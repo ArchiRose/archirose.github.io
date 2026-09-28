@@ -1,0 +1,942 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Archi Rose Mani · Security operations portfolio</title>
+<meta name="description" content="Archi Rose Mani: security operations analyst. SOC and IT support automation designs, home labs and experience.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+:root{
+  color-scheme: light;
+  --paper:#F1F4F7; --raised:#FFFFFF; --ink:#132029; --ink-soft:#384956; --muted:#5B6B78;
+  --line:#D2DBE2; --line-strong:#9AABB9; --grid:rgba(29,78,137,.075);
+  --accent:#1D4E89; --accent-soft:#E2EBF5;
+  --amber:#8F5400; --amber-soft:#FBEFD9; --green:#1D6647; --green-soft:#E0F1E8;
+  --code-bg:#E8EEF3; --code-ink:#1A2A36; --code-c:#6A7B88;
+  --f-display:"Barlow Condensed","Arial Narrow","Roboto Condensed",sans-serif;
+  --f-body:"Public Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --paper:#0D1720; --raised:#12212E; --ink:#E3EBF1; --ink-soft:#C2CFD9; --muted:#91A3B1;
+    --line:#223647; --line-strong:#3D5970; --grid:rgba(130,180,234,.07);
+    --accent:#86B7EC; --accent-soft:#15314D;
+    --amber:#E9B45C; --amber-soft:#35270F; --green:#72CDA1; --green-soft:#11301F;
+    --code-bg:#0A131B; --code-ink:#D6E1EA; --code-c:#7F93A3;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --paper:#0D1720; --raised:#12212E; --ink:#E3EBF1; --ink-soft:#C2CFD9; --muted:#91A3B1;
+  --line:#223647; --line-strong:#3D5970; --grid:rgba(130,180,234,.07);
+  --accent:#86B7EC; --accent-soft:#15314D;
+  --amber:#E9B45C; --amber-soft:#35270F; --green:#72CDA1; --green-soft:#11301F;
+  --code-bg:#0A131B; --code-ink:#D6E1EA; --code-c:#7F93A3;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 var(--f-body)}
+a{color:var(--accent);text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.wrap{max-width:1140px;margin:0 auto;padding-inline:20px;padding-block:28px 56px}
+.mono{font-family:var(--f-mono)}
+.eyebrow{font:500 12px/1.4 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0}
+
+/* top bar */
+.topbar{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:12px}
+.topbar nav{display:flex;flex-wrap:wrap;gap:4px 18px}
+.topbar nav a{font:500 13px/1.4 var(--f-mono);color:var(--ink-soft);text-decoration:none;letter-spacing:.04em}
+.topbar nav a:hover{color:var(--accent)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:32px;align-items:end;padding-block:36px 28px}
+.hero h1{font:700 clamp(46px,8.2vw,88px)/.92 var(--f-display);letter-spacing:.005em;text-transform:uppercase;margin:10px 0 14px;text-wrap:balance}
+.hero .role{font:600 clamp(19px,2.4vw,24px)/1.25 var(--f-display);letter-spacing:.02em;color:var(--accent);margin:0 0 14px}
+.hero .intro{max-width:62ch;color:var(--ink-soft);margin:0}
+.titleblock{border:1.5px solid var(--ink);background:var(--raised);display:grid;grid-template-columns:auto 1fr}
+.titleblock dt,.titleblock dd{margin:0;padding:10px 12px;border-bottom:1px solid var(--line)}
+.titleblock dt{font:500 11px/1.5 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-right:1px solid var(--line);padding-top:12px}
+.titleblock dd{font-size:14.5px;overflow-wrap:anywhere}
+.titleblock dt:nth-last-of-type(1),.titleblock dd:last-of-type{border-bottom:0}
+.copyrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.btn{font:500 12px/1 var(--f-mono);letter-spacing:.04em;border:1px solid var(--line-strong);background:transparent;color:var(--ink);padding:6px 9px;border-radius:2px;cursor:pointer}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* facts */
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-block:1.5px solid var(--ink);margin-block:8px 0}
+.fact{padding:14px 16px 16px;border-left:1px solid var(--line)}
+.fact:first-child{border-left:0;padding-left:0}
+.fact b{display:block;font:700 clamp(28px,3.6vw,40px)/1 var(--f-display);font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.fact span{display:block;margin-top:6px;font-size:13.5px;line-height:1.45;color:var(--ink-soft)}
+
+/* sections */
+section{padding-top:52px}
+.sec-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:24px;align-items:end;margin-bottom:22px}
+.sec-head h2{font:700 clamp(32px,4.6vw,48px)/1 var(--f-display);text-transform:uppercase;letter-spacing:.01em;margin:6px 0 0}
+.sec-head p{margin:0;color:var(--ink-soft);max-width:60ch}
+
+/* legend + filters */
+.controls{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:flex-start;justify-content:space-between;border:1px solid var(--line);background:var(--raised);padding:14px 16px;margin-bottom:22px}
+.filters{display:flex;flex-wrap:wrap;gap:12px 22px}
+.fgroup{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.fgroup .eyebrow{margin-right:4px}
+.chip{font:500 13px/1 var(--f-body);border:1px solid var(--line-strong);background:transparent;color:var(--ink-soft);padding:7px 11px;border-radius:999px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.chip:hover{border-color:var(--accent)}
+.count{font:500 12px/1.4 var(--f-mono);color:var(--muted);margin:0;align-self:center}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13px;color:var(--ink-soft)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.swatch{width:22px;height:14px;border:1.5px solid var(--ink-soft);display:inline-block}
+.swatch.dash{border-style:dashed}
+.swatch.gate{border:1.5px dashed var(--amber);background:var(--amber-soft)}
+
+/* design sheets */
+.sheets{display:grid;gap:26px}
+.sheet{background:var(--raised);border:1.5px solid var(--ink)}
+.tb{display:grid;grid-template-columns:auto minmax(0,1fr) auto;border-bottom:1px solid var(--line)}
+.tb>*{padding:12px 16px}
+.tb-id{border-right:1px solid var(--line);display:flex;flex-direction:column;justify-content:center;gap:2px;min-width:108px}
+.tb-id .mono{font-size:15px;font-weight:500;color:var(--accent)}
+.tb-id .lane{font:500 11px/1.3 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tb-title{margin:0;font:600 clamp(22px,2.6vw,28px)/1.1 var(--f-display);letter-spacing:.01em;align-self:center;text-wrap:balance}
+.tb-status{border-left:1px solid var(--line);display:flex;align-items:center}
+.stamp{font:500 11.5px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:7px 9px;border:1.5px solid;white-space:nowrap}
+.stamp.built{color:var(--green);border-color:var(--green);background:var(--green-soft)}
+.stamp.blueprint{color:var(--accent);border-color:var(--accent);border-style:dashed;background:var(--accent-soft)}
+.meta{padding:12px 16px 4px;display:grid;gap:6px}
+.meta p{margin:0;display:flex;flex-wrap:wrap;gap:6px 8px;align-items:baseline;font-size:14px;color:var(--ink-soft)}
+.ml{font:500 11px/1.6 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);min-width:92px}
+.tag{font:500 12px/1.2 var(--f-mono);border:1px solid var(--line-strong);padding:3px 6px;color:var(--ink)}
+
+/* the drawing board: flow on a drafting grid */
+.board{margin:12px 16px 4px;border:1px solid var(--line);padding:18px;
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:16px 16px}
+.flow{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:22px}
+.node{position:relative;background:var(--raised);border:1.5px solid var(--ink-soft);padding:10px 11px 12px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.blueprint .node{border-style:dashed}
+.node:not(:last-child)::after{content:"\2192";position:absolute;right:-18px;top:50%;transform:translateY(-50%);font:500 15px/1 var(--f-mono);color:var(--muted)}
+.kind{font:500 10.5px/1.2 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.nl{font-weight:600;font-size:14.5px;line-height:1.25}
+.nd{font-size:12.5px;line-height:1.4;color:var(--ink-soft)}
+.k-trigger .kind,.k-decide .kind{color:var(--accent)}
+.k-decide .kind::before{content:"\25C6  ";}
+.k-trigger{border-left-width:4px}
+.node.k-gate{border:1.5px dashed var(--amber);background:var(--amber-soft)}
+.k-gate .kind{color:var(--amber)}
+
+.detail{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) minmax(0,.9fr);gap:22px;padding:16px 16px 6px}
+.detail h4{margin:0 0 6px;font:500 11px/1.4 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.detail p{margin:0;font-size:15px;max-width:62ch}
+.detail ul{margin:0;padding-left:18px;font-size:14.5px;color:var(--ink-soft);display:grid;gap:4px}
+details.code{margin:10px 16px 16px;border-top:1px solid var(--line)}
+details.code summary{cursor:pointer;padding-top:10px;font:500 13px/1.4 var(--f-mono);color:var(--accent);list-style-position:inside}
+.codewrap{margin-top:10px;overflow-x:auto;background:var(--code-bg);border:1px solid var(--line)}
+.codewrap pre{margin:0;padding:14px 16px;font:13px/1.55 var(--f-mono);color:var(--code-ink);tab-size:4}
+.codewrap .c{color:var(--code-c);font-style:italic}
+
+/* labs */
+.labs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1.5px solid var(--ink)}
+.lab{padding:16px 18px 18px 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.lab:not(:nth-child(3n+1)){padding-left:18px;border-left:1px solid var(--line)}
+.lab h3{margin:0;font:600 21px/1.15 var(--f-display);letter-spacing:.01em}
+.lab .when{font:500 12px/1.4 var(--f-mono);color:var(--muted)}
+.lab p{margin:0;font-size:14.5px;color:var(--ink-soft)}
+.lab .stack{font:500 12px/1.4 var(--f-mono);color:var(--accent);margin-top:auto;padding-top:4px}
+
+/* experience */
+.xp{border-top:1.5px solid var(--ink)}
+.xrow{display:grid;grid-template-columns:170px minmax(0,1fr) auto;gap:6px 24px;padding:14px 0;border-bottom:1px solid var(--line)}
+.xrow .when{font:500 13px/1.5 var(--f-mono);font-variant-numeric:tabular-nums;color:var(--muted);padding-top:2px}
+.xrow h3{margin:0;font:600 20px/1.2 var(--f-display);letter-spacing:.01em}
+.xrow .org{color:var(--ink-soft);font-size:14.5px}
+.xrow p{margin:4px 0 0;font-size:14.5px;color:var(--ink-soft);max-width:70ch}
+.xrow .rel{font:500 11px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:5px 7px;border:1px solid var(--line-strong);color:var(--muted);align-self:start;white-space:nowrap}
+.xrow.security .rel{color:var(--green);border-color:var(--green)}
+.xrow.it .rel{color:var(--accent);border-color:var(--accent)}
+.xrow.other h3{font-size:18px}
+.edu{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:32px;margin-top:34px}
+.edu h3{margin:0 0 10px;font:500 12px/1.4 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.edu ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.edu li{padding:10px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;font-size:15px}
+.edu li .when{font:500 13px/1.6 var(--f-mono);color:var(--muted)}
+.edu li small{display:block;color:var(--ink-soft);font-size:13.5px}
+.certs li{grid-template-columns:minmax(0,1fr) auto}
+.certs .st{font:500 11px/1.8 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+
+/* contact */
+.contact{margin-top:56px;border:1.5px solid var(--ink);background:var(--raised);display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}
+.contact>div{padding:22px 22px 24px}
+.contact>div+div{border-left:1px solid var(--line)}
+.contact h2{font:700 clamp(30px,4vw,42px)/1 var(--f-display);text-transform:uppercase;margin:6px 0 10px}
+.contact p{margin:0;color:var(--ink-soft);max-width:52ch}
+.contact dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:10px 14px;align-items:baseline}
+.contact dt{font:500 11px/1.5 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.contact dd{margin:0;overflow-wrap:anywhere}
+footer.foot{margin-top:26px;font:500 12px/1.5 var(--f-mono);color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between}
+
+/* responsive */
+@media (max-width:980px){
+  .flow{grid-template-columns:1fr;gap:14px}
+  .node:not(:last-child)::after{content:"\2193";right:auto;left:16px;top:auto;bottom:-15px;transform:none}
+  .node{display:grid;grid-template-columns:92px minmax(0,1fr);column-gap:10px;row-gap:2px}
+  .node .kind{grid-row:1 / span 2;padding-top:2px}
+  .detail{grid-template-columns:1fr 1fr}
+  .detail>div:first-child{grid-column:1 / -1}
+  .labs{grid-template-columns:1fr 1fr}
+  .lab:not(:nth-child(3n+1)){padding-left:0;border-left:0}
+  .lab:nth-child(2n){padding-left:18px;border-left:1px solid var(--line)}
+}
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr;gap:22px;padding-block:26px 20px}
+  .facts{grid-template-columns:1fr 1fr}
+  .fact:nth-child(3){border-left:0;padding-left:0}
+  .fact:nth-child(n+3){border-top:1px solid var(--line)}
+  .sec-head{grid-template-columns:1fr;gap:10px}
+  .tb{grid-template-columns:auto minmax(0,1fr)}
+  .tb-status{grid-column:1 / -1;border-left:0;border-top:1px solid var(--line);padding-block:8px}
+  .detail{grid-template-columns:1fr}
+  .labs{grid-template-columns:1fr}
+  .lab,.lab:nth-child(2n){padding-left:0;border-left:0}
+  .xrow{grid-template-columns:1fr auto}
+  .xrow .when{grid-column:1 / -1;padding-top:0}
+  .edu{grid-template-columns:1fr}
+  .contact{grid-template-columns:1fr}
+  .contact>div+div{border-left:0;border-top:1px solid var(--line)}
+}
+@media (max-width:420px){
+  .node{grid-template-columns:1fr}
+  .node .kind{grid-row:auto}
+  .tb-id{min-width:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+:root{--red:#A12C2C;--red-soft:#F8E2E2}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--red:#F29090;--red-soft:#3A1919}}
+:root[data-theme="dark"]{--red:#F29090;--red-soft:#3A1919}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 26px}
+.subnav a{display:inline-flex;gap:8px;align-items:center;font:500 13.5px/1 var(--f-body);color:var(--ink);text-decoration:none;border:1px solid var(--line-strong);border-radius:999px;padding:9px 13px;background:var(--raised)}
+.subnav a span{font:500 11px/1 var(--f-mono);color:var(--muted)}
+.subnav a:hover{border-color:var(--accent);color:var(--accent)}
+.group{margin-top:40px;scroll-margin-top:16px}
+.group:first-of-type{margin-top:0}
+.group-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;margin:0 0 16px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.group-h h3{margin:0;font:700 27px/1.1 var(--f-display);text-transform:uppercase;letter-spacing:.01em}
+.group-h p{margin:0;color:var(--ink-soft);font-size:14.5px;max-width:70ch}
+.stamp.ref{color:var(--ink);border-color:var(--ink);background:transparent}
+.sheet.sec .tb-id{min-width:120px}
+.sheets{grid-template-columns:minmax(0,1fr)}
+.sheet,.board,.panel,.kd>div{min-width:0}
+.fig{margin:0;min-width:0}
+.fig-scroll{overflow-x:auto;max-width:100%}
+.dg{display:block;width:100%;height:auto}
+.dg .bx{fill:var(--raised);stroke:var(--ink-soft);stroke-width:1.5}
+.dg .bx.hl{stroke:var(--accent);stroke-width:2.2}
+.dg .bx.good{fill:var(--green-soft);stroke:var(--green)}
+.dg .bx.warn{fill:var(--amber-soft);stroke:var(--amber)}
+.dg .bx.bad{fill:var(--red-soft);stroke:var(--red)}
+.dg .zone{fill:none;stroke:var(--line-strong);stroke-width:1.5;stroke-dasharray:6 5}
+.dg .ln{stroke:var(--muted);stroke-width:1.5;fill:none}
+.dg .ah{fill:var(--muted)}
+.dg text{fill:var(--ink)}
+.dg .t{font:600 13px var(--f-body);fill:var(--ink)}
+.dg .s{font:400 11.5px var(--f-body);fill:var(--ink-soft)}
+.dg .m{font:500 10px var(--f-mono);fill:var(--muted);letter-spacing:.06em}
+.dg .lb{font:500 10.5px var(--f-mono);fill:var(--muted)}
+.dg .zl{font:500 10.5px var(--f-mono);fill:var(--muted);letter-spacing:.08em}
+.fig figcaption{margin-top:12px;font-size:13.5px;line-height:1.5;color:var(--ink-soft);max-width:82ch}
+.kd{padding:14px 16px 16px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:24px}
+.kd.one{grid-template-columns:minmax(0,1fr)}
+.kd h4{margin:0 0 8px;font:500 11px/1.4 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.kd ul{margin:0;padding-left:18px;font-size:14.5px;color:var(--ink-soft);display:grid;gap:5px}
+.kd .codewrap{margin-top:0}
+.note{margin:10px 0 0;font-size:13.5px;color:var(--muted);max-width:80ch}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);background:var(--raised)}
+table.t{border-collapse:collapse;width:100%;min-width:620px;font-size:13.5px;line-height:1.45}
+table.t th{font:500 10.5px/1.4 var(--f-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);background:var(--paper)}
+table.t td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink-soft)}
+table.t tr:last-child td{border-bottom:0}
+table.t td:first-child{color:var(--ink);font-weight:600}
+table.matrix{min-width:860px}
+table.matrix td{font-size:12.5px}
+.ok{color:var(--green);font-weight:500}
+.no{color:var(--muted)}
+.risk{font:500 10.5px/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:4px 6px;border:1px solid;display:inline-block;white-space:nowrap}
+.risk.h{color:var(--red);border-color:var(--red);background:var(--red-soft)}
+.risk.m{color:var(--amber);border-color:var(--amber);background:var(--amber-soft)}
+.risk.l{color:var(--green);border-color:var(--green);background:var(--green-soft)}
+.panel{padding:4px 16px 10px}
+.chain{display:grid}
+.crow{display:grid;grid-template-columns:30px minmax(0,1.1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:16px;padding:13px 0;border-top:1px solid var(--line);font-size:13.5px;line-height:1.5;color:var(--ink-soft)}
+.crow:first-child{border-top:0}
+.cn{font:700 24px/1 var(--f-display);color:var(--red);font-variant-numeric:tabular-nums}
+.cl{display:block;font:500 10.5px/1.4 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.ctac .cl{color:var(--ink)}
+.tech{display:block;font:500 12px/1.45 var(--f-mono);color:var(--accent)}
+.catk .cl{color:var(--red)}
+.cprev .cl{color:var(--green)}
+.cdet .cl{color:var(--accent)}
+.rbmeta{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,.8fr) minmax(0,1fr);gap:10px 24px;padding:12px 16px 4px;font-size:14px;color:var(--ink-soft)}
+.rb{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.phase{background:var(--raised);border:1.5px solid var(--ink-soft);padding:10px 11px 12px;display:flex;flex-direction:column;gap:9px;min-width:0}
+.phase h5{margin:0;font:600 18px/1.15 var(--f-display);letter-spacing:.01em;display:flex;gap:8px;align-items:baseline}
+.pn{font:500 11px/1 var(--f-mono);color:var(--muted)}
+.phase ol{margin:0;padding:0;list-style:none;display:grid;gap:7px;font-size:13px;line-height:1.45;color:var(--ink-soft)}
+.role{display:inline-block;font:500 10px/1 var(--f-mono);letter-spacing:.05em;border:1px solid var(--line-strong);padding:3px 4px;margin-right:6px;color:var(--ink);vertical-align:1px}
+.decision{border:1.5px dashed var(--amber);background:var(--amber-soft);padding:8px 9px;font-size:12.5px;line-height:1.45;color:var(--ink);display:grid;gap:3px}
+.decision b{font:500 10.5px/1.4 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--amber)}
+.decision .yn strong{font-weight:600}
+.rbnote{margin:0;padding:2px 16px 16px;font-size:13px;color:var(--muted)}
+@media (max-width:980px){
+  .crow{grid-template-columns:30px minmax(0,1fr) minmax(0,1fr);grid-template-areas:"n tac atk" ". prev det"}
+  .crow .cn{grid-area:n}.crow .ctac{grid-area:tac}.crow .catk{grid-area:atk}.crow .cprev{grid-area:prev}.crow .cdet{grid-area:det}
+  .rb{grid-template-columns:1fr}
+  .kd{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .rbmeta{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .crow{grid-template-columns:26px minmax(0,1fr);grid-template-areas:"n tac" ". atk" ". prev" ". det";gap:8px 12px}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="topbar">
+    <p class="eyebrow">Portfolio · Security operations and IT support</p>
+    <nav aria-label="Sections">
+      <a href="#security">Security designs</a><a href="#designs">Automation</a><a href="#labs">Labs</a><a href="#experience">Experience</a><a href="#contact">Contact</a>
+    </nav>
+  </div>
+
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Dunfermline, Fife · UK</p>
+      <h1>Archi Rose Mani</h1>
+      <p class="role">Security operations analyst · SOC and service desk automation</p>
+      <p class="intro">My background is security operations and IT support: a year as a Tier-1 analyst in a 24/7 Microsoft SOC and over a year on a first-line service desk. This page shows my security designs (architecture, attack-and-defence flows, threat models and incident response runbooks) and the automations I've built in my home lab or designed next. Any automated step that changes an account or deletes mail waits for a person to approve it.</p>
+    </div>
+    <dl class="titleblock" aria-label="Contact details">
+      <dt>Email</dt><dd><span class="copyrow"><span id="email-hero">archicybersoc@gmail.com</span><button type="button" class="btn" data-copy="archicybersoc@gmail.com" data-target="email-hero">Copy</button></span></dd>
+      <dt>LinkedIn</dt><dd><a href="https://www.linkedin.com/in/archirosemani" target="_blank" rel="noopener">linkedin.com/in/archirosemani</a></dd>
+      <dt>Based</dt><dd>Dunfermline, Fife. 30 minutes from Edinburgh</dd>
+      <dt>Looking for</dt><dd>SOC analyst, security analyst and IT support roles</dd>
+    </dl>
+  </header>
+
+  <div class="facts" role="list">
+    <div class="fact" role="listitem"><b>1 year</b><span>Tier-1 analyst in a 24/7 Microsoft SOC</span></div>
+    <div class="fact" role="listitem"><b>30–50</b><span>alerts triaged per shift in Sentinel and Defender</span></div>
+    <div class="fact" role="listitem"><b>1,200+</b><span>service desk tickets a year, 92% fixed on first contact</span></div>
+    <div class="fact" role="listitem"><b>MSc</b><span>Cyber Security with Distinction. CEH and CHFI certified</span></div>
+  </div>
+
+
+  <section id="security" aria-labelledby="security-h">
+    <div class="sec-head">
+      <div><p class="eyebrow">11 designs · architecture · attack and defence · threat models · runbooks</p><h2 id="security-h">Security designs</h2></div>
+      <p>Reference designs of the kind a SOC or security team works from: how the pieces fit together, how an attack runs and where it gets stopped, what could go wrong in a system, and what to do when it does. They link to the detections and playbooks in the automation designs below.</p>
+    </div>
+    <nav class="subnav" aria-label="Security design types"><a href="#architecture">Architecture <span>4</span></a><a href="#attack-defence">Attack and defence <span>2</span></a><a href="#threat-models">Threat models <span>2</span></a><a href="#runbooks">Incident response runbooks <span>3</span></a></nav>
+    <div class="group" id="architecture"><div class="group-h"><h3>Architecture</h3><p>How the pieces fit together and which way the data flows.</p></div><div class="sheets"><article class="sheet sec" id="arc-01"><header class="tb"><div class="tb-id"><span class="mono">ARC-01</span><span class="lane">Architecture</span></div><h3 class="tb-title">Microsoft Sentinel SOC architecture</h3><div class="tb-status"><span class="stamp ref">Reference design</span></div></header><div class="meta"><p><span class="ml">Tools</span><span class="tools">Microsoft Sentinel · Log Analytics · Azure Monitor Agent · Logic Apps · ServiceNow</span></p></div><div class="board"><figure class="fig"><div class="fig-scroll"><svg class="dg" viewBox="0 0 1000 420" role="img" aria-label="Microsoft Sentinel SOC architecture: five log sources feed one workspace, rules create incidents, automation enriches them, analysts triage and escalate." style="min-width:780px"><defs><marker id="ah-arc1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah"/></marker></defs><text x="115" y="26" text-anchor="middle" class="zl">LOG SOURCES</text><text x="355" y="26" text-anchor="middle" class="zl">WORKSPACE</text><text x="585" y="26" text-anchor="middle" class="zl">DETECTION</text><text x="855" y="26" text-anchor="middle" class="zl">RESPONSE</text><rect x="20" y="40" width="190" height="50" rx="3" class="bx "/><text x="115.0" y="61.5" text-anchor="middle" class="t">Entra ID sign-ins</text><text x="115.0" y="76.5" text-anchor="middle" class="s">SigninLogs</text><line x1="210" y1="65" x2="268" y2="65" class="ln" marker-end="url(#ah-arc1)"/><rect x="20" y="100" width="190" height="50" rx="3" class="bx "/><text x="115.0" y="121.5" text-anchor="middle" class="t">Microsoft 365 audit</text><text x="115.0" y="136.5" text-anchor="middle" class="s">OfficeActivity</text><line x1="210" y1="125" x2="268" y2="125" class="ln" marker-end="url(#ah-arc1)"/><rect x="20" y="160" width="190" height="50" rx="3" class="bx "/><text x="115.0" y="181.5" text-anchor="middle" class="t">Defender XDR</text><text x="115.0" y="196.5" text-anchor="middle" class="s">alerts, device events</text><line x1="210" y1="185" x2="268" y2="185" class="ln" marker-end="url(#ah-arc1)"/><rect x="20" y="220" width="190" height="50" rx="3" class="bx "/><text x="115.0" y="241.5" text-anchor="middle" class="t">Windows servers</text><text x="115.0" y="256.5" text-anchor="middle" class="s">SecurityEvent via AMA</text><line x1="210" y1="245" x2="268" y2="245" class="ln" marker-end="url(#ah-arc1)"/><rect x="20" y="280" width="190" height="50" rx="3" class="bx "/><text x="115.0" y="301.5" text-anchor="middle" class="t">Firewall</text><text x="115.0" y="316.5" text-anchor="middle" class="s">CEF syslog</text><line x1="210" y1="305" x2="268" y2="305" class="ln" marker-end="url(#ah-arc1)"/><text x="239" y="35" text-anchor="middle" class="lb">connectors</text><rect x="270" y="40" width="170" height="290" rx="3" class="bx hl"/><text x="355.0" y="167.0" text-anchor="middle" class="t">Log Analytics</text><text x="355.0" y="182.0" text-anchor="middle" class="s">workspace</text><text x="355.0" y="197.0" text-anchor="middle" class="s">queried with KQL</text><text x="355.0" y="211.0" text-anchor="middle" class="m">90-DAY RETENTION</text><rect x="500" y="40" width="170" height="70" rx="3" class="bx "/><text x="585.0" y="64.5" text-anchor="middle" class="t">Analytics rules</text><text x="585.0" y="79.5" text-anchor="middle" class="s">scheduled KQL</text><text x="585.0" y="93.5" text-anchor="middle" class="m">MAPPED TO ATT&amp;CK</text><line x1="440" y1="75" x2="498" y2="75" class="ln" marker-end="url(#ah-arc1)"/><text x="469.0" y="68" text-anchor="middle" class="lb">runs KQL</text><rect x="500" y="160" width="170" height="60" rx="3" class="bx "/><text x="585.0" y="186.5" text-anchor="middle" class="t">Incidents</text><text x="585.0" y="201.5" text-anchor="middle" class="s">grouped by entity</text><line x1="585" y1="110" x2="585" y2="158" class="ln" marker-end="url(#ah-arc1)"/><text x="593" y="138" text-anchor="start" class="lb">creates</text><rect x="500" y="270" width="170" height="60" rx="3" class="bx "/><text x="585.0" y="296.5" text-anchor="middle" class="t">Hunting, workbooks</text><text x="585.0" y="311.5" text-anchor="middle" class="s">analyst queries</text><line x1="440" y1="300" x2="498" y2="300" class="ln" marker-end="url(#ah-arc1)"/><text x="469.0" y="293" text-anchor="middle" class="lb">reads</text><rect x="730" y="40" width="250" height="70" rx="3" class="bx "/><text x="855.0" y="71.5" text-anchor="middle" class="t">VirusTotal API</text><text x="855.0" y="86.5" text-anchor="middle" class="s">IP, URL and hash reputation</text><rect x="730" y="160" width="250" height="60" rx="3" class="bx hl"/><text x="855.0" y="186.5" text-anchor="middle" class="t">Automation rule + playbook</text><text x="855.0" y="201.5" text-anchor="middle" class="s">Logic Apps: enrich, tag, notify</text><line x1="670" y1="190" x2="728" y2="190" class="ln" marker-end="url(#ah-arc1)"/><text x="699.0" y="183" text-anchor="middle" class="lb">on create</text><line x1="855" y1="160" x2="855" y2="112" class="ln" marker-end="url(#ah-arc1)"/><text x="863" y="140" text-anchor="start" class="lb">lookups</text><rect x="730" y="270" width="250" height="60" rx="3" class="bx "/><text x="855.0" y="296.5" text-anchor="middle" class="t">Analyst triage (L1)</text><text x="855.0" y="311.5" text-anchor="middle" class="s">true or false positive</text><line x1="855" y1="220" x2="855" y2="268" class="ln" marker-end="url(#ah-arc1)"/><text x="863" y="248" text-anchor="start" class="lb">comment + tags</text><line x1="670" y1="214" x2="728" y2="286" class="ln" marker-end="url(#ah-arc1)"/><text x="688" y="268" text-anchor="middle" class="lb">queue</text><rect x="730" y="356" width="250" height="50" rx="3" class="bx "/><text x="855.0" y="377.5" text-anchor="middle" class="t">ServiceNow ticket</text><text x="855.0" y="392.5" text-anchor="middle" class="s">escalate to L2 with evidence</text><line x1="855" y1="330" x2="855" y2="354" class="ln" marker-end="url(#ah-arc1)"/><text x="863" y="347" text-anchor="start" class="lb">confirmed</text></svg></div><figcaption>Logs from five sources land in one Log Analytics workspace. Scheduled KQL rules turn matches into incidents, an automation rule runs the enrichment playbook, and the analyst starts triage with reputation data already on the incident. Confirmed incidents go to ServiceNow and Level 2.</figcaption></figure></div><div class="kd"><div><h4>Key decisions</h4><ul><li>One workspace for every source, so one KQL query can join sign-ins, mail and endpoint data.</li><li>Every analytics rule is mapped to MITRE ATT&amp;CK, which shows coverage gaps by tactic.</li><li>Automation enriches and tags incidents but never closes them. People decide outcomes.</li><li>90 days of searchable data for investigations; older logs move to cheaper archive storage for audit.</li></ul></div><div><h4>Where it connects</h4><ul><li>The detection rules in SOC-01 and the enrichment playbook in SOC-02 run on this design in my lab.</li><li>Firewall logs arrive from the segmented network in ARC-03.</li><li>User-reported phishing from ARC-04 lands here as incidents.</li></ul></div></div></article><article class="sheet sec" id="arc-02"><header class="tb"><div class="tb-id"><span class="mono">ARC-02</span><span class="lane">Architecture</span></div><h3 class="tb-title">Zero Trust sign-in with Conditional Access</h3><div class="tb-status"><span class="stamp ref">Reference design</span></div></header><div class="meta"><p><span class="ml">Tools</span><span class="tools">Entra ID · Conditional Access · Intune · Entra ID Protection</span></p></div><div class="board"><figure class="fig"><div class="fig-scroll"><svg class="dg" viewBox="0 0 1000 360" role="img" aria-label="Conditional Access decision: sign-in signals plus device state from Intune and risk from Entra ID Protection lead to block, grant with MFA, or grant with phishing-resistant MFA for admins." style="min-width:780px"><defs><marker id="ah-arc2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah"/></marker></defs><rect x="20" y="135" width="170" height="90" rx="3" class="bx "/><text x="105.0" y="169.0" text-anchor="middle" class="t">Sign-in request</text><text x="105.0" y="184.0" text-anchor="middle" class="s">user, device,</text><text x="105.0" y="199.0" text-anchor="middle" class="s">location, app</text><line x1="190" y1="180" x2="248" y2="180" class="ln" marker-end="url(#ah-arc2)"/><text x="219.0" y="173" text-anchor="middle" class="lb">signals</text><rect x="250" y="20" width="180" height="56" rx="3" class="bx "/><text x="340.0" y="44.5" text-anchor="middle" class="t">Intune</text><text x="340.0" y="59.5" text-anchor="middle" class="s">device compliant?</text><line x1="340" y1="76" x2="340" y2="133" class="ln" marker-end="url(#ah-arc2)"/><text x="348" y="108" text-anchor="start" class="lb">device state</text><rect x="250" y="284" width="180" height="56" rx="3" class="bx "/><text x="340.0" y="308.5" text-anchor="middle" class="t">Entra ID Protection</text><text x="340.0" y="323.5" text-anchor="middle" class="s">sign-in and user risk</text><line x1="340" y1="284" x2="340" y2="227" class="ln" marker-end="url(#ah-arc2)"/><text x="348" y="260" text-anchor="start" class="lb">risk level</text><rect x="250" y="135" width="180" height="90" rx="3" class="bx hl"/><text x="340.0" y="169.0" text-anchor="middle" class="t">Conditional Access</text><text x="340.0" y="184.0" text-anchor="middle" class="s">all matching policies</text><text x="340.0" y="199.0" text-anchor="middle" class="s">must pass</text><rect x="500" y="20" width="220" height="70" rx="3" class="bx bad"/><text x="610.0" y="51.5" text-anchor="middle" class="t">Block</text><text x="610.0" y="66.5" text-anchor="middle" class="s">legacy auth or high risk</text><rect x="500" y="145" width="220" height="70" rx="3" class="bx warn"/><text x="610.0" y="176.5" text-anchor="middle" class="t">Grant with MFA</text><text x="610.0" y="191.5" text-anchor="middle" class="s">standard users</text><rect x="500" y="270" width="220" height="80" rx="3" class="bx good"/><text x="610.0" y="299.5" text-anchor="middle" class="t">Grant: phishing-resistant</text><text x="610.0" y="314.5" text-anchor="middle" class="s">MFA + compliant device</text><text x="610.0" y="328.5" text-anchor="middle" class="m">ADMIN ROLES</text><line x1="430" y1="160" x2="498" y2="62" class="ln" marker-end="url(#ah-arc2)"/><text x="474" y="122" text-anchor="start" class="lb">block rule</text><line x1="430" y1="180" x2="498" y2="180" class="ln" marker-end="url(#ah-arc2)"/><text x="464.0" y="173" text-anchor="middle" class="lb">user</text><line x1="430" y1="200" x2="498" y2="300" class="ln" marker-end="url(#ah-arc2)"/><text x="474" y="258" text-anchor="start" class="lb">admin</text><rect x="780" y="135" width="200" height="90" rx="3" class="bx good"/><text x="880.0" y="169.0" text-anchor="middle" class="t">Access granted</text><text x="880.0" y="184.0" text-anchor="middle" class="s">token for Microsoft 365,</text><text x="880.0" y="199.0" text-anchor="middle" class="s">Azure portal, SSO apps</text><line x1="720" y1="180" x2="778" y2="180" class="ln" marker-end="url(#ah-arc2)"/><text x="749.0" y="173" text-anchor="middle" class="lb">passes</text><line x1="720" y1="305" x2="778" y2="212" class="ln" marker-end="url(#ah-arc2)"/><text x="756" y="276" text-anchor="start" class="lb">passes</text></svg></div><figcaption>Every sign-in sends its signals to Conditional Access, which also asks Intune about the device and Entra ID Protection about risk. All matching policies must pass and a block always wins. Standard users get MFA; admins need phishing-resistant MFA on a compliant device.</figcaption></figure></div><div class="kd"><div><h4>Key decisions</h4><ul><li>Each new policy runs in report-only mode for a week before it is switched on.</li><li>Two break-glass accounts sit outside every policy, with an alert on any use.</li><li>Admins sign in with phishing-resistant methods, because an ordinary MFA prompt can be relayed by a proxy phishing page (see ATK-01).</li></ul></div><div><h4>Policy set</h4><div class="tablewrap"><table class="t"><thead><tr><th>Policy</th><th>Applies to</th><th>Control</th></tr></thead><tbody><tr><td>CA01 Block legacy authentication</td><td>All users</td><td>Block</td></tr><tr><td>CA02 Require MFA</td><td>All users, all cloud apps</td><td>Grant: MFA</td></tr><tr><td>CA03 Phishing-resistant MFA for admins</td><td>Admin directory roles</td><td>Grant: authentication strength (FIDO2 key or Windows Hello)</td></tr><tr><td>CA04 Block high-risk sign-ins</td><td>All users</td><td>Block (Entra ID Protection risk)</td></tr><tr><td>CA05 Admin portals from compliant devices</td><td>Admin directory roles</td><td>Grant: compliant device</td></tr><tr><td>Break-glass accounts</td><td>Two cloud-only accounts</td><td>Excluded from every policy; any sign-in alerts the SOC</td></tr></tbody></table></div></div></div></article><article class="sheet sec" id="arc-03"><header class="tb"><div class="tb-id"><span class="mono">ARC-03</span><span class="lane">Architecture</span></div><h3 class="tb-title">Network segmentation for a small office</h3><div class="tb-status"><span class="stamp ref">Reference design</span></div></header><div class="meta"><p><span class="ml">Tools</span><span class="tools">Next-generation firewall · VLANs · jump host · Microsoft Sentinel</span></p></div><div class="board"><figure class="fig"><div class="fig-scroll"><svg class="dg" viewBox="0 0 1000 346" role="img" aria-label="Network segmentation: internet traffic reaches only the DMZ on port 443; five internal VLANs talk to each other only through the default-deny firewall, which logs to Sentinel." style="min-width:780px"><defs><marker id="ah-arc3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah"/></marker></defs><rect x="410" y="16" width="180" height="44" rx="3" class="bx "/><text x="500.0" y="42.0" text-anchor="middle" class="t">Internet</text><line x1="500" y1="60" x2="500" y2="108" class="ln" marker-end="url(#ah-arc3)"/><text x="510" y="90" text-anchor="start" class="lb">443 to DMZ only</text><rect x="380" y="110" width="240" height="56" rx="3" class="bx hl"/><text x="500.0" y="134.5" text-anchor="middle" class="t">Firewall</text><text x="500.0" y="149.5" text-anchor="middle" class="s">default deny, logs everything</text><rect x="700" y="110" width="280" height="56" rx="3" class="bx "/><text x="840.0" y="134.5" text-anchor="middle" class="t">DMZ</text><text x="840.0" y="149.5" text-anchor="middle" class="s">reverse proxy, web server</text><line x1="620" y1="138" x2="698" y2="138" class="ln" marker-end="url(#ah-arc3)"/><text x="659.0" y="131" text-anchor="middle" class="lb">443</text><rect x="20" y="110" width="280" height="56" rx="3" class="bx "/><text x="160.0" y="134.5" text-anchor="middle" class="t">Microsoft Sentinel</text><text x="160.0" y="149.5" text-anchor="middle" class="s">firewall logs (CEF)</text><line x1="380" y1="138" x2="302" y2="138" class="ln" marker-end="url(#ah-arc3)"/><text x="341.0" y="131" text-anchor="middle" class="lb">logs</text><line x1="500" y1="166" x2="500" y2="212" class="ln"/><line x1="108" y1="212" x2="892" y2="212" class="ln"/><text x="120" y="204" class="lb">every flow between VLANs crosses the firewall</text><line x1="108" y1="212" x2="108" y2="246" class="ln" marker-end="url(#ah-arc3)"/><rect x="20" y="248" width="176" height="62" rx="3" class="bx "/><text x="108.0" y="275.5" text-anchor="middle" class="t">Users</text><text x="108.0" y="290.5" text-anchor="middle" class="s">VLAN 10 · laptops</text><text x="108" y="332" text-anchor="middle" class="lb">servers, printers, web</text><line x1="304" y1="212" x2="304" y2="246" class="ln" marker-end="url(#ah-arc3)"/><rect x="216" y="248" width="176" height="62" rx="3" class="bx "/><text x="304.0" y="275.5" text-anchor="middle" class="t">Servers</text><text x="304.0" y="290.5" text-anchor="middle" class="s">VLAN 20 · files, apps</text><text x="304" y="332" text-anchor="middle" class="lb">updates only</text><line x1="500" y1="212" x2="500" y2="246" class="ln" marker-end="url(#ah-arc3)"/><rect x="412" y="248" width="176" height="62" rx="3" class="bx "/><text x="500.0" y="275.5" text-anchor="middle" class="t">Management</text><text x="500.0" y="290.5" text-anchor="middle" class="s">VLAN 99 · jump host</text><text x="500" y="332" text-anchor="middle" class="lb">admin from jump host</text><line x1="696" y1="212" x2="696" y2="246" class="ln" marker-end="url(#ah-arc3)"/><rect x="608" y="248" width="176" height="62" rx="3" class="bx "/><text x="696.0" y="275.5" text-anchor="middle" class="t">Guest Wi-Fi</text><text x="696.0" y="290.5" text-anchor="middle" class="s">VLAN 50 · visitors</text><text x="696" y="332" text-anchor="middle" class="lb">internet only</text><line x1="892" y1="212" x2="892" y2="246" class="ln" marker-end="url(#ah-arc3)"/><rect x="804" y="248" width="176" height="62" rx="3" class="bx "/><text x="892.0" y="275.5" text-anchor="middle" class="t">Printers, IoT</text><text x="892.0" y="290.5" text-anchor="middle" class="s">VLAN 60 · devices</text><text x="892" y="332" text-anchor="middle" class="lb">print server only</text></svg></div><figcaption>The five internal VLANs never talk to each other directly. Every flow crosses the firewall, which denies by default, allows only the flows in the matrix below, and sends its logs to Sentinel. From the internet, only HTTPS to the DMZ gets in.</figcaption></figure></div><div class="kd one"><div><h4>Firewall rule matrix</h4><div class="tablewrap"><table class="t matrix"><thead><tr><th>From \ To</th><th>Users</th><th>Servers</th><th>Management</th><th>Guest</th><th>IoT</th><th>DMZ</th><th>Internet</th></tr></thead><tbody><tr><td>Users</td><td><span class="no">—</span></td><td><span class="ok">Allow 443, 445</span></td><td><span class="no">Deny</span></td><td><span class="no">Deny</span></td><td><span class="ok">Allow print 9100, 631</span></td><td><span class="ok">Allow 443</span></td><td><span class="ok">Allow via web filter</span></td></tr><tr><td>Servers</td><td><span class="no">Deny</span></td><td><span class="no">—</span></td><td><span class="no">Deny</span></td><td><span class="no">Deny</span></td><td><span class="no">Deny</span></td><td><span class="no">Deny</span></td><td><span class="ok">Allow update list</span></td></tr><tr><td>Management</td><td><span class="ok">Allow 3389, 22 from jump host</span></td><td><span class="ok">Allow 3389, 22 from jump host</span></td><td><span class="no">—</span></td><td><span class="no">Deny</span></td><td><span class="ok">Allow 443 from jump host</span></td><td><span class="ok">Allow 22 from jump host</span></td><td><span class="ok">Allow update list</span></td></tr><tr><td>Guest Wi-Fi</td><td><span class="no">Deny</span></td><td><span class="no">Deny</span></td><td><span class="no">Deny</span></td><td><span class="no">—</span></td><td><span class="no">Deny</span></td><td><span class="no">Deny</span></td><td><span class="ok">Allow</span></td></tr><tr><td>Printers, IoT</td><td><span class="no">Deny</span></td><td><span class="ok">Allow print server only</span></td><td><span class="no">Deny</span></td><td><span class="no">Deny</span></td><td><span class="no">—</span></td><td><span class="no">Deny</span></td><td><span class="ok">Allow vendor updates</span></td></tr><tr><td>DMZ</td><td><span class="no">Deny</span></td><td><span class="ok">Allow 8443 to app server</span></td><td><span class="no">Deny</span></td><td><span class="no">Deny</span></td><td><span class="no">Deny</span></td><td><span class="no">—</span></td><td><span class="no">Deny</span></td></tr></tbody></table></div><p class="note">Stateful firewall, so replies to allowed connections are permitted. Every allow rule has an owner and a reason, and rules are reviewed every quarter.</p></div></div></article><article class="sheet sec" id="arc-04"><header class="tb"><div class="tb-id"><span class="mono">ARC-04</span><span class="lane">Architecture</span></div><h3 class="tb-title">Email security layers</h3><div class="tb-status"><span class="stamp ref">Reference design</span></div></header><div class="meta"><p><span class="ml">Tools</span><span class="tools">DNS (SPF, DKIM, DMARC) · Exchange Online Protection · Defender for Office 365</span></p></div><div class="board"><figure class="fig"><div class="fig-scroll"><svg class="dg" viewBox="0 0 1000 340" role="img" aria-label="Inbound email security: sender authentication, then Exchange Online Protection, then Defender for Office 365, with rejected, junk and quarantine outcomes and a user report path to the SOC." style="min-width:780px"><defs><marker id="ah-arc4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah"/></marker></defs><rect x="20" y="40" width="140" height="70" rx="3" class="bx "/><text x="90.0" y="71.5" text-anchor="middle" class="t">Sender</text><text x="90.0" y="86.5" text-anchor="middle" class="s">mail server</text><rect x="200" y="40" width="180" height="70" rx="3" class="bx "/><text x="290.0" y="71.5" text-anchor="middle" class="t">SPF · DKIM · DMARC</text><text x="290.0" y="86.5" text-anchor="middle" class="s">is the sender genuine?</text><rect x="420" y="40" width="180" height="70" rx="3" class="bx "/><text x="510.0" y="64.0" text-anchor="middle" class="t">Exchange Online</text><text x="510.0" y="79.0" text-anchor="middle" class="s">Protection (EOP)</text><text x="510.0" y="94.0" text-anchor="middle" class="s">spam and malware</text><rect x="640" y="40" width="200" height="70" rx="3" class="bx hl"/><text x="740.0" y="64.0" text-anchor="middle" class="t">Defender for Office 365</text><text x="740.0" y="79.0" text-anchor="middle" class="s">Safe Links,</text><text x="740.0" y="94.0" text-anchor="middle" class="s">Safe Attachments</text><rect x="880" y="40" width="100" height="70" rx="3" class="bx "/><text x="930.0" y="71.5" text-anchor="middle" class="t">Mailbox</text><text x="930.0" y="86.5" text-anchor="middle" class="s">inbox</text><line x1="160" y1="75" x2="198" y2="75" class="ln" marker-end="url(#ah-arc4)"/><text x="179.0" y="67" text-anchor="middle" class="lb">pass</text><line x1="380" y1="75" x2="418" y2="75" class="ln" marker-end="url(#ah-arc4)"/><text x="399.0" y="67" text-anchor="middle" class="lb">pass</text><line x1="600" y1="75" x2="638" y2="75" class="ln" marker-end="url(#ah-arc4)"/><text x="619.0" y="67" text-anchor="middle" class="lb">pass</text><line x1="840" y1="75" x2="878" y2="75" class="ln" marker-end="url(#ah-arc4)"/><text x="859.0" y="67" text-anchor="middle" class="lb">pass</text><rect x="200" y="190" width="180" height="60" rx="3" class="bx bad"/><text x="290.0" y="216.5" text-anchor="middle" class="t">Rejected</text><text x="290.0" y="231.5" text-anchor="middle" class="s">DMARC fail, p=reject</text><line x1="290" y1="110" x2="290" y2="188" class="ln" marker-end="url(#ah-arc4)"/><text x="298" y="152" text-anchor="start" class="lb">fails</text><rect x="420" y="190" width="180" height="60" rx="3" class="bx warn"/><text x="510.0" y="216.5" text-anchor="middle" class="t">Junk or quarantine</text><text x="510.0" y="231.5" text-anchor="middle" class="s">spam, bulk, malware</text><line x1="510" y1="110" x2="510" y2="188" class="ln" marker-end="url(#ah-arc4)"/><text x="518" y="152" text-anchor="start" class="lb">filtered</text><rect x="640" y="190" width="200" height="60" rx="3" class="bx warn"/><text x="740.0" y="216.5" text-anchor="middle" class="t">Quarantine</text><text x="740.0" y="231.5" text-anchor="middle" class="s">malicious file or link</text><line x1="740" y1="110" x2="740" y2="188" class="ln" marker-end="url(#ah-arc4)"/><text x="748" y="152" text-anchor="start" class="lb">detonated</text><rect x="880" y="190" width="100" height="60" rx="3" class="bx "/><text x="930.0" y="216.5" text-anchor="middle" class="t">User reports</text><text x="930.0" y="231.5" text-anchor="middle" class="s">phish button</text><line x1="930" y1="110" x2="930" y2="188" class="ln" marker-end="url(#ah-arc4)"/><text x="922" y="152" text-anchor="end" class="lb">looks odd</text><rect x="860" y="280" width="120" height="50" rx="3" class="bx hl"/><text x="920.0" y="301.5" text-anchor="middle" class="t">SOC triage</text><text x="920.0" y="316.5" text-anchor="middle" class="s">see SOC-03</text><line x1="930" y1="250" x2="930" y2="278" class="ln" marker-end="url(#ah-arc4)"/></svg></div><figcaption>Inbound mail passes three layers in order. A DMARC failure is rejected at the edge, Exchange Online Protection filters spam and known malware, and Defender for Office 365 opens attachments in a sandbox and checks links at click time. Anything that still reaches a user can be reported straight to the SOC.</figcaption></figure></div><div class="kd"><div><h4>Our own domain</h4><ul><li>SPF lists every service allowed to send as us, ending in -all.</li><li>DKIM signing is switched on for the domain in Microsoft 365.</li><li>DMARC starts at p=none for four weeks while aggregate reports show every legitimate sender, then moves to p=quarantine and finally p=reject.</li></ul></div><div><h4>DNS records (example.co.uk)</h4><div class="codewrap"><pre><code>example.co.uk.         TXT  &quot;v=spf1 include:spf.protection.outlook.com -all&quot;
+_dmarc.example.co.uk.  TXT  &quot;v=DMARC1; p=reject; rua=mailto:dmarc-reports@example.co.uk&quot;</code></pre></div></div></div></article></div></div><div class="group" id="attack-defence"><div class="group-h"><h3>Attack and defence</h3><p>Real attack chains mapped to MITRE ATT&amp;CK, with the control that prevents each step and the detection that catches it.</p></div><div class="sheets"><article class="sheet sec" id="atk-01"><header class="tb"><div class="tb-id"><span class="mono">ATK-01</span><span class="lane">Attack and defence</span></div><h3 class="tb-title">Phishing to mailbox takeover</h3><div class="tb-status"><span class="stamp ref">Reference design</span></div></header><div class="meta"><p><span class="ml">Scenario</span><span class="tools">Business email compromise against a Microsoft 365 tenant</span></p><p><span class="ml">Framework</span><span class="tools">MITRE ATT&amp;CK (Enterprise)</span></p></div><div class="panel"><div class="chain"><div class="crow"><span class="cn">1</span><div class="ctac"><span class="cl">Initial access</span><span class="tech">T1566.002 Spearphishing Link</span></div><div class="catk"><span class="cl">Attacker</span>Emails a link to a fake Microsoft 365 sign-in page.</div><div class="cprev"><span class="cl">Prevent</span>Safe Links checks the link at click time (ARC-04). Staff know the report button.</div><div class="cdet"><span class="cl">Detect</span>User reports it; a tenant-wide hunt finds every recipient (SOC-03).</div></div><div class="crow"><span class="cn">2</span><div class="ctac"><span class="cl">Credential access</span><span class="tech">T1557 Adversary-in-the-Middle · T1539 Steal Web Session Cookie</span></div><div class="catk"><span class="cl">Attacker</span>A proxy page relays the real sign-in and steals the session cookie, which gets past ordinary MFA.</div><div class="cprev"><span class="cl">Prevent</span>Phishing-resistant MFA and compliant devices (ARC-02).</div><div class="cdet"><span class="cl">Detect</span>Entra ID Protection flags an anomalous token or unfamiliar sign-in.</div></div><div class="crow"><span class="cn">3</span><div class="ctac"><span class="cl">Initial access</span><span class="tech">T1078.004 Valid Accounts: Cloud Accounts</span></div><div class="catk"><span class="cl">Attacker</span>Signs in as the user from the attacker&#x27;s own infrastructure.</div><div class="cprev"><span class="cl">Prevent</span>Conditional Access blocks sign-ins from unmanaged devices.</div><div class="cdet"><span class="cl">Detect</span>Sign-in from a new country or hosting provider.</div></div><div class="crow"><span class="cn">4</span><div class="ctac"><span class="cl">Persistence</span><span class="tech">T1098.005 Device Registration</span></div><div class="catk"><span class="cl">Attacker</span>Registers their own MFA method to come back later.</div><div class="cprev"><span class="cl">Prevent</span>Security info can only be registered from trusted locations or compliant devices.</div><div class="cdet"><span class="cl">Detect</span>Alert on new MFA methods in the Entra ID audit log.</div></div><div class="crow"><span class="cn">5</span><div class="ctac"><span class="cl">Defence evasion · Collection</span><span class="tech">T1564.008 Email Hiding Rules · T1114.003 Email Forwarding Rule</span></div><div class="catk"><span class="cl">Attacker</span>Adds an inbox rule that hides replies and forwards finance email out.</div><div class="cprev"><span class="cl">Prevent</span>External auto-forwarding blocked by the outbound spam policy.</div><div class="cdet"><span class="cl">Detect</span>SOC-01 forwarding-rule detection.</div></div><div class="crow"><span class="cn">6</span><div class="ctac"><span class="cl">Impact</span><span class="tech">T1657 Financial Theft</span></div><div class="catk"><span class="cl">Attacker</span>Emails customers new bank details from the real mailbox.</div><div class="cprev"><span class="cl">Prevent</span>Finance calls back on a known number before any bank-detail change.</div><div class="cdet"><span class="cl">Detect</span>Customer or bank query. Contain with SOC-04 and runbook IR-02.</div></div></div></div></article><article class="sheet sec" id="atk-02"><header class="tb"><div class="tb-id"><span class="mono">ATK-02</span><span class="lane">Attack and defence</span></div><h3 class="tb-title">Ransomware through exposed remote access</h3><div class="tb-status"><span class="stamp ref">Reference design</span></div></header><div class="meta"><p><span class="ml">Scenario</span><span class="tools">Human-operated ransomware against a Windows network</span></p><p><span class="ml">Framework</span><span class="tools">MITRE ATT&amp;CK (Enterprise)</span></p></div><div class="panel"><div class="chain"><div class="crow"><span class="cn">1</span><div class="ctac"><span class="cl">Initial access</span><span class="tech">T1133 External Remote Services · T1110.003 Password Spraying</span></div><div class="catk"><span class="cl">Attacker</span>Password spray against the VPN or an exposed RDP server.</div><div class="cprev"><span class="cl">Prevent</span>No RDP on the internet; MFA on the VPN.</div><div class="cdet"><span class="cl">Detect</span>SOC-01 rule: many failures, then a success from the same IP.</div></div><div class="crow"><span class="cn">2</span><div class="ctac"><span class="cl">Execution</span><span class="tech">T1059.001 PowerShell</span></div><div class="catk"><span class="cl">Attacker</span>Runs encoded PowerShell to download tools.</div><div class="cprev"><span class="cl">Prevent</span>Attack surface reduction rules; PowerShell script block logging on.</div><div class="cdet"><span class="cl">Detect</span>SOC-01 rule: PowerShell with an encoded command.</div></div><div class="crow"><span class="cn">3</span><div class="ctac"><span class="cl">Credential access</span><span class="tech">T1003.001 LSASS Memory</span></div><div class="catk"><span class="cl">Attacker</span>Dumps passwords and hashes from memory.</div><div class="cprev"><span class="cl">Prevent</span>Credential Guard; the ASR rule that blocks credential theft from LSASS; LAPS for local admin.</div><div class="cdet"><span class="cl">Detect</span>Defender alert on LSASS access.</div></div><div class="crow"><span class="cn">4</span><div class="ctac"><span class="cl">Lateral movement</span><span class="tech">T1021.001 RDP · T1021.002 SMB/Windows Admin Shares</span></div><div class="catk"><span class="cl">Attacker</span>Spreads to servers with the stolen admin account.</div><div class="cprev"><span class="cl">Prevent</span>Segmented network (ARC-03); separate admin accounts; no workstation-to-workstation SMB.</div><div class="cdet"><span class="cl">Detect</span>Admin logons from unusual hosts (Event 4624, logon types 3 and 10).</div></div><div class="crow"><span class="cn">5</span><div class="ctac"><span class="cl">Defence evasion</span><span class="tech">T1562.001 Disable or Modify Tools</span></div><div class="catk"><span class="cl">Attacker</span>Tries to switch off antivirus and EDR.</div><div class="cprev"><span class="cl">Prevent</span>Defender tamper protection.</div><div class="cdet"><span class="cl">Detect</span>Tamper-attempt alerts.</div></div><div class="crow"><span class="cn">6</span><div class="ctac"><span class="cl">Impact</span><span class="tech">T1490 Inhibit System Recovery · T1486 Data Encrypted for Impact</span></div><div class="catk"><span class="cl">Attacker</span>Deletes shadow copies, then encrypts file shares.</div><div class="cprev"><span class="cl">Prevent</span>Immutable, offline backups with tested restores.</div><div class="cdet"><span class="cl">Detect</span>Shadow-copy deletion commands (query below); mass file renames. Respond with IR-01.</div></div></div></div><details class="code"><summary>Show the KQL for step 6</summary><div class="codewrap"><pre><code><span class="c">// Shadow copies or backups being deleted: a common last step before encryption (T1490)</span>
+DeviceProcessEvents
+| where TimeGenerated &gt; ago(1h)
+| where FileName in~ (&quot;vssadmin.exe&quot;, &quot;wmic.exe&quot;, &quot;wbadmin.exe&quot;, &quot;bcdedit.exe&quot;)
+| where ProcessCommandLine contains &quot;delete shadows&quot;
+     or ProcessCommandLine contains &quot;shadowcopy delete&quot;
+     or ProcessCommandLine contains &quot;delete catalog&quot;
+     or ProcessCommandLine contains &quot;recoveryenabled no&quot;
+| project TimeGenerated, DeviceName, AccountName, ProcessCommandLine</code></pre></div></details></article></div></div><div class="group" id="threat-models"><div class="group-h"><h3>Threat models</h3><p>What could go wrong in a system, rated and matched to mitigations using STRIDE.</p></div><div class="sheets"><article class="sheet sec" id="tm-01"><header class="tb"><div class="tb-id"><span class="mono">TM-01</span><span class="lane">Threat model</span></div><h3 class="tb-title">Small business Microsoft 365 tenant</h3><div class="tb-status"><span class="stamp ref">Reference design</span></div></header><div class="meta"><p><span class="ml">Scope</span><span class="tools">A 50-person firm on Microsoft 365: mail, files, Teams and a few third-party apps</span></p><p><span class="ml">Method</span><span class="tools">STRIDE per trust-boundary crossing</span></p></div><div class="board"><figure class="fig"><div class="fig-scroll"><svg class="dg" viewBox="0 0 1000 300" role="img" aria-label="Data flow diagram of a Microsoft 365 tenant showing four flows crossing the tenant trust boundary: staff sign-in, admin access, third-party app API access and external sharing." style="min-width:780px"><defs><marker id="ah-tm1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah"/></marker></defs><rect x="270" y="14" width="480" height="272" rx="4" class="zone"/><text x="280" y="30" class="zl">MICROSOFT 365 TENANT</text><rect x="20" y="60" width="200" height="60" rx="3" class="bx "/><text x="120.0" y="86.5" text-anchor="middle" class="t">Staff devices</text><text x="120.0" y="101.5" text-anchor="middle" class="s">laptops, phones, BYOD</text><rect x="20" y="190" width="200" height="60" rx="3" class="bx "/><text x="120.0" y="216.5" text-anchor="middle" class="t">Admins</text><text x="120.0" y="231.5" text-anchor="middle" class="s">Global admin, IT team</text><rect x="300" y="50" width="190" height="60" rx="3" class="bx "/><text x="395.0" y="76.5" text-anchor="middle" class="t">Entra ID</text><text x="395.0" y="91.5" text-anchor="middle" class="s">sign-in and tokens</text><rect x="300" y="190" width="190" height="60" rx="3" class="bx "/><text x="395.0" y="216.5" text-anchor="middle" class="t">Admin centres</text><text x="395.0" y="231.5" text-anchor="middle" class="s">roles and policies</text><rect x="530" y="50" width="190" height="60" rx="3" class="bx "/><text x="625.0" y="76.5" text-anchor="middle" class="t">Exchange Online</text><text x="625.0" y="91.5" text-anchor="middle" class="s">mailboxes</text><rect x="530" y="190" width="190" height="60" rx="3" class="bx "/><text x="625.0" y="216.5" text-anchor="middle" class="t">SharePoint, OneDrive</text><text x="625.0" y="231.5" text-anchor="middle" class="s">files and share links</text><rect x="800" y="50" width="180" height="60" rx="3" class="bx "/><text x="890.0" y="76.5" text-anchor="middle" class="t">Third-party apps</text><text x="890.0" y="91.5" text-anchor="middle" class="s">OAuth consent</text><rect x="800" y="190" width="180" height="60" rx="3" class="bx "/><text x="890.0" y="216.5" text-anchor="middle" class="t">External people</text><text x="890.0" y="231.5" text-anchor="middle" class="s">guests, share links</text><line x1="220" y1="88" x2="298" y2="82" class="ln" marker-end="url(#ah-tm1)"/><text x="259.0" y="76" text-anchor="middle" class="lb">sign in</text><line x1="220" y1="220" x2="298" y2="220" class="ln" marker-end="url(#ah-tm1)"/><text x="259.0" y="213" text-anchor="middle" class="lb">privileged</text><line x1="395" y1="190" x2="395" y2="112" class="ln" marker-end="url(#ah-tm1)"/><text x="403" y="156" text-anchor="start" class="lb">policies</text><line x1="490" y1="80" x2="528" y2="80" class="ln" marker-end="url(#ah-tm1)"/><text x="509.0" y="73" text-anchor="middle" class="lb">token</text><line x1="798" y1="80" x2="722" y2="80" class="ln" marker-end="url(#ah-tm1)"/><text x="760.0" y="73" text-anchor="middle" class="lb">API access</text><line x1="798" y1="220" x2="722" y2="220" class="ln" marker-end="url(#ah-tm1)"/><text x="760.0" y="213" text-anchor="middle" class="lb">share links</text></svg></div><figcaption>Four flows cross the tenant boundary: staff signing in, admins using privileged access, third-party apps granted API access to mail, and files shared with people outside the company. Each crossing is where the threats in the table apply.</figcaption></figure></div><div class="kd one"><div><h4>Threats and mitigations</h4><div class="tablewrap"><table class="t"><thead><tr><th>STRIDE</th><th>Threat</th><th>Risk</th><th>Mitigations</th></tr></thead><tbody><tr><td>Spoofing</td><td>Password spray or proxy phishing takes over a staff account</td><td><span class="risk h">High</span></td><td>MFA for everyone and phishing-resistant MFA for admins; legacy auth blocked; risky sign-ins blocked (ARC-02)</td></tr><tr><td>Tampering</td><td>Attacker adds an inbox rule to hide and forward finance email</td><td><span class="risk h">High</span></td><td>External auto-forwarding blocked; alert on new forwarding rules (SOC-01)</td></tr><tr><td>Repudiation</td><td>Admin changes cannot be traced to a person</td><td><span class="risk m">Medium</span></td><td>Unified audit log on and kept in Sentinel for a year; named admin accounts, no shared logins</td></tr><tr><td>Information disclosure</td><td>&#x27;Anyone&#x27; links expose files to the whole internet</td><td><span class="risk m">Medium</span></td><td>Sharing defaults to specific people; external sharing reviewed monthly; sensitivity labels on finance and HR</td></tr><tr><td>Denial of service</td><td>Email bombing buries a real alert or invoice</td><td><span class="risk l">Low</span></td><td>Anti-spam thresholds and mail flow rules; staff report floods</td></tr><tr><td>Elevation of privilege</td><td>A user consents to a malicious OAuth app with mail access; standing Global Admin rights</td><td><span class="risk h">High</span></td><td>User consent off with an admin approval workflow; app permissions reviewed quarterly; just-in-time admin roles (PIM)</td></tr></tbody></table></div></div></div></article><article class="sheet sec" id="tm-02"><header class="tb"><div class="tb-id"><span class="mono">TM-02</span><span class="lane">Threat model</span></div><h3 class="tb-title">Customer file-upload portal</h3><div class="tb-status"><span class="stamp ref">Reference design</span></div></header><div class="meta"><p><span class="ml">Scope</span><span class="tools">A web portal where customers sign in, upload documents and download their own files</span></p><p><span class="ml">Method</span><span class="tools">STRIDE per component, with OWASP Top 10 in mind</span></p></div><div class="board"><figure class="fig"><div class="fig-scroll"><svg class="dg" viewBox="0 0 1000 300" role="img" aria-label="Data flow diagram of a customer file-upload portal: browser through WAF to the web app, which alone reaches the database and file storage in the data tier." style="min-width:780px"><defs><marker id="ah-tm2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah"/></marker></defs><rect x="220" y="12" width="760" height="276" rx="4" class="zone"/><text x="230" y="28" class="zl">COMPANY CLOUD</text><rect x="690" y="84" width="180" height="190" rx="4" class="zone"/><text x="700" y="100" class="zl">DATA TIER</text><rect x="20" y="110" width="170" height="60" rx="3" class="bx "/><text x="105.0" y="136.5" text-anchor="middle" class="t">Customer browser</text><text x="105.0" y="151.5" text-anchor="middle" class="s">on the internet</text><rect x="250" y="110" width="150" height="60" rx="3" class="bx "/><text x="325.0" y="136.5" text-anchor="middle" class="t">WAF</text><text x="325.0" y="151.5" text-anchor="middle" class="s">load balancer</text><rect x="440" y="22" width="190" height="56" rx="3" class="bx "/><text x="535.0" y="46.5" text-anchor="middle" class="t">Identity provider</text><text x="535.0" y="61.5" text-anchor="middle" class="s">OIDC sign-in, MFA</text><rect x="440" y="110" width="190" height="60" rx="3" class="bx "/><text x="535.0" y="136.5" text-anchor="middle" class="t">Web app and API</text><text x="535.0" y="151.5" text-anchor="middle" class="s">sessions, access checks</text><rect x="440" y="208" width="190" height="56" rx="3" class="bx "/><text x="535.0" y="232.5" text-anchor="middle" class="t">Admin console</text><text x="535.0" y="247.5" text-anchor="middle" class="s">staff only, MFA</text><rect x="705" y="110" width="150" height="56" rx="3" class="bx "/><text x="780.0" y="134.5" text-anchor="middle" class="t">Database</text><text x="780.0" y="149.5" text-anchor="middle" class="s">customer records</text><rect x="705" y="204" width="150" height="56" rx="3" class="bx "/><text x="780.0" y="228.5" text-anchor="middle" class="t">File storage</text><text x="780.0" y="243.5" text-anchor="middle" class="s">scanned before storing</text><line x1="190" y1="140" x2="248" y2="140" class="ln" marker-end="url(#ah-tm2)"/><text x="219.0" y="133" text-anchor="middle" class="lb">HTTPS</text><line x1="400" y1="140" x2="438" y2="140" class="ln" marker-end="url(#ah-tm2)"/><text x="419.0" y="104" text-anchor="middle" class="lb">filtered</text><line x1="190" y1="122" x2="438" y2="56" class="ln" marker-end="url(#ah-tm2)"/><text x="300" y="78" text-anchor="middle" class="lb">sign in (OIDC)</text><line x1="535" y1="78" x2="535" y2="108" class="ln" marker-end="url(#ah-tm2)"/><text x="543" y="97" text-anchor="start" class="lb">token</text><line x1="630" y1="140" x2="703" y2="138" class="ln" marker-end="url(#ah-tm2)"/><text x="666.5" y="131" text-anchor="middle" class="lb">SQL</text><line x1="630" y1="160" x2="703" y2="222" class="ln" marker-end="url(#ah-tm2)"/><text x="672" y="178" text-anchor="start" class="lb">upload</text><line x1="535" y1="208" x2="535" y2="172" class="ln" marker-end="url(#ah-tm2)"/><text x="527" y="194" text-anchor="end" class="lb">admin actions</text></svg></div><figcaption>Customer traffic crosses the internet boundary once, through the WAF. The web app is the only component that talks to the database and file storage, and every upload is scanned before it is stored.</figcaption></figure></div><div class="kd one"><div><h4>Threats and mitigations</h4><div class="tablewrap"><table class="t"><thead><tr><th>STRIDE</th><th>Threat</th><th>Risk</th><th>Mitigations</th></tr></thead><tbody><tr><td>Spoofing</td><td>Credential stuffing against customer logins</td><td><span class="risk h">High</span></td><td>Sign-in through the identity provider with MFA; rate limits and breached-password checks</td></tr><tr><td>Tampering</td><td>SQL injection through search or upload fields</td><td><span class="risk h">High</span></td><td>Parameterised queries; server-side validation; WAF rules as a second layer</td></tr><tr><td>Repudiation</td><td>A customer disputes deleting a file</td><td><span class="risk m">Medium</span></td><td>Append-only audit log of uploads, downloads and deletes with user, time and IP</td></tr><tr><td>Information disclosure</td><td>Changing a file ID in the URL downloads someone else&#x27;s file (IDOR)</td><td><span class="risk h">High</span></td><td>Access check on every object request; random file IDs; short-lived download links</td></tr><tr><td>Denial of service</td><td>Huge or repeated uploads fill storage</td><td><span class="risk m">Medium</span></td><td>Size limits, per-user quotas and rate limits at the WAF</td></tr><tr><td>Elevation of privilege</td><td>A normal user calls admin endpoints directly</td><td><span class="risk h">High</span></td><td>Admin console on its own route with a separate role check and MFA; deny by default</td></tr></tbody></table></div></div></div></article></div></div><div class="group" id="runbooks"><div class="group-h"><h3>Incident response runbooks</h3><p>What to do, in order, and who does it. Phases follow NIST SP 800-61.</p></div><div class="sheets"><article class="sheet sec" id="ir-01"><header class="tb"><div class="tb-id"><span class="mono">IR-01</span><span class="lane">IR runbook</span></div><h3 class="tb-title">Ransomware on the network</h3><div class="tb-status"><span class="stamp ref">Reference design</span></div></header><div class="rbmeta"><div><span class="cl">Trigger</span>EDR ransomware alert, mass file renames, a ransom note, or shadow copies being deleted (ATK-02)</div><div><span class="cl">Severity</span>P1, critical</div><div><span class="cl">Example targets</span>Confirm in 15 minutes; contain within 1 hour</div></div><div class="board"><div class="rb"><div class="phase"><h5><span class="pn">1</span>Detect and analyse</h5><ol><li><span class="role">L1</span>Confirm the alert: ransom note, changing file extensions, shadow-copy deletion.</li><li><span class="role">L1</span>Scope it: which devices, accounts and file shares.</li><li><span class="role">L2</span>Declare a P1, open the incident bridge and start the timeline log.</li></ol><div class="decision"><b>Decision</b>Is encryption still spreading?<span class="yn"><strong>Yes:</strong> isolate the whole segment and disconnect backup targets now.</span><span class="yn"><strong>No:</strong> contain device by device.</span></div></div><div class="phase"><h5><span class="pn">2</span>Contain</h5><ol><li><span class="role">L1</span>Isolate affected devices in Defender for Endpoint; the EDR stays connected.</li><li><span class="role">IT</span>Disable compromised accounts and take affected shares offline.</li><li><span class="role">L2</span>Block the attacker&#x27;s IPs, domains and file hashes everywhere.</li><li><span class="role">L2</span>Image memory and disk on the first infected host before any rebuild.</li></ol></div><div class="phase"><h5><span class="pn">3</span>Eradicate</h5><ol><li><span class="role">L2</span>Find the way in (VPN, RDP or phishing) and close it.</li><li><span class="role">L2</span>Remove persistence: new accounts, scheduled tasks, services, GPO changes.</li><li><span class="role">IT</span>Reset privileged credentials, including the KRBTGT account twice.</li></ol></div><div class="phase"><h5><span class="pn">4</span>Recover</h5><ol><li><span class="role">IT</span>Rebuild infected hosts and restore data from backups taken before the compromise.</li><li><span class="role">IT</span>Bring services back in priority order, scanning each restore.</li><li><span class="role">L1</span>Watch restored systems closely for 30 days.</li></ol></div><div class="phase"><h5><span class="pn">5</span>After the incident</h5><ol><li><span class="role">DPO</span>Decide on reporting to the ICO within 72 hours if personal data is at risk.</li><li><span class="role">Mgmt</span>Report the crime: Police Scotland on 101, or Action Fraud in England, Wales and Northern Ireland. Tell the NCSC about significant incidents.</li><li><span class="role">L2</span>Lessons-learned review within two weeks; add detections for anything missed.</li></ol></div></div></div><p class="rbnote">Roles: L1 SOC analyst · L2 incident lead · IT operations · DPO data protection officer · Mgmt leadership. Any ransom decision sits with leadership and legal advisers, not the SOC.</p></article><article class="sheet sec" id="ir-02"><header class="tb"><div class="tb-id"><span class="mono">IR-02</span><span class="lane">IR runbook</span></div><h3 class="tb-title">Business email compromise</h3><div class="tb-status"><span class="stamp ref">Reference design</span></div></header><div class="rbmeta"><div><span class="cl">Trigger</span>Forwarding-rule alert (SOC-01), a risky sign-in, or a customer asking about changed bank details (ATK-01)</div><div><span class="cl">Severity</span>P2; P1 if money has moved</div><div><span class="cl">Example targets</span>Contain within 30 minutes of confirmation</div></div><div class="board"><div class="rb"><div class="phase"><h5><span class="pn">1</span>Detect and analyse</h5><ol><li><span class="role">L1</span>Check the account&#x27;s sign-ins: new country, new device, attacker IP ranges.</li><li><span class="role">L1</span>Review mailbox activity: inbox rules, sent items, mail read (MailItemsAccessed).</li><li><span class="role">L1</span>Check for new MFA methods and OAuth app consents.</li></ol><div class="decision"><b>Decision</b>Were fraudulent payment requests sent?<span class="yn"><strong>Yes:</strong> call finance and the affected customers now, and ask the bank to recall payments.</span><span class="yn"><strong>No:</strong> carry on with containment.</span></div></div><div class="phase"><h5><span class="pn">2</span>Contain</h5><ol><li><span class="role">L1</span>Revoke sessions and reset the password (SOC-04 automates this after approval).</li><li><span class="role">L1</span>Remove the attacker&#x27;s inbox rules and MFA methods.</li><li><span class="role">L2</span>Block attacker IPs with a Conditional Access named location.</li></ol></div><div class="phase"><h5><span class="pn">3</span>Eradicate</h5><ol><li><span class="role">L2</span>Hunt for the same IPs signing in to other accounts.</li><li><span class="role">L2</span>Remove malicious OAuth apps and purge the original phishing email (SOC-03).</li></ol></div><div class="phase"><h5><span class="pn">4</span>Recover</h5><ol><li><span class="role">IT</span>Re-enable the user with phishing-resistant MFA.</li><li><span class="role">L1</span>Tell the user what happened and what to watch for.</li><li><span class="role">L1</span>Extra monitoring on the account for 30 days.</li></ol></div><div class="phase"><h5><span class="pn">5</span>After the incident</h5><ol><li><span class="role">DPO</span>Assess the mailbox contents for personal data and decide on ICO reporting within 72 hours.</li><li><span class="role">Mgmt</span>Confirm finance calls back on a known number before any bank-detail change.</li><li><span class="role">L2</span>Lessons learned; tune the detections.</li></ol></div></div></div><p class="rbnote">Roles: L1 SOC analyst · L2 incident lead · IT operations · DPO data protection officer · Mgmt leadership.</p></article><article class="sheet sec" id="ir-03"><header class="tb"><div class="tb-id"><span class="mono">IR-03</span><span class="lane">IR runbook</span></div><h3 class="tb-title">Malware alert on an endpoint</h3><div class="tb-status"><span class="stamp ref">Reference design</span></div></header><div class="rbmeta"><div><span class="cl">Trigger</span>Defender for Endpoint malware alert on a laptop or server</div><div><span class="cl">Severity</span>P3; raised to P2 if the file ran</div><div><span class="cl">Example targets</span>Triage within 30 minutes</div></div><div class="board"><div class="rb"><div class="phase"><h5><span class="pn">1</span>Detect and analyse</h5><ol><li><span class="role">L1</span>Read the alert: file, path, hash, and whether it was blocked or ran.</li><li><span class="role">L1</span>Check the process tree and how it arrived: email, download or USB.</li><li><span class="role">L1</span>Look up the hash in VirusTotal.</li></ol><div class="decision"><b>Decision</b>Blocked and quarantined before it ran?<span class="yn"><strong>Yes:</strong> confirm the quarantine, run a full scan and close as remediated.</span><span class="yn"><strong>No:</strong> isolate the device and continue.</span></div></div><div class="phase"><h5><span class="pn">2</span>Contain</h5><ol><li><span class="role">L1</span>Isolate the device in Defender and collect the investigation package.</li><li><span class="role">L1</span>Block the hash, URL or sender across the estate.</li></ol></div><div class="phase"><h5><span class="pn">3</span>Eradicate</h5><ol><li><span class="role">L2</span>Remove persistence: run keys, scheduled tasks, services.</li><li><span class="role">IT</span>Reimage if there is any doubt the device is clean.</li></ol></div><div class="phase"><h5><span class="pn">4</span>Recover</h5><ol><li><span class="role">IT</span>Reset the user&#x27;s passwords if the malware steals credentials.</li><li><span class="role">IT</span>Return the device and confirm Defender reports it healthy.</li></ol></div><div class="phase"><h5><span class="pn">5</span>After the incident</h5><ol><li><span class="role">L1</span>Hunt for the same hash on other devices (DeviceFileEvents).</li><li><span class="role">L2</span>Update ASR rules or web filtering so it cannot happen the same way again.</li></ol></div></div></div><p class="rbnote">Roles: L1 SOC analyst · L2 incident lead · IT operations.</p></article></div></div>
+  </section>
+
+  <section id="designs" aria-labelledby="designs-h">
+    <div class="sec-head">
+      <div><p class="eyebrow">10 designs · 6 SOC · 4 IT support</p><h2 id="designs-h">Automation designs</h2></div>
+      <p>Each design is drawn as a flow from trigger to record, with the guardrails that keep it safe and what I'd measure to know it works. Open any design to see the code. Solid outlines are running in my lab; dashed outlines are complete designs I haven't built yet.</p>
+    </div>
+
+    <div class="controls">
+      <div class="filters">
+        <div class="fgroup" role="group" aria-label="Filter by area"><span class="eyebrow">Area</span>
+          <button type="button" class="chip" data-group="lane" data-value="all" aria-pressed="true">All (10)</button><button type="button" class="chip" data-group="lane" data-value="soc" aria-pressed="false">SOC (6)</button><button type="button" class="chip" data-group="lane" data-value="it" aria-pressed="false">IT support (4)</button>
+        </div>
+        <div class="fgroup" role="group" aria-label="Filter by status"><span class="eyebrow">Status</span>
+          <button type="button" class="chip" data-group="status" data-value="all" aria-pressed="true">Any</button><button type="button" class="chip" data-group="status" data-value="built" aria-pressed="false">Built in my lab (4)</button><button type="button" class="chip" data-group="status" data-value="blueprint" aria-pressed="false">Blueprint (6)</button>
+        </div>
+      </div>
+      <div class="legend" aria-label="Legend">
+        <span><i class="swatch"></i>Built in my lab</span>
+        <span><i class="swatch dash"></i>Blueprint</span>
+        <span><i class="swatch gate"></i>A person approves</span>
+      </div>
+      <p class="count" id="design-count" aria-live="polite">Showing 10 of 10 designs</p>
+    </div>
+
+    <div class="sheets">
+
+<article class="sheet built" id="soc-01" data-lane="soc" data-status="built">
+  <header class="tb">
+    <div class="tb-id"><span class="mono">SOC-01</span><span class="lane">SOC</span></div>
+    <h3 class="tb-title">Sign-in, mailbox and endpoint detection rules</h3>
+    <div class="tb-status"><span class="stamp built">Built in my lab</span></div>
+  </header>
+  <div class="meta">
+    <p><span class="ml">MITRE ATT&amp;CK</span><span class="tag">T1110 Brute Force</span><span class="tag">T1078 Valid Accounts</span><span class="tag">T1114.003 Email Forwarding Rule</span><span class="tag">T1059.001 PowerShell</span></p>
+    <p><span class="ml">Tools</span><span class="tools">Microsoft Sentinel · KQL · Entra ID sign-in logs · Office 365 audit log · Defender for Endpoint</span></p>
+  </div>
+  <div class="board">
+    <ol class="flow" style="--n:5" aria-label="Sign-in, mailbox and endpoint detection rules flow">
+<li class="node k-trigger"><span class="kind">Trigger</span><span class="nl">Logs arrive</span><span class="nd">Sign-in, Office 365 and endpoint process logs stream into the workspace</span></li>
+<li class="node k-enrich"><span class="kind">Enrich</span><span class="nl">Scheduled query</span><span class="nd">Each rule runs hourly over the last hour of data</span></li>
+<li class="node k-decide"><span class="kind">Decide</span><span class="nl">Threshold met?</span><span class="nd">For example 10+ failures from one IP, then a success within 30 minutes</span></li>
+<li class="node k-act"><span class="kind">Act</span><span class="nl">Create incident</span><span class="nd">Account, IP and host mapped; MITRE tactic set</span></li>
+<li class="node k-record"><span class="kind">Record</span><span class="nl">Hand to triage</span><span class="nd">An automation rule starts the enrichment playbook (SOC-02)</span></li>
+    </ol>
+  </div>
+  <div class="detail">
+    <div><h4>What it does</h4><p>Scheduled analytics rules in my Sentinel lab. They catch a run of failed sign-ins that ends in a success from the same IP address, a new mailbox rule that forwards or redirects mail, and PowerShell started with an encoded command. Each rule maps its account, IP and host entities so related alerts group into one incident and playbooks can act on them.</p></div>
+    <div><h4>Guardrails</h4><ul><li>Rules alert only. Nothing is blocked automatically.</li><li>Thresholds sit in variables at the top of each query, so tuning is a one-line change.</li><li>Alerts group into one incident per account and IP, which keeps floods down.</li></ul></div>
+    <div><h4>What I'd measure</h4><ul><li>True positives per rule</li><li>Alerts per day per rule (noise)</li><li>Time from first failed sign-in to incident</li></ul></div>
+  </div>
+  <details class="code">
+    <summary>Show the KQL</summary>
+    <div class="codewrap"><pre><code><span class="c">// Rule 1: failed sign-ins followed by a success from the same IP  (T1110 -&gt; T1078)</span>
+let failureThreshold = 10;
+let window = 30m;
+let failures = SigninLogs
+    | where TimeGenerated &gt; ago(1h)
+    | where ResultType != &quot;0&quot;
+    | summarize FailedCount = count(), LastFail = max(TimeGenerated)
+        by UserPrincipalName, IPAddress, bin(TimeGenerated, window)
+    | where FailedCount &gt;= failureThreshold;
+SigninLogs
+| where TimeGenerated &gt; ago(1h)
+| where ResultType == &quot;0&quot;
+| join kind=inner failures on UserPrincipalName, IPAddress
+| where TimeGenerated between (LastFail .. LastFail + window)
+| project SuccessTime = TimeGenerated, UserPrincipalName, IPAddress, FailedCount, AppDisplayName, Location
+
+<span class="c">// Rule 2: new or changed inbox rule that forwards or redirects mail  (T1114.003)</span>
+OfficeActivity
+| where TimeGenerated &gt; ago(1h)
+| where Operation in (&quot;New-InboxRule&quot;, &quot;Set-InboxRule&quot;, &quot;UpdateInboxRules&quot;)
+| where Parameters has_any (&quot;ForwardTo&quot;, &quot;ForwardAsAttachmentTo&quot;, &quot;RedirectTo&quot;)
+| project TimeGenerated, UserId, ClientIP, Operation, Parameters
+
+<span class="c">// Rule 3: PowerShell launched with an encoded command  (T1059.001)</span>
+DeviceProcessEvents
+| where TimeGenerated &gt; ago(1h)
+| where FileName in~ (&quot;powershell.exe&quot;, &quot;pwsh.exe&quot;)
+| where ProcessCommandLine contains &quot;-enc&quot; or ProcessCommandLine contains &quot;FromBase64String&quot;
+| project TimeGenerated, DeviceName, AccountName, ProcessCommandLine, InitiatingProcessFileName</code></pre></div>
+  </details>
+</article>
+<article class="sheet built" id="soc-02" data-lane="soc" data-status="built">
+  <header class="tb">
+    <div class="tb-id"><span class="mono">SOC-02</span><span class="lane">SOC</span></div>
+    <h3 class="tb-title">Incident enrichment playbook</h3>
+    <div class="tb-status"><span class="stamp built">Built in my lab</span></div>
+  </header>
+  <div class="meta">
+    <p><span class="ml">Scope</span><span class="tag">Every new Sentinel incident</span></p>
+    <p><span class="ml">Tools</span><span class="tools">Microsoft Sentinel automation rules · Azure Logic Apps · VirusTotal API · Log Analytics</span></p>
+  </div>
+  <div class="board">
+    <ol class="flow" style="--n:6" aria-label="Incident enrichment playbook flow">
+<li class="node k-trigger"><span class="kind">Trigger</span><span class="nl">Incident created</span><span class="nd">Sentinel automation rule calls the playbook</span></li>
+<li class="node k-enrich"><span class="kind">Enrich</span><span class="nl">Get entities</span><span class="nd">IP addresses, accounts and hosts from the incident</span></li>
+<li class="node k-enrich"><span class="kind">Enrich</span><span class="nl">Check reputation</span><span class="nd">VirusTotal lookup for each IP address</span></li>
+<li class="node k-decide"><span class="kind">Decide</span><span class="nl">Any IP flagged?</span><span class="nd">Malicious votes above the set level</span></li>
+<li class="node k-act"><span class="kind">Act</span><span class="nl">Comment and tag</span><span class="nd">Summary comment; tag &#x27;enriched&#x27; or &#x27;malicious-ip&#x27;</span></li>
+<li class="node k-record"><span class="kind">Record</span><span class="nl">Ready for triage</span><span class="nd">Context is on the incident when the analyst opens it</span></li>
+    </ol>
+  </div>
+  <div class="detail">
+    <div><h4>What it does</h4><p>When Sentinel opens an incident, an automation rule starts this Logic Apps playbook. It pulls the IP addresses and accounts out of the incident, checks each IP&#x27;s reputation and writes one summary comment on the incident. The analyst opens the incident with the context already there.</p></div>
+    <div><h4>Guardrails</h4><ul><li>Read-only. The playbook never closes an incident or changes its status.</li><li>The API key lives in Azure Key Vault, not in the workflow.</li><li>Runs under a managed identity with the Microsoft Sentinel Responder role and nothing wider.</li></ul></div>
+    <div><h4>What I'd measure</h4><ul><li>Time from incident creation to first analyst action</li><li>Share of incidents that arrive enriched</li><li>Lookups per day against the API quota</li></ul></div>
+  </div>
+  <details class="code">
+    <summary>Show the Logic Apps (workflow excerpt)</summary>
+    <div class="codewrap"><pre><code>{
+  &quot;triggers&quot;: {
+    &quot;Microsoft_Sentinel_incident&quot;: { &quot;type&quot;: &quot;ApiConnectionWebhook&quot; }
+  },
+  &quot;actions&quot;: {
+    &quot;Entities_-_Get_IPs&quot;: { &quot;type&quot;: &quot;ApiConnection&quot; },
+    &quot;Get_secret&quot;: { &quot;type&quot;: &quot;ApiConnection&quot;, &quot;description&quot;: &quot;VirusTotal key from Azure Key Vault&quot; },
+    &quot;For_each_IP&quot;: {
+      &quot;type&quot;: &quot;Foreach&quot;,
+      &quot;foreach&quot;: &quot;@body(&#x27;Entities_-_Get_IPs&#x27;)?[&#x27;IPs&#x27;]&quot;,
+      &quot;actions&quot;: {
+        &quot;Check_IP_reputation&quot;: {
+          &quot;type&quot;: &quot;Http&quot;,
+          &quot;inputs&quot;: {
+            &quot;method&quot;: &quot;GET&quot;,
+            &quot;uri&quot;: &quot;https://www.virustotal.com/api/v3/ip_addresses/@{items(&#x27;For_each_IP&#x27;)?[&#x27;Address&#x27;]}&quot;,
+            &quot;headers&quot;: { &quot;x-apikey&quot;: &quot;@{body(&#x27;Get_secret&#x27;)?[&#x27;value&#x27;]}&quot; }
+          }
+        }
+      }
+    },
+    &quot;Add_comment_to_incident&quot;: { &quot;type&quot;: &quot;ApiConnection&quot; }
+  }
+}</code></pre></div>
+  </details>
+</article>
+<article class="sheet blueprint" id="soc-03" data-lane="soc" data-status="blueprint">
+  <header class="tb">
+    <div class="tb-id"><span class="mono">SOC-03</span><span class="lane">SOC</span></div>
+    <h3 class="tb-title">Phishing triage and clean-up</h3>
+    <div class="tb-status"><span class="stamp blueprint">Blueprint</span></div>
+  </header>
+  <div class="meta">
+    <p><span class="ml">MITRE ATT&amp;CK</span><span class="tag">T1566 Phishing</span></p>
+    <p><span class="ml">Tools</span><span class="tools">Defender for Office 365 · Microsoft Sentinel · Azure Logic Apps · VirusTotal · ServiceNow</span></p>
+  </div>
+  <div class="board">
+    <ol class="flow" style="--n:7" aria-label="Phishing triage and clean-up flow">
+<li class="node k-trigger"><span class="kind">Trigger</span><span class="nl">Email reported</span><span class="nd">Report button or a Defender for Office 365 alert</span></li>
+<li class="node k-enrich"><span class="kind">Enrich</span><span class="nl">Parse and extract</span><span class="nd">SPF, DKIM and DMARC results, URLs, attachment hashes</span></li>
+<li class="node k-enrich"><span class="kind">Enrich</span><span class="nl">Reputation checks</span><span class="nd">URLs and file hashes checked in VirusTotal</span></li>
+<li class="node k-enrich"><span class="kind">Enrich</span><span class="nl">Hunt the tenant</span><span class="nd">KQL finds every recipient of the same message</span></li>
+<li class="node k-gate"><span class="kind">Approval</span><span class="nl">Analyst approves</span><span class="nd">Verdict: phish, spam or safe. Nothing is deleted without a click</span></li>
+<li class="node k-act"><span class="kind">Act</span><span class="nl">Bulk clean-up</span><span class="nd">Soft-delete matching messages; block sender and URL</span></li>
+<li class="node k-record"><span class="kind">Record</span><span class="nl">Close the loop</span><span class="nd">Ticket updated; reporter told the verdict</span></li>
+    </ol>
+  </div>
+  <div class="detail">
+    <div><h4>What it does</h4><p>Automates the phishing process I ran by hand on the SOC rota: read the headers, check the links and attachments, find everyone else who received the same email, then clean it up. The analyst decides the verdict. The automation does the collecting and the bulk actions.</p></div>
+    <div><h4>Guardrails</h4><ul><li>Soft delete only, so a wrong call can be undone.</li><li>Clean-ups that touch more than 50 mailboxes need a second approver.</li><li>Feedback to the reporter uses a fixed template and never quotes the email.</li></ul></div>
+    <div><h4>What I'd measure</h4><ul><li>Time from report to verdict</li><li>Mailboxes cleaned per confirmed phish</li><li>Share of reports that were real phishing</li></ul></div>
+  </div>
+  <details class="code">
+    <summary>Show the KQL</summary>
+    <div class="codewrap"><pre><code><span class="c">// Who else received this message, and which links did it carry?</span>
+let reportedSender  = &quot;invoice@supp1ier-payments.com&quot;;
+let reportedSubject = &quot;Overdue invoice - action required&quot;;
+EmailEvents
+| where TimeGenerated &gt; ago(7d)
+| where SenderFromAddress == reportedSender or Subject == reportedSubject
+| join kind=leftouter (EmailUrlInfo | project NetworkMessageId, Url) on NetworkMessageId
+| summarize Recipients = make_set(RecipientEmailAddress),
+            Urls = make_set(Url),
+            Delivered = countif(DeliveryAction == &quot;Delivered&quot;)
+          by SenderFromAddress, Subject</code></pre></div>
+  </details>
+</article>
+<article class="sheet blueprint" id="soc-04" data-lane="soc" data-status="blueprint">
+  <header class="tb">
+    <div class="tb-id"><span class="mono">SOC-04</span><span class="lane">SOC</span></div>
+    <h3 class="tb-title">Compromised account containment</h3>
+    <div class="tb-status"><span class="stamp blueprint">Blueprint</span></div>
+  </header>
+  <div class="meta">
+    <p><span class="ml">MITRE ATT&amp;CK</span><span class="tag">T1078 Valid Accounts</span><span class="tag">T1114.003 Email Forwarding Rule</span></p>
+    <p><span class="ml">Tools</span><span class="tools">Microsoft Sentinel · Azure Logic Apps · Microsoft Graph · Exchange Online PowerShell · Microsoft Teams</span></p>
+  </div>
+  <div class="board">
+    <ol class="flow" style="--n:6" aria-label="Compromised account containment flow">
+<li class="node k-trigger"><span class="kind">Trigger</span><span class="nl">Correlated incident</span><span class="nd">Risky sign-in and forwarding rule on one account (SOC-01)</span></li>
+<li class="node k-enrich"><span class="kind">Enrich</span><span class="nl">Enrich</span><span class="nd">Runs SOC-02: IP reputation and recent sign-ins</span></li>
+<li class="node k-gate"><span class="kind">Approval</span><span class="nl">Analyst approves</span><span class="nd">Teams card: Contain now, or Investigate first</span></li>
+<li class="node k-act"><span class="kind">Act</span><span class="nl">Contain</span><span class="nd">Revoke sessions, disable account, remove inbox rule</span></li>
+<li class="node k-act"><span class="kind">Act</span><span class="nl">Hand over</span><span class="nd">Service desk verifies the user, resets password and MFA</span></li>
+<li class="node k-record"><span class="kind">Record</span><span class="nl">Record</span><span class="nd">Every action and approver logged on the incident and ticket</span></li>
+    </ol>
+  </div>
+  <div class="detail">
+    <div><h4>What it does</h4><p>When a risky sign-in and a new forwarding rule land on the same account, this playbook asks the on-call analyst in Teams whether to contain it. One approval revokes the user&#x27;s sessions, disables the account and removes the forwarding rule, then hands a verified password and MFA reset to the service desk.</p></div>
+    <div><h4>Guardrails</h4><ul><li>Never runs without a named analyst&#x27;s approval.</li><li>Admin and break-glass accounts are excluded and go straight to a senior analyst.</li><li>Each action is logged with who approved it and when.</li></ul></div>
+    <div><h4>What I'd measure</h4><ul><li>Time from alert to containment</li><li>Accounts contained per month</li><li>Accounts compromised again within 30 days</li></ul></div>
+  </div>
+  <details class="code">
+    <summary>Show the PowerShell</summary>
+    <div class="codewrap"><pre><code><span class="c"># Runs only after an analyst approves the Teams card</span>
+Connect-MgGraph -Identity                  # managed identity, least-privilege Graph permissions
+Connect-ExchangeOnline -ManagedIdentity -Organization &quot;contoso.onmicrosoft.com&quot;
+
+$upn = $Incident.AccountUpn
+
+Revoke-MgUserSignInSession -UserId $upn   # sign the user out everywhere
+Update-MgUser -UserId $upn -AccountEnabled:$false
+
+Get-InboxRule -Mailbox $upn |
+    Where-Object { $_.ForwardTo -or $_.ForwardAsAttachmentTo -or $_.RedirectTo } |
+    Remove-InboxRule -Confirm:$false</code></pre></div>
+  </details>
+</article>
+<article class="sheet blueprint" id="soc-05" data-lane="soc" data-status="blueprint">
+  <header class="tb">
+    <div class="tb-id"><span class="mono">SOC-05</span><span class="lane">SOC</span></div>
+    <h3 class="tb-title">Vulnerability remediation tracker</h3>
+    <div class="tb-status"><span class="stamp blueprint">Blueprint</span></div>
+  </header>
+  <div class="meta">
+    <p><span class="ml">Practice</span><span class="tag">Vulnerability management</span></p>
+    <p><span class="ml">Tools</span><span class="tools">Python (pandas) · Scanner CSV export · CISA KEV catalogue · ServiceNow or GLPI</span></p>
+  </div>
+  <div class="board">
+    <ol class="flow" style="--n:6" aria-label="Vulnerability remediation tracker flow">
+<li class="node k-trigger"><span class="kind">Trigger</span><span class="nl">Weekly scan export</span><span class="nd">CSV from the vulnerability scanner</span></li>
+<li class="node k-enrich"><span class="kind">Enrich</span><span class="nl">Clean up</span><span class="nd">De-duplicate by host and CVE</span></li>
+<li class="node k-enrich"><span class="kind">Enrich</span><span class="nl">Add context</span><span class="nd">Asset owner, and whether the CVE is known to be exploited</span></li>
+<li class="node k-decide"><span class="kind">Decide</span><span class="nl">Set due date</span><span class="nd">From severity; sooner if actively exploited</span></li>
+<li class="node k-act"><span class="kind">Act</span><span class="nl">Notify owners</span><span class="nd">One ticket per owner listing their open findings</span></li>
+<li class="node k-record"><span class="kind">Record</span><span class="nl">Weekly report</span><span class="nd">Overdue findings by owner, and the trend</span></li>
+    </ol>
+  </div>
+  <div class="detail">
+    <div><h4>What it does</h4><p>Turns a weekly scan export into a short list of who needs to fix what, and by when. Findings are de-duplicated, matched to an owner, checked against CISA&#x27;s Known Exploited Vulnerabilities catalogue and given a due date from their severity.</p></div>
+    <div><h4>Guardrails</h4><ul><li>Accepting a risk needs a named approver and an expiry date.</li><li>Known-exploited CVEs are always escalated, whatever their score.</li><li>Original scan files are kept unchanged for audit.</li></ul></div>
+    <div><h4>What I'd measure</h4><ul><li>Median days to fix, by severity</li><li>Overdue findings by owner</li><li>Known-exploited CVEs still open</li></ul></div>
+  </div>
+  <details class="code">
+    <summary>Show the Python</summary>
+    <div class="codewrap"><pre><code>import pandas as pd
+
+SLA_DAYS = {&quot;Critical&quot;: 14, &quot;High&quot;: 30, &quot;Medium&quot;: 60, &quot;Low&quot;: 90}   # example policy
+
+scan = pd.read_csv(&quot;scan_export.csv&quot;)          # host, cve, severity, first_seen
+kev = set(pd.read_csv(&quot;known_exploited_vulnerabilities.csv&quot;)[&quot;cveID&quot;])
+
+findings = scan.drop_duplicates([&quot;host&quot;, &quot;cve&quot;]).copy()
+findings[&quot;kev&quot;] = findings[&quot;cve&quot;].isin(kev)
+days = findings[&quot;severity&quot;].map(SLA_DAYS).where(~findings[&quot;kev&quot;], 7)   # exploited: 7 days
+findings[&quot;due&quot;] = pd.to_datetime(findings[&quot;first_seen&quot;]) + pd.to_timedelta(days, unit=&quot;D&quot;)
+
+overdue = findings[findings[&quot;due&quot;] &lt; pd.Timestamp.today()]
+print(overdue.groupby(&quot;host&quot;).size().sort_values(ascending=False))</code></pre></div>
+  </details>
+</article>
+<article class="sheet blueprint" id="soc-06" data-lane="soc" data-status="blueprint">
+  <header class="tb">
+    <div class="tb-id"><span class="mono">SOC-06</span><span class="lane">SOC</span></div>
+    <h3 class="tb-title">Shift handover digest</h3>
+    <div class="tb-status"><span class="stamp blueprint">Blueprint</span></div>
+  </header>
+  <div class="meta">
+    <p><span class="ml">Practice</span><span class="tag">SOC operations</span></p>
+    <p><span class="ml">Tools</span><span class="tools">Microsoft Sentinel · KQL · Azure Logic Apps · Microsoft Teams</span></p>
+  </div>
+  <div class="board">
+    <ol class="flow" style="--n:5" aria-label="Shift handover digest flow">
+<li class="node k-trigger"><span class="kind">Trigger</span><span class="nl">Shift ends</span><span class="nd">Scheduled at 07:00, 15:00 and 23:00</span></li>
+<li class="node k-enrich"><span class="kind">Enrich</span><span class="nl">Query open incidents</span><span class="nd">Latest state of every open incident</span></li>
+<li class="node k-decide"><span class="kind">Decide</span><span class="nl">Near SLA?</span><span class="nd">Flag anything within two hours of breach</span></li>
+<li class="node k-act"><span class="kind">Act</span><span class="nl">Post digest</span><span class="nd">Teams message grouped by severity and owner</span></li>
+<li class="node k-record"><span class="kind">Record</span><span class="nl">Take ownership</span><span class="nd">Incoming shift replies in the thread to claim incidents</span></li>
+    </ol>
+  </div>
+  <div class="detail">
+    <div><h4>What it does</h4><p>At the end of each shift a scheduled playbook posts a handover to the SOC channel: open incidents by severity, who owns them, how long they have been open, and anything close to breaching its SLA. It is the handover I used to write by hand on a 24/7 rota.</p></div>
+    <div><h4>Guardrails</h4><ul><li>Read-only. The query changes nothing in Sentinel.</li><li>Only incident numbers, titles and owners go to Teams, never raw log data.</li></ul></div>
+    <div><h4>What I'd measure</h4><ul><li>Incidents that breach SLA across a shift change</li><li>Unowned incidents at handover</li></ul></div>
+  </div>
+  <details class="code">
+    <summary>Show the KQL</summary>
+    <div class="codewrap"><pre><code>SecurityIncident
+| where TimeGenerated &gt; ago(14d)
+| summarize arg_max(TimeGenerated, *) by IncidentNumber     // latest state of each incident
+| where Status in (&quot;New&quot;, &quot;Active&quot;)
+| extend AgeHours = datetime_diff(&quot;hour&quot;, now(), CreatedTime),
+         Owner = tostring(Owner.assignedTo),
+         SevRank = case(Severity == &quot;High&quot;, 1, Severity == &quot;Medium&quot;, 2, Severity == &quot;Low&quot;, 3, 4)
+| project IncidentNumber, Title, Severity, Owner, AgeHours, SevRank
+| order by SevRank asc, AgeHours desc</code></pre></div>
+  </details>
+</article>
+<article class="sheet built" id="it-01" data-lane="it" data-status="built">
+  <header class="tb">
+    <div class="tb-id"><span class="mono">IT-01</span><span class="lane">IT support</span></div>
+    <h3 class="tb-title">Joiner, mover and leaver</h3>
+    <div class="tb-status"><span class="stamp built">Built in my lab</span></div>
+  </header>
+  <div class="meta">
+    <p><span class="ml">Practice</span><span class="tag">Service request management</span><span class="tag">Access management</span></p>
+    <p><span class="ml">Tools</span><span class="tools">PowerShell · Active Directory · Microsoft 365 · GLPI</span></p>
+  </div>
+  <div class="board">
+    <ol class="flow" style="--n:6" aria-label="Joiner, mover and leaver flow">
+<li class="node k-trigger"><span class="kind">Trigger</span><span class="nl">Approved request</span><span class="nd">Starter, mover or leaver ticket</span></li>
+<li class="node k-enrich"><span class="kind">Enrich</span><span class="nl">Validate</span><span class="nd">Name, department, manager and date checked first</span></li>
+<li class="node k-decide"><span class="kind">Decide</span><span class="nl">Which request?</span><span class="nd">Starter, mover or leaver path</span></li>
+<li class="node k-act"><span class="kind">Act</span><span class="nl">Apply access</span><span class="nd">Create or update the account; groups from a role table</span></li>
+<li class="node k-act"><span class="kind">Act</span><span class="nl">Leaver clean-up</span><span class="nd">Disable, record and remove groups, keep the mailbox</span></li>
+<li class="node k-record"><span class="kind">Record</span><span class="nl">Audit trail</span><span class="nd">Result written back to the ticket and an audit CSV</span></li>
+    </ol>
+  </div>
+  <div class="detail">
+    <div><h4>What it does</h4><p>Scripts that carry out starter, role-change and leaver requests from an approved ticket. Starters get an account in the right OU and the groups for their role. Movers lose the old role&#x27;s groups and gain the new ones. Leavers are disabled, their group memberships are recorded and removed, and their mailbox becomes a shared mailbox.</p></div>
+    <div><h4>Guardrails</h4><ul><li>Groups come from one role-to-group table, so access matches the role and nothing more.</li><li>Leavers are disabled for 30 days before anything is deleted.</li><li>A -WhatIf run previews every change before the real one.</li></ul></div>
+    <div><h4>What I'd measure</h4><ul><li>Time from approved request to a working account</li><li>Leavers disabled on their last day</li><li>Accounts holding groups outside their role</li></ul></div>
+  </div>
+  <details class="code">
+    <summary>Show the PowerShell</summary>
+    <div class="codewrap"><pre><code>param(
+    [Parameter(Mandatory)] [string] $First,
+    [Parameter(Mandatory)] [string] $Last,
+    [Parameter(Mandatory)] [string] $Department,
+    [Parameter(Mandatory)] [string] $Manager
+)
+$sam      = (&quot;{0}.{1}&quot; -f $First, $Last).ToLower()
+$ou       = &quot;OU=$Department,OU=Staff,DC=lab,DC=local&quot;
+$tempPass = Read-Host &quot;Temporary password&quot; -AsSecureString
+
+New-ADUser -Name &quot;$First $Last&quot; -GivenName $First -Surname $Last `
+    -SamAccountName $sam -UserPrincipalName &quot;$sam@lab.local&quot; -Path $ou `
+    -Department $Department -Manager $Manager `
+    -AccountPassword $tempPass -ChangePasswordAtLogon $true -Enabled $true
+
+<span class="c"># Role-based access: groups come from one table, nothing added by hand</span>
+Import-Csv .\role-groups.csv |
+    Where-Object Department -eq $Department |
+    ForEach-Object { Add-ADGroupMember -Identity $_.Group -Members $sam }
+
+Add-Content .\jml-audit.csv &quot;$(Get-Date -Format s),JOINER,$sam,$Department&quot;</code></pre></div>
+  </details>
+</article>
+<article class="sheet built" id="it-02" data-lane="it" data-status="built">
+  <header class="tb">
+    <div class="tb-id"><span class="mono">IT-02</span><span class="lane">IT support</span></div>
+    <h3 class="tb-title">Service desk log analyser</h3>
+    <div class="tb-status"><span class="stamp built">Built in my lab</span></div>
+  </header>
+  <div class="meta">
+    <p><span class="ml">Practice</span><span class="tag">Problem management</span><span class="tag">Service level management</span></p>
+    <p><span class="ml">Tools</span><span class="tools">Python · SQLite · pandas · Ticket CSV export</span></p>
+  </div>
+  <div class="board">
+    <ol class="flow" style="--n:6" aria-label="Service desk log analyser flow">
+<li class="node k-trigger"><span class="kind">Trigger</span><span class="nl">Ticket export</span><span class="nd">CSV from ServiceNow or GLPI</span></li>
+<li class="node k-enrich"><span class="kind">Enrich</span><span class="nl">Load and clean</span><span class="nd">Dates, categories and priorities normalised into SQLite</span></li>
+<li class="node k-enrich"><span class="kind">Enrich</span><span class="nl">Run SQL</span><span class="nd">Volumes, SLA breaches, resolution times</span></li>
+<li class="node k-decide"><span class="kind">Decide</span><span class="nl">Spike?</span><span class="nd">Category above twice its four-week average</span></li>
+<li class="node k-act"><span class="kind">Act</span><span class="nl">Write report</span><span class="nd">Markdown report with tables</span></li>
+<li class="node k-record"><span class="kind">Record</span><span class="nl">Problem candidates</span><span class="nd">Spikes listed for problem management</span></li>
+    </ol>
+  </div>
+  <div class="detail">
+    <div><h4>What it does</h4><p>A command-line tool that loads a ticket export into SQLite and produces the weekly report a service desk lead needs: volume by category, SLA breaches by priority, resolution times, and categories that are suddenly busier than usual.</p></div>
+    <div><h4>Guardrails</h4><ul><li>Reads an export only. It never touches the live ticket system.</li><li>Caller names and contact details are dropped when the data is loaded.</li></ul></div>
+    <div><h4>What I'd measure</h4><ul><li>SLA breaches spotted before the monthly review</li><li>Repeat issues raised as problem records</li></ul></div>
+  </div>
+  <details class="code">
+    <summary>Show the Python</summary>
+    <div class="codewrap"><pre><code>import sqlite3
+import pandas as pd
+
+con = sqlite3.connect(&quot;tickets.db&quot;)
+tickets = pd.read_csv(&quot;ticket_export.csv&quot;, parse_dates=[&quot;opened&quot;, &quot;resolved&quot;])
+tickets.drop(columns=[&quot;caller_name&quot;, &quot;caller_email&quot;], errors=&quot;ignore&quot;) \
+       .to_sql(&quot;tickets&quot;, con, if_exists=&quot;replace&quot;, index=False)
+
+breaches = pd.read_sql(&quot;&quot;&quot;
+    SELECT priority,
+           COUNT(*) AS total,
+           SUM(CASE WHEN (julianday(resolved) - julianday(opened)) * 24 &gt; sla_hours
+                    THEN 1 ELSE 0 END) AS breached
+    FROM tickets
+    GROUP BY priority
+    ORDER BY priority&quot;&quot;&quot;, con)
+
+print(breaches.to_markdown(index=False))</code></pre></div>
+  </details>
+</article>
+<article class="sheet blueprint" id="it-03" data-lane="it" data-status="blueprint">
+  <header class="tb">
+    <div class="tb-id"><span class="mono">IT-03</span><span class="lane">IT support</span></div>
+    <h3 class="tb-title">Ticket triage and account unlock</h3>
+    <div class="tb-status"><span class="stamp blueprint">Blueprint</span></div>
+  </header>
+  <div class="meta">
+    <p><span class="ml">Practice</span><span class="tag">Incident management</span><span class="tag">Knowledge management</span></p>
+    <p><span class="ml">Tools</span><span class="tools">PowerShell · Active Directory · Ticketing rules · Knowledge base</span></p>
+  </div>
+  <div class="board">
+    <ol class="flow" style="--n:7" aria-label="Ticket triage and account unlock flow">
+<li class="node k-trigger"><span class="kind">Trigger</span><span class="nl">New ticket</span><span class="nd">Email or self-service portal</span></li>
+<li class="node k-enrich"><span class="kind">Enrich</span><span class="nl">Classify</span><span class="nd">Keyword rules: password, lockout, VPN, Outlook</span></li>
+<li class="node k-decide"><span class="kind">Decide</span><span class="nl">Set priority</span><span class="nd">Impact x urgency matrix</span></li>
+<li class="node k-act"><span class="kind">Act</span><span class="nl">Route and reply</span><span class="nd">Right queue, with a KB article in the auto-reply</span></li>
+<li class="node k-gate"><span class="kind">Approval</span><span class="nl">Verify caller</span><span class="nd">Identity checked before any unlock or reset</span></li>
+<li class="node k-act"><span class="kind">Act</span><span class="nl">Find lockout source</span><span class="nd">Event 4740 on the domain controller names the device</span></li>
+<li class="node k-record"><span class="kind">Record</span><span class="nl">Resolve</span><span class="nd">Unlock, note the device, close with the KB link</span></li>
+    </ol>
+  </div>
+  <div class="detail">
+    <div><h4>What it does</h4><p>New tickets are sorted by keyword rules, given a priority from an impact and urgency matrix, sent to the right queue and answered with a matching knowledge-base article. For account lockouts, a script finds the device that keeps locking the account, so the fix is quick once the caller&#x27;s identity is checked.</p></div>
+    <div><h4>Guardrails</h4><ul><li>Unlocks and resets happen only after identity verification.</li><li>Auto-replies never promise a fix time beyond the SLA.</li><li>Keyword rules are reviewed monthly against tickets that were misrouted.</li></ul></div>
+    <div><h4>What I'd measure</h4><ul><li>First-contact resolution</li><li>Tickets misrouted</li><li>Repeat lockouts from the same device</li></ul></div>
+  </div>
+  <details class="code">
+    <summary>Show the PowerShell</summary>
+    <div class="codewrap"><pre><code><span class="c"># Which device keeps locking this account? Event 4740 on the PDC emulator.</span>
+$pdc = (Get-ADDomain).PDCEmulator
+Get-WinEvent -ComputerName $pdc -FilterHashtable @{
+        LogName   = &#x27;Security&#x27;
+        Id        = 4740
+        StartTime = (Get-Date).AddHours(-24)
+    } |
+    Select-Object TimeCreated,
+        @{ n = &#x27;User&#x27;;   e = { $_.Properties[0].Value } },
+        @{ n = &#x27;Device&#x27;; e = { $_.Properties[1].Value } }</code></pre></div>
+  </details>
+</article>
+<article class="sheet blueprint" id="it-04" data-lane="it" data-status="blueprint">
+  <header class="tb">
+    <div class="tb-id"><span class="mono">IT-04</span><span class="lane">IT support</span></div>
+    <h3 class="tb-title">Microsoft 365 licence and account hygiene</h3>
+    <div class="tb-status"><span class="stamp blueprint">Blueprint</span></div>
+  </header>
+  <div class="meta">
+    <p><span class="ml">Practice</span><span class="tag">IT asset management</span><span class="tag">Access management</span></p>
+    <p><span class="ml">Tools</span><span class="tools">Microsoft Graph PowerShell · Microsoft 365 · Entra ID</span></p>
+  </div>
+  <div class="board">
+    <ol class="flow" style="--n:6" aria-label="Microsoft 365 licence and account hygiene flow">
+<li class="node k-trigger"><span class="kind">Trigger</span><span class="nl">Weekly schedule</span><span class="nd">Every Monday at 07:00</span></li>
+<li class="node k-enrich"><span class="kind">Enrich</span><span class="nl">Collect</span><span class="nd">Users, licences and last sign-in from Microsoft Graph</span></li>
+<li class="node k-decide"><span class="kind">Decide</span><span class="nl">Needs attention?</span><span class="nd">Disabled but licensed, inactive 60+ days, stale guests</span></li>
+<li class="node k-gate"><span class="kind">Approval</span><span class="nl">IT lead reviews</span><span class="nd">Approve, skip, or add an exception</span></li>
+<li class="node k-act"><span class="kind">Act</span><span class="nl">Tidy up</span><span class="nd">Remove licences, disable stale accounts</span></li>
+<li class="node k-record"><span class="kind">Record</span><span class="nl">Log and report</span><span class="nd">Changes made and licences reclaimed</span></li>
+    </ol>
+  </div>
+  <div class="detail">
+    <div><h4>What it does</h4><p>A weekly report of licences and accounts that need attention: disabled users still holding a licence, accounts with no sign-in for 60 days, and guest accounts nobody uses. Each line suggests an action, and a person approves it.</p></div>
+    <div><h4>Guardrails</h4><ul><li>Report first. Nothing changes without approval.</li><li>Service and break-glass accounts sit on an exceptions list.</li></ul></div>
+    <div><h4>What I'd measure</h4><ul><li>Licences reclaimed per month</li><li>Inactive accounts still enabled</li></ul></div>
+  </div>
+  <details class="code">
+    <summary>Show the PowerShell</summary>
+    <div class="codewrap"><pre><code>Connect-MgGraph -Scopes &quot;User.Read.All&quot;, &quot;AuditLog.Read.All&quot;
+$cutoff = (Get-Date).AddDays(-60)
+
+Get-MgUser -All -Property DisplayName, UserPrincipalName, AccountEnabled, AssignedLicenses, SignInActivity |
+    Where-Object {
+        (-not $_.AccountEnabled -and $_.AssignedLicenses.Count -gt 0) -or
+        ($_.SignInActivity.LastSignInDateTime -and $_.SignInActivity.LastSignInDateTime -lt $cutoff)
+    } |
+    Select-Object DisplayName, UserPrincipalName, AccountEnabled,
+        @{ n = &#x27;Licences&#x27;;   e = { $_.AssignedLicenses.Count } },
+        @{ n = &#x27;LastSignIn&#x27;; e = { $_.SignInActivity.LastSignInDateTime } } |
+    Export-Csv .\m365-hygiene.csv -NoTypeInformation</code></pre></div>
+  </details>
+</article>
+    </div>
+  </section>
+
+  <section id="labs" aria-labelledby="labs-h">
+    <div class="sec-head">
+      <div><p class="eyebrow">Home lab · 2024 – 2026</p><h2 id="labs-h">Labs and practice</h2></div>
+      <p>Where the built designs run, and where I keep my hands-on skills current between roles.</p>
+    </div>
+    <div class="labs">
+<div class="lab"><h3>Microsoft Sentinel SOC lab</h3><span class="when">2024 – 2026</span><p>Log ingestion, KQL analytics rules mapped to MITRE ATT&amp;CK, alert triage and threat hunting. The detection rules and enrichment playbook above run here.</p><span class="stack">Sentinel · KQL · Logic Apps</span></div>
+<div class="lab"><h3>Microsoft 365 and Entra ID lab</h3><span class="when">2024 – 2026</span><p>A test tenant run through the whole user lifecycle: accounts, licences, Exchange Online mailboxes, SharePoint, OneDrive and Teams permissions, MFA and conditional access.</p><span class="stack">Microsoft 365 · Entra ID</span></div>
+<div class="lab"><h3>Windows Server and Active Directory lab</h3><span class="when">2024 – 2026</span><p>Organisational units, security groups and Group Policy, with lockout, password reset and access faults reproduced and fixed.</p><span class="stack">Active Directory · Group Policy · PowerShell</span></div>
+<div class="lab"><h3>Service desk lab</h3><span class="when">2025 – 2026</span><p>A working GLPI helpdesk with ticket logging, prioritisation, escalation paths and SLA tracking for password, VPN and software requests.</p><span class="stack">GLPI · ITIL</span></div>
+<div class="lab"><h3>Network analysis lab</h3><span class="when">2024 – 2026</span><p>Packet capture and analysis of DNS, DHCP and connectivity faults across a VMware environment.</p><span class="stack">Wireshark · VMware</span></div>
+<div class="lab"><h3>Offensive security practice</h3><span class="when">2024 – 2026</span><p>Penetration-testing coursework on the MSc, plus regular practice on Hack The Box and TryHackMe. Knowing how attacks run makes triage faster.</p><span class="stack">Hack The Box · TryHackMe</span></div>
+    </div>
+  </section>
+
+  <section id="experience" aria-labelledby="xp-h">
+    <div class="sec-head">
+      <div><p class="eyebrow">Work history</p><h2 id="xp-h">Experience</h2></div>
+      <p>Security and IT support roles first, then the roles I've held in the UK since 2022 while studying and job-hunting.</p>
+    </div>
+    <div class="xp">
+<div class="xrow security"><span class="when">Apr 2020 – May 2021</span><div><h3>Junior SOC Analyst (Tier 1, 24/7 rota)</h3><span class="org">V Systems, Chennai</span><p>Triaged 30–50 alerts per shift in Microsoft Sentinel and Defender, led phishing investigations and tenant-wide hunts, and escalated confirmed incidents to Level 2/3 with evidence and timelines recorded in ServiceNow.</p></div><span class="rel">Security</span></div>
+<div class="xrow it"><span class="when">Nov 2018 – Mar 2020</span><div><h3>IT Support Engineer (1st line)</h3><span class="org">V Systems, Chennai</span><p>Resolved 1,200+ incidents and requests a year at 92% first-contact resolution across Windows, Microsoft 365, Active Directory and networking. Ran joiners, movers and leavers in Active Directory.</p></div><span class="rel">IT support</span></div>
+<div class="xrow other"><span class="when">Sep 2026 – now</span><div><h3>FC Associate (Picker)</h3><span class="org">Amazon, Dunfermline</span><p>Shift work to rate and accuracy targets on handheld systems. An income role while I return to security.</p></div><span class="rel">Other work</span></div>
+<div class="xrow other"><span class="when">Sep 2025 – Aug 2026</span><div><h3>Warehouse Operative (Stock Booker and PPT Driver)</h3><span class="org">Europa Worldwide, Corby</span><p>Goods-in stock booking, pallet checks and labelling, and powered pallet truck put-away.</p></div><span class="rel">Other work</span></div>
+<div class="xrow other"><span class="when">Jan 2022 – Jun 2024</span><div><h3>Customer Service Assistant</h3><span class="org">Castle Service Station, Norwich</span><p>Front-line customer service alongside postgraduate study.</p></div><span class="rel">Other work</span></div>
+    </div>
+    <div class="edu">
+      <div><h3>Education</h3><ul>
+<li><span class="when">2024 – 2025</span><span>MSc Cyber Security, Distinction<small>De Montfort University</small></span></li>
+<li><span class="when">2021 – 2022</span><span>Postgraduate Diploma in Cyber Security<small>University of East Anglia</small></span></li>
+<li><span class="when">2015 – 2018</span><span>BEng Electronics and Communication Engineering<small>St. Joseph&#x27;s College of Engineering</small></span></li>
+      </ul></div>
+      <div><h3>Certifications</h3><ul class="certs">
+        <li><span>Certified Ethical Hacker (CEH)</span><span class="st">Held</span></li>
+        <li><span>Computer Hacking Forensic Investigator (CHFI)</span><span class="st">Held</span></li>
+        <li><span>CompTIA Security+</span><span class="st">In progress</span></li>
+        <li><span>ITIL Foundation</span><span class="st">In progress</span></li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact" aria-labelledby="contact-h">
+    <div>
+      <p class="eyebrow">Get in touch</p>
+      <h2 id="contact-h">Talk to me about a role</h2>
+      <p>I'm looking for SOC analyst, security analyst and IT support roles in Scotland, remote across the UK, or with relocation. I'm happy to walk through any design on this page in detail.</p>
+    </div>
+    <div>
+      <dl>
+        <dt>Email</dt><dd><span class="copyrow"><span id="email-foot">archicybersoc@gmail.com</span><button type="button" class="btn" data-copy="archicybersoc@gmail.com" data-target="email-foot">Copy</button></span></dd>
+        <dt>LinkedIn</dt><dd><a href="https://www.linkedin.com/in/archirosemani" target="_blank" rel="noopener">linkedin.com/in/archirosemani</a></dd>
+        <dt>Based</dt><dd>Dunfermline, Fife</dd>
+      </dl>
+    </div>
+  </section>
+
+  <footer class="foot"><span>Archi Rose Mani</span><span>Updated September 2026</span></footer>
+</div>
+
+<script>
+(function(){
+  var state={lane:"all",status:"all"};
+  var sheets=[].slice.call(document.querySelectorAll(".sheet"));
+  var countEl=document.getElementById("design-count");
+  function apply(){
+    var shown=0;
+    sheets.forEach(function(s){
+      var ok=(state.lane==="all"||s.dataset.lane===state.lane)&&(state.status==="all"||s.dataset.status===state.status);
+      s.hidden=!ok; if(ok) shown++;
+    });
+    countEl.textContent="Showing "+shown+" of "+sheets.length+" designs";
+  }
+  [].slice.call(document.querySelectorAll(".chip")).forEach(function(b){
+    b.addEventListener("click",function(){
+      var g=b.dataset.group;
+      [].slice.call(document.querySelectorAll('.chip[data-group="'+g+'"]')).forEach(function(o){o.setAttribute("aria-pressed","false");});
+      b.setAttribute("aria-pressed","true");
+      state[g]=b.dataset.value; apply();
+    });
+  });
+  [].slice.call(document.querySelectorAll("[data-copy]")).forEach(function(btn){
+    btn.addEventListener("click",function(){
+      var text=btn.getAttribute("data-copy");
+      var done=function(){btn.textContent="Copied"; setTimeout(function(){btn.textContent="Copy";},1600);};
+      var fallback=function(){
+        var el=document.getElementById(btn.getAttribute("data-target"));
+        if(!el) return;
+        var r=document.createRange(); r.selectNodeContents(el);
+        var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+        btn.textContent="Selected";
+      };
+      try{
+        if(navigator.clipboard&&navigator.clipboard.writeText){
+          navigator.clipboard.writeText(text).then(done,fallback);
+        }else{fallback();}
+      }catch(e){fallback();}
+    });
+  });
+  apply();
+})();
+</script>
+</body>
+</html>
