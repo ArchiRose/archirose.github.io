@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="hud hud3d x3d">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -215,7 +215,7 @@ footer.foot{margin-top:26px;font:500 12px/1.5 var(--f-mono);color:var(--muted);d
   .node .kind{grid-row:auto}
   .tb-id{min-width:0}
 }
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (prefers-reduced-motion:reduce){html:not([data-motion="on"]) *{transition:none!important;animation:none!important}}
 
 :root{--red:#A12C2C;--red-soft:#F8E2E2}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--red:#F29090;--red-soft:#3A1919}}
@@ -309,8 +309,542 @@ table.matrix td{font-size:12.5px}
   .crow{grid-template-columns:26px minmax(0,1fr);grid-template-areas:"n tac" ". atk" ". prev" ". det";gap:8px 12px}
 }
 </style>
+<meta name="theme-color" content="#03080E">
+<script>
+(function(){var h=document.documentElement,m=null,seen=null;
+try{m=window.localStorage.getItem("hud-motion")}catch(e){}
+if(m!=="on"&&m!=="off"){m=(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)?"off":"on"}
+h.className+=" js";h.setAttribute("data-motion",m);
+try{seen=window.sessionStorage.getItem("hud-boot")}catch(e){}
+if(m==="on"&&!seen&&!location.hash&&!/[?&]nointro\b/.test(location.search)){h.className+=" booting"}
+})();
+</script>
+<style>
+/* ================================================================
+   HUD layer. Added by hud.py. Page wording unchanged.
+   ================================================================ */
+@property --hud-s{syntax:"<length>";inherits:false;initial-value:14px}
+
+/* two small layout fixes to the base page (they apply on screen and in print) */
+/* 1. the runbook ".role" badge style also matched the role line under the name and drew a box round it */
+html.hud .hero .role{display:block;border:0;padding:0;vertical-align:baseline}
+/* 2. the base "section{padding-top:52px}" rule also padded the inside of the contact panel */
+html.hud section.contact{padding-top:0}
+
+/* everything visual in the HUD layer is screen-only, so a printed copy is the plain light page */
+@media screen{
+html.hud:root{color-scheme:dark;
+  --paper:#03080E;--raised:#081522;--ink:#E4F4FC;--ink-soft:#B5CDDB;--muted:#7C99AD;
+  --line:#11314A;--line-strong:#2A6585;--grid:rgba(70,212,255,.07);
+  --accent:#46D4FF;--accent-soft:rgba(70,212,255,.10);
+  --amber:#FFB14A;--amber-soft:rgba(255,177,74,.11);--green:#3FE0A0;--green-soft:rgba(63,224,160,.10);
+  --red:#FF7676;--red-soft:rgba(255,118,118,.11);
+  --code-bg:#02070C;--code-ink:#CFE8F6;--code-c:#7C99AD;
+  --hi:#F2FBFF;--edge:rgba(70,212,255,.26);--edge-hi:rgba(70,212,255,.52);
+  --panel:rgba(8,21,34,.86);--panel-2:rgba(5,14,24,.86);--glow:rgba(70,212,255,.45);
+  --bleed:clamp(20px,calc((100vw - 1140px)/2),140px)}
+html.hud{scrollbar-color:#17475F #03080E}
+html.hud[data-motion="on"]{scroll-behavior:smooth}
+html.hud body{background:#03080E}
+html.hud ::selection{background:rgba(70,212,255,.3);color:#fff}
+html.hud .wrap{position:relative;z-index:1}
+html.hud a{transition:color .2s,text-shadow .2s}
+html.hud a:hover{text-shadow:0 0 12px var(--glow)}
+
+/* ---- fixed background: grid, glows, scan beam, frame ---- */
+.hud-bg{position:fixed;top:0;right:0;bottom:0;left:0;z-index:0;pointer-events:none;overflow:hidden;color:var(--accent);
+  background:radial-gradient(900px 520px at 80% -6%,rgba(70,212,255,.14),transparent 62%),
+    radial-gradient(760px 620px at -8% 30%,rgba(40,110,255,.09),transparent 60%),
+    radial-gradient(900px 700px at 108% 100%,rgba(70,212,255,.06),transparent 60%),#03080E}
+.hud-grid{position:absolute;top:0;right:0;bottom:0;left:0;
+  background-image:linear-gradient(rgba(70,212,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(70,212,255,.06) 1px,transparent 1px);
+  background-size:44px 44px;
+  -webkit-mask-image:radial-gradient(ellipse 90% 80% at 50% 30%,#000 15%,transparent 80%);
+  mask-image:radial-gradient(ellipse 90% 80% at 50% 30%,#000 15%,transparent 80%)}
+.hud-beam{position:absolute;left:0;right:0;top:-190px;height:180px;opacity:0;
+  background:linear-gradient(180deg,transparent,rgba(70,212,255,.035) 60%,rgba(70,212,255,.11) 98%,transparent)}
+.hud-glow{position:absolute;left:-300px;top:-300px;width:600px;height:600px;border-radius:50%;opacity:0;transition:opacity .8s;
+  background:radial-gradient(circle,rgba(70,212,255,.09),transparent 60%)}
+.hud-corner{position:absolute;width:18px;height:18px;border:1.5px solid rgba(70,212,255,.55)}
+.hud-corner.tl{left:8px;top:8px;border-right:0;border-bottom:0}
+.hud-corner.tr{right:8px;top:8px;border-left:0;border-bottom:0}
+.hud-corner.bl{left:8px;bottom:8px;border-right:0;border-top:0}
+.hud-corner.br{right:8px;bottom:8px;border-left:0;border-top:0}
+.hud-side,.hud-rail,.hud-readout{display:none}
+@media (min-width:1320px){
+  .hud-side{display:block;position:absolute;left:26px;top:50%;writing-mode:vertical-rl;transform:translateY(-50%) rotate(180deg);
+    font:500 10px/1 var(--f-mono);letter-spacing:.42em;text-transform:uppercase;color:rgba(70,212,255,.5);white-space:nowrap}
+  .hud-rail{display:block;position:absolute;right:30px;top:20vh;height:52vh;width:10px;
+    background:repeating-linear-gradient(180deg,rgba(70,212,255,.55) 0 1px,transparent 1px 12px)}
+  .hud-rail i{position:absolute;left:-8px;right:-4px;top:calc(var(--p,0)*100%);height:2px;margin-top:-1px;background:var(--accent);box-shadow:0 0 10px var(--accent)}
+  .hud-rail b{position:absolute;right:22px;top:calc(var(--p,0)*100%);transform:translateY(-50%);
+    font:500 10px/1 var(--f-mono);letter-spacing:.1em;color:var(--accent);white-space:nowrap}
+  .hud-readout{display:block;position:absolute;right:26px;bottom:34px;text-align:right;
+    font:500 9.5px/1.6 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:rgba(70,212,255,.62)}
+  .hud-readout b{display:block;font-size:13px;letter-spacing:.08em;color:var(--hi);font-weight:500;font-variant-numeric:tabular-nums}
+}
+.hud-progress{position:fixed;left:0;right:0;top:0;height:2px;z-index:70;pointer-events:none;
+  transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,rgba(70,212,255,.25),var(--accent));box-shadow:0 0 12px rgba(70,212,255,.8)}
+
+/* ---- top bar ---- */
+html.hud .topbar{position:relative;border-bottom:0;align-items:center;gap:10px 20px}
+html.hud .topbar nav{gap:4px 15px}
+html.hud .topbar::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(70,212,255,.32) 14%,rgba(70,212,255,.32) 86%,transparent)}
+html.hud .topbar .eyebrow{color:var(--ink-soft)}
+html.hud .topbar nav a{position:relative;padding:3px 0;text-transform:uppercase;font-size:12px;letter-spacing:.09em;color:var(--ink-soft)}
+html.hud .topbar nav a::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:1px;background:var(--accent);box-shadow:0 0 8px var(--accent);
+  transform:scaleX(0);transform-origin:0 50%;transition:transform .3s ease}
+html.hud .topbar nav a:hover,html.hud .topbar nav a[aria-current]{color:var(--accent);text-shadow:0 0 12px var(--glow)}
+html.hud .topbar nav a:hover::after,html.hud .topbar nav a[aria-current]::after{transform:scaleX(1)}
+@media (min-width:900px){
+  html.hud .topbar{position:sticky;top:0;z-index:60;margin:-28px calc(var(--bleed)*-1) 0;padding:13px var(--bleed) 12px;
+    background:linear-gradient(90deg,rgba(3,8,14,0),rgba(3,8,14,.95) min(var(--bleed),70px),rgba(3,8,14,.95) calc(100% - min(var(--bleed),70px)),rgba(3,8,14,0))}
+  html.hud section[id],html.hud .group[id],html.hud article[id]{scroll-margin-top:calc(var(--tb-h,56px) + 16px)}
+}
+.hud-status{display:flex;align-items:center;gap:12px}
+.hud-toggle{position:relative;font:500 11px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);
+  background:rgba(70,212,255,.06);border:1px solid rgba(70,212,255,.45);border-radius:2px;padding:8px 10px 8px 25px;cursor:pointer}
+.hud-toggle::before{content:"";position:absolute;left:9px;top:50%;width:7px;height:7px;margin-top:-4px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+.hud-toggle[aria-pressed="false"]{color:var(--ink-soft);border-color:rgba(124,153,173,.6)}
+.hud-toggle[aria-pressed="false"]::before{background:#5A7183;box-shadow:none}
+.hud-toggle:hover{background:rgba(70,212,255,.14)}
+
+/* ---- hero ---- */
+html.hud .hero{position:relative}
+html.hud .hero>div:not(.hud-rings-clip),html.hud .hero>dl{position:relative;z-index:1}
+html.hud .hero .eyebrow{color:var(--accent)}
+html.hud .hero .eyebrow::before{content:"";display:inline-block;width:7px;height:7px;margin-right:10px;border-radius:50%;vertical-align:1px;
+  background:var(--accent);box-shadow:0 0 10px var(--accent)}
+html.hud .hero h1{color:var(--hi);text-shadow:0 0 30px var(--glow),0 0 2px rgba(70,212,255,.5)}
+html.hud .hero .role{text-shadow:0 0 14px rgba(70,212,255,.4)}
+.hud-caret::after{content:"";display:inline-block;width:.5em;height:.95em;margin-left:4px;vertical-align:-.1em;background:var(--accent);box-shadow:0 0 10px var(--accent)}
+.hud-rings-clip{position:absolute;top:-76px;bottom:-64px;left:calc(var(--bleed)*-1);right:calc(var(--bleed)*-1);overflow:hidden;pointer-events:none;z-index:0;
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent);
+  mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent)}
+.hud-rings{position:absolute;width:540px;height:540px;top:50%;margin-top:-270px;right:calc(var(--bleed) - 52px);opacity:.62}
+.hud-par{position:absolute;top:0;right:0;bottom:0;left:0;transform:translate3d(var(--px,0px),var(--py,0px),0);transition:transform .5s ease-out}
+.hr{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;overflow:visible;fill:none;stroke:currentColor;color:var(--accent)}
+.hr3{filter:drop-shadow(0 0 5px rgba(70,212,255,.9))}
+.hr-sweep{position:absolute;top:6%;right:6%;bottom:6%;left:6%;border-radius:50%;display:none;
+  background:conic-gradient(from 0deg,rgba(70,212,255,.22),rgba(70,212,255,0) 15%,rgba(70,212,255,0) 100%)}
+@media (max-width:900px){
+  html.hud .hero{grid-template-columns:1fr;gap:22px}
+  /* phones and small tablets: the rings swing in from the right edge; the centre marks stay off screen so nothing sits on the text */
+  .hud-rings-clip{top:-40px;bottom:auto;height:470px}
+  .hud-rings{width:440px;height:440px;top:-36px;margin-top:0;right:-270px;opacity:.42}
+  .hr6,html[data-motion="on"] .hr-sweep{display:none}
+  .hud-corner{width:10px;height:10px}
+  .hud-corner.tl,.hud-corner.bl{left:5px}
+  .hud-corner.tr,.hud-corner.br{right:5px}
+  .hud-corner.tl,.hud-corner.tr{top:5px}
+  .hud-corner.bl,.hud-corner.br{bottom:5px}
+}
+html.hud .titleblock{position:relative;overflow:hidden;border:1px solid var(--edge-hi);background:rgba(5,15,25,.84);
+  box-shadow:0 24px 70px -28px #000,inset 0 0 44px rgba(70,212,255,.06)}
+html.hud .titleblock dt,html.hud .titleblock dd{border-bottom-color:rgba(70,212,255,.16)}
+html.hud .titleblock dt{border-right-color:rgba(70,212,255,.16);color:var(--accent)}
+html.hud .titleblock>:nth-child(n+3){--i:1}
+html.hud .titleblock>:nth-child(n+5){--i:2}
+html.hud .titleblock>:nth-child(n+7){--i:3}
+html.hud .titleblock>:nth-child(n+9){--i:4}
+
+/* ---- HUD corner brackets on panels ---- */
+html.hud .sheet::before,html.hud .titleblock::before,html.hud .contact::before,html.hud .controls::before{
+  content:"";position:absolute;top:0;right:0;bottom:0;left:0;pointer-events:none;z-index:2;--c:var(--accent);
+  background:
+    linear-gradient(var(--c),var(--c)) 0 0/var(--hud-s,14px) 2px no-repeat,linear-gradient(var(--c),var(--c)) 0 0/2px var(--hud-s,14px) no-repeat,
+    linear-gradient(var(--c),var(--c)) 100% 0/var(--hud-s,14px) 2px no-repeat,linear-gradient(var(--c),var(--c)) 100% 0/2px var(--hud-s,14px) no-repeat,
+    linear-gradient(var(--c),var(--c)) 0 100%/var(--hud-s,14px) 2px no-repeat,linear-gradient(var(--c),var(--c)) 0 100%/2px var(--hud-s,14px) no-repeat,
+    linear-gradient(var(--c),var(--c)) 100% 100%/var(--hud-s,14px) 2px no-repeat,linear-gradient(var(--c),var(--c)) 100% 100%/2px var(--hud-s,14px) no-repeat;
+  transition:--hud-s .35s ease}
+html.hud .sheet:hover::before,html.hud .contact:hover::before{--hud-s:30px}
+
+/* ---- facts ---- */
+html.hud .facts{border-block:1px solid var(--edge-hi);background:linear-gradient(90deg,rgba(70,212,255,.06),transparent 65%)}
+html.hud .fact{border-left-color:rgba(70,212,255,.18)}
+html.hud .fact::before{content:"";display:block;width:26px;height:2px;margin-bottom:10px;background:var(--accent);box-shadow:0 0 8px var(--accent)}
+html.hud .fact b{color:var(--hi);text-shadow:0 0 18px var(--glow)}
+html.hud .fact:nth-child(2){--i:1}
+html.hud .fact:nth-child(3){--i:2}
+html.hud .fact:nth-child(4){--i:3}
+@media (max-width:760px){html.hud .fact:nth-child(n+3){border-top-color:rgba(70,212,255,.18)}}
+
+/* ---- section heads ---- */
+html.hud .sec-head{position:relative;padding-top:20px}
+html.hud .sec-head::before{content:"";position:absolute;left:0;top:0;width:100%;height:1px;background:linear-gradient(90deg,var(--accent),rgba(70,212,255,.16) 32%,transparent 85%)}
+html.hud .sec-head::after{content:"";position:absolute;left:0;top:-2px;width:64px;height:5px;background:var(--accent);box-shadow:0 0 12px var(--accent);
+  -webkit-clip-path:polygon(0 0,100% 0,calc(100% - 5px) 100%,0 100%);clip-path:polygon(0 0,100% 0,calc(100% - 5px) 100%,0 100%)}
+html.hud .sec-head .eyebrow{color:var(--accent)}
+html.hud .sec-head h2,html.hud .contact h2{color:var(--hi);text-shadow:0 0 24px rgba(70,212,255,.4)}
+html.hud .group-h{border-bottom-color:rgba(70,212,255,.22)}
+html.hud .group-h h3{color:var(--hi);text-shadow:0 0 18px rgba(70,212,255,.35)}
+html.hud .subnav a{background:rgba(8,21,34,.8);border-color:rgba(70,212,255,.38);border-radius:2px;transition:border-color .2s,box-shadow .2s,color .2s}
+html.hud .subnav a:hover{box-shadow:0 0 14px rgba(70,212,255,.28)}
+html.hud .subnav a span{color:var(--accent)}
+
+/* ---- filters and legend ---- */
+html.hud .controls{position:relative;border-color:rgba(70,212,255,.22);background:rgba(8,21,34,.72)}
+html.hud .chip{border-color:rgba(70,212,255,.42);border-radius:2px;font-family:var(--f-mono);font-size:12px;letter-spacing:.03em;transition:border-color .2s,box-shadow .2s,color .2s,background .2s}
+html.hud .chip:hover{border-color:var(--accent);color:var(--accent);box-shadow:0 0 12px rgba(70,212,255,.25)}
+html.hud .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#03121C;box-shadow:0 0 16px var(--glow)}
+html.hud .btn{border-color:rgba(70,212,255,.5);color:var(--accent);transition:background .2s,box-shadow .2s}
+html.hud .btn:hover{background:rgba(70,212,255,.12);box-shadow:0 0 12px rgba(70,212,255,.28)}
+html.hud .swatch:not(.gate){border-color:rgba(70,212,255,.62)}
+html.hud .swatch.dash{border-color:rgba(181,205,219,.55)}
+
+/* ---- design sheets ---- */
+html.hud .sheet{position:relative;border:1px solid var(--edge);background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  box-shadow:0 26px 70px -36px #000,inset 0 1px 0 rgba(70,212,255,.07);transition:border-color .3s,box-shadow .3s}
+html.hud .sheet:hover{border-color:var(--edge-hi);box-shadow:0 26px 70px -36px #000,0 0 36px -10px rgba(70,212,255,.38),inset 0 1px 0 rgba(70,212,255,.07)}
+html.hud .tb{border-bottom-color:rgba(70,212,255,.2);background:linear-gradient(90deg,rgba(70,212,255,.09),transparent 58%)}
+html.hud .tb-id{border-right-color:rgba(70,212,255,.2)}
+html.hud .tb-id .mono{text-shadow:0 0 12px rgba(70,212,255,.6)}
+html.hud .tb-status{border-left-color:rgba(70,212,255,.2)}
+html.hud .tb-title{color:var(--hi)}
+@media (max-width:760px){html.hud .tb-status{border-top-color:rgba(70,212,255,.2)}}
+html.hud .stamp.built{box-shadow:0 0 14px rgba(63,224,160,.25),inset 0 0 12px rgba(63,224,160,.12)}
+html.hud .stamp.ref{color:var(--ink-soft);border-color:rgba(181,205,219,.55)}
+html.hud .tag{border-color:rgba(70,212,255,.36)}
+html.hud .board{background-color:rgba(2,7,12,.72);border-color:rgba(70,212,255,.16)}
+html.hud .node{background:rgba(9,26,41,.96);border-color:rgba(70,212,255,.62)}
+html.hud .blueprint .node{background:rgba(8,20,32,.9);border-color:rgba(181,205,219,.5)}
+html.hud .node.k-gate{background:rgba(46,30,10,.92);border-color:var(--amber)}
+html.hud .node:not(:last-child)::after{color:var(--accent)}
+html.hud .blueprint .node:not(:last-child)::after{color:var(--muted)}
+html.hud .detail h4,html.hud .kd h4{color:rgba(70,212,255,.85)}
+html.hud details.code{border-top-color:rgba(70,212,255,.18)}
+html.hud .codewrap{border-color:rgba(70,212,255,.2);box-shadow:inset 0 0 30px rgba(70,212,255,.04)}
+html.hud .dg .bx{stroke:rgba(181,205,219,.75)}
+html.hud .dg .bx.hl{stroke:var(--accent);stroke-width:2.4}
+html.hud .dg .bx.good{stroke:var(--green)}
+html.hud .dg .bx.warn{stroke:var(--amber)}
+html.hud .dg .bx.bad{stroke:var(--red)}
+.ln-flow{fill:none;stroke:#8FE6FF;stroke-width:2.2;stroke-linecap:round;stroke-dasharray:5 15;opacity:0;pointer-events:none}
+html.hud .tablewrap{background:rgba(5,14,24,.8);border-color:rgba(70,212,255,.18)}
+html.hud table.t th{background:rgba(70,212,255,.07);color:rgba(70,212,255,.85);border-bottom-color:rgba(70,212,255,.22)}
+html.hud table.t td{border-bottom-color:rgba(70,212,255,.1)}
+html.hud table.t tbody tr:hover td{background:rgba(70,212,255,.05)}
+html.hud .crow{border-top-color:rgba(70,212,255,.14)}
+html.hud .cn{text-shadow:0 0 14px rgba(255,118,118,.45)}
+html.hud .phase{background:rgba(9,26,41,.96);border-color:rgba(70,212,255,.42)}
+html.hud .phase h5{color:var(--hi)}
+html.hud .pn{color:var(--accent)}
+html.hud .phase .role{border-color:rgba(70,212,255,.45);color:var(--accent)}
+
+/* ---- labs, experience, contact ---- */
+html.hud .labs,html.hud .xp{border-top:1px solid var(--edge-hi)}
+html.hud .lab,html.hud .xrow{border-bottom-color:rgba(70,212,255,.14)}
+html.hud .lab:not(:nth-child(3n+1)),html.hud .lab:nth-child(2n){border-left-color:rgba(70,212,255,.14)}
+html.hud .lab h3,html.hud .xrow h3{color:var(--hi)}
+html.hud .edu ul{border-top-color:rgba(70,212,255,.22)}
+html.hud .edu li{border-bottom-color:rgba(70,212,255,.14)}
+html.hud .edu h3{color:var(--accent)}
+html.hud .contact{position:relative;border:1px solid var(--edge-hi);background:linear-gradient(180deg,var(--panel),var(--panel-2));box-shadow:0 26px 70px -36px #000,inset 0 0 50px rgba(70,212,255,.05)}
+html.hud .contact>div+div{border-color:rgba(70,212,255,.18)}
+html.hud .contact dt{color:var(--accent)}
+
+/* ---- start-up intro ---- */
+.hud-boot{display:none;position:fixed;top:0;right:0;bottom:0;left:0;z-index:1000;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 40%,#08192A,#02060B 72%);color:var(--accent);overscroll-behavior:contain;touch-action:none;cursor:pointer}
+html.booting .hud-boot,.hud-boot.on{display:flex}
+html.booting .hud-boot{animation:hud-bootsafe .01s linear 8s forwards}
+.hud-boot.out{opacity:0;transition:opacity .5s ease;pointer-events:none}
+.hb-core{display:flex;flex-direction:column;align-items:center;gap:6px}
+.hb-rings{position:relative;width:190px;height:190px;margin-bottom:20px;transition:transform .55s cubic-bezier(.5,0,.85,.4),opacity .45s}
+.hud-boot.out .hb-rings{transform:scale(2.2);opacity:0}
+.hb-r{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;overflow:visible;fill:none;stroke:currentColor}
+.hb-r1{animation:hud-spin 7s linear infinite}
+.hb-r2{animation:hud-spin-r 2.4s linear infinite;filter:drop-shadow(0 0 5px rgba(70,212,255,.9))}
+.hb-r3{animation:hud-spin 10s linear infinite}
+.hb-pct{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;align-items:center;justify-content:center;gap:2px;color:var(--hi);text-shadow:0 0 22px rgba(70,212,255,.7)}
+.hb-pct b{font:700 46px/1 var(--f-display);font-variant-numeric:tabular-nums}
+.hb-pct span{font:500 12px/1 var(--f-mono);align-self:flex-end;margin-bottom:76px;color:var(--accent)}
+.hb-title{margin:0;font:700 26px/1 var(--f-display);letter-spacing:.2em;text-transform:uppercase;color:var(--hi);text-shadow:0 0 22px var(--glow)}
+.hb-sub{margin:4px 0 14px;font:500 11px/1 var(--f-mono);letter-spacing:.32em;text-transform:uppercase;color:var(--accent)}
+.hb-log{margin:0;width:268px;max-width:88vw;min-height:9.6em;font:400 12px/1.6 var(--f-mono);color:var(--ink-soft);white-space:pre;overflow:hidden}
+.hb-skip{position:absolute;right:20px;bottom:20px;font:500 12px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);
+  background:rgba(70,212,255,.08);border:1px solid rgba(70,212,255,.5);border-radius:2px;padding:14px 16px;cursor:pointer}
+.hb-skip:hover{background:rgba(70,212,255,.18)}
+
+/* ---- keyframes ---- */
+@keyframes hud-spin{to{transform:rotate(360deg)}}
+@keyframes hud-spin-r{to{transform:rotate(-360deg)}}
+@keyframes hud-beam{to{transform:translate3d(0,calc(100vh + 200px),0)}}
+@keyframes hud-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.7)}}
+@keyframes hud-blink{50%{opacity:0}}
+@keyframes hud-in{from{opacity:0}}
+@keyframes hud-up{from{opacity:0;transform:translate3d(0,18px,0)}}
+@keyframes hud-left{from{opacity:0;transform:translate3d(-16px,0,0)}}
+@keyframes hud-flicker{0%{opacity:0}9%{opacity:1}14%{opacity:.25}22%{opacity:1}28%{opacity:.55}36%{opacity:1}}
+@keyframes hud-panel{from{opacity:0;-webkit-clip-path:inset(0 0 100% 0);clip-path:inset(0 0 100% 0)}to{opacity:1;-webkit-clip-path:inset(0 0 0 0);clip-path:inset(0 0 0 0)}}
+@keyframes hud-rings-in{from{opacity:0;transform:scale(.55) rotate(-50deg)}}
+@keyframes hud-sweep{0%{transform:translate3d(0,-90px,0)}45%,100%{transform:translate3d(0,360px,0)}}
+@keyframes hud-scan{0%{transform:translate3d(0,0,0);opacity:0}12%{opacity:1}100%{transform:translate3d(0,280px,0);opacity:0}}
+@keyframes hud-node{from{opacity:0;transform:translate3d(-10px,0,0) scale(.96)}60%{box-shadow:0 0 22px rgba(70,212,255,.55)}}
+@keyframes hud-signal{0%,13%,100%{box-shadow:0 0 0 rgba(70,212,255,0);border-color:rgba(70,212,255,.62)}5%{box-shadow:0 0 22px rgba(70,212,255,.6),inset 0 0 18px rgba(70,212,255,.16);border-color:#A6ECFF}}
+@keyframes hud-arrow{0%,13%,100%{color:var(--accent);text-shadow:none}5%{color:#fff;text-shadow:0 0 10px var(--accent)}}
+@keyframes hud-draw{from{stroke-dashoffset:var(--len);opacity:0}25%{opacity:1}to{stroke-dashoffset:0;opacity:1}}
+@keyframes hud-flow{to{stroke-dashoffset:-20}}
+@keyframes hud-lock{from{opacity:0;transform:scale(1.9)}}
+@keyframes hud-wipe{from{opacity:.4;-webkit-clip-path:inset(0 100% 0 0);clip-path:inset(0 100% 0 0)}to{opacity:1;-webkit-clip-path:inset(0 0 0 0);clip-path:inset(0 0 0 0)}}
+@keyframes hud-failsafe{to{opacity:1}}
+@keyframes hud-bootsafe{to{visibility:hidden}}
+
+/* ---- motion: everything below only runs while animations are on ---- */
+html.js[data-motion="on"]:not(.ready) .wrap{opacity:0;animation:hud-failsafe .01s linear 8s forwards}
+html[data-motion="on"] .hud-beam{opacity:1;animation:hud-beam 10s linear infinite}
+html[data-motion="on"] .hero .eyebrow::before{animation:hud-pulse 2.4s ease-in-out infinite}
+html[data-motion="on"] .hud-caret::after{animation:hud-blink .7s steps(1) infinite}
+html[data-motion="on"] .hr1{animation:hud-spin 150s linear infinite}
+html[data-motion="on"] .hr2{animation:hud-spin-r 46s linear infinite}
+html[data-motion="on"] .hr3{animation:hud-spin 17s linear infinite}
+html[data-motion="on"] .hr4{animation:hud-spin-r 29s linear infinite}
+html[data-motion="on"] .hr5{animation:hud-spin 75s linear infinite}
+html[data-motion="on"] .hr-sweep{display:block;animation:hud-spin 7s linear infinite}
+html[data-motion="on"] .hero:not(.onscreen) .hr,html[data-motion="on"] .hero:not(.onscreen) .hr-sweep,html[data-motion="on"] .hero:not(.onscreen) .titleblock::after{animation-play-state:paused!important}
+html[data-motion="on"] .titleblock::after{content:"";position:absolute;left:0;right:0;top:0;height:70px;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(70,212,255,.09));border-bottom:1px solid rgba(70,212,255,.32);
+  transform:translate3d(0,-90px,0);animation:hud-sweep 7s 2.6s ease-in-out infinite}
+
+html.ready[data-motion="on"] .topbar{animation:hud-in .7s ease backwards}
+html.ready[data-motion="on"] .hero .eyebrow{animation:hud-left .5s .05s ease backwards}
+html.ready[data-motion="on"] .hero h1{animation:hud-flicker .75s .08s linear backwards}
+html.ready[data-motion="on"] .hero .role{animation:hud-in .25s .5s ease backwards}
+html.ready[data-motion="on"] .hero .intro{animation:hud-up .7s .8s ease backwards}
+html.ready[data-motion="on"] .hud-rings{animation:hud-rings-in 1.8s .05s cubic-bezier(.16,.8,.2,1) backwards}
+html.ready[data-motion="on"] .titleblock{animation:hud-panel .8s .3s cubic-bezier(.2,.7,.2,1) backwards}
+html.ready[data-motion="on"] .titleblock dt,html.ready[data-motion="on"] .titleblock dd{animation:hud-in .5s ease backwards;animation-delay:calc(.7s + var(--i,0)*90ms)}
+html.ready[data-motion="on"] .facts{animation:hud-in .6s .95s ease backwards}
+html.ready[data-motion="on"] .fact{animation:hud-up .6s ease backwards;animation-delay:calc(1.05s + var(--i,0)*110ms)}
+
+html[data-motion="on"] .rv:not(.in){opacity:0}
+html[data-motion="on"] .rv.in{animation:hud-up .7s cubic-bezier(.2,.7,.2,1) backwards}
+/* cards: the frame is there from the start and the contents power on inside it.
+   (Fading a whole card means redrawing a very large layer, which is slow on weak devices.) */
+html[data-motion="on"] .sheet.rv:not(.in){opacity:1}
+html[data-motion="on"] .sheet.rv:not(.in)>*{opacity:0}
+html[data-motion="on"] .sheet.rv.in{animation:none}
+html[data-motion="on"] .sheet.rv.in>*:not(.rv){animation:hud-in .6s .12s ease backwards}
+html[data-motion="on"] .sheet.rv.in>.tb{animation:hud-left .55s cubic-bezier(.2,.7,.2,1) backwards}
+html[data-motion="on"] .sheet.rv.in::after{content:"";position:absolute;left:0;right:0;top:0;height:2px;z-index:3;pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--accent) 30%,#fff 50%,var(--accent) 70%,transparent);box-shadow:0 0 16px 2px rgba(70,212,255,.7);
+  animation:hud-scan 1.15s .1s ease-out both}
+html[data-motion="on"] .board.rv.in .node,html[data-motion="on"] .board.rv.in .phase{animation:hud-node .5s cubic-bezier(.2,.7,.2,1) backwards;animation-delay:calc(.15s + var(--i,0)*90ms)}
+html[data-motion="on"] .sheet.built .board.in .node{--loop:calc(var(--n,5)*.55s + 2.6s);
+  animation:hud-node .5s cubic-bezier(.2,.7,.2,1) backwards,hud-signal var(--loop) linear infinite;
+  animation-delay:calc(.15s + var(--i,0)*90ms),calc(1.5s + var(--i,0)*.55s)}
+html[data-motion="on"] .sheet.built .board.in .node:not(:last-child)::after{animation:hud-arrow var(--loop) linear infinite;animation-delay:calc(1.8s + var(--i,0)*.55s)}
+html[data-motion="on"] .crow.rv.in .cn{animation:hud-lock .6s cubic-bezier(.2,.8,.2,1) backwards}
+html[data-motion="on"] .board.rv.in .dg rect,html[data-motion="on"] .board.rv.in .dg text{animation:hud-in .5s ease backwards;animation-delay:calc(.1s + var(--x,0)*.8s)}
+html[data-motion="on"] .board.in .dg .ln{stroke-dasharray:var(--len)}
+html[data-motion="on"] .board.rv.in .dg .ln{animation:hud-draw .55s ease-out backwards;animation-delay:calc(.25s + var(--x,0)*.8s)}
+html[data-motion="on"] .board.in .ln-flow{opacity:.95;animation:hud-flow 1.1s linear infinite,hud-in 1s 1.3s ease backwards}
+@media (hover:none){html[data-motion="on"] .board.in .ln-flow{animation-timing-function:steps(11),ease}}
+html[data-motion="on"] .sheet:not(.onscreen) .ln-flow,html[data-motion="on"] .sheet:not(.onscreen) .node,html[data-motion="on"] .sheet:not(.onscreen) .node::after{animation-play-state:paused!important}
+html[data-motion="on"] details.code[open] .codewrap{animation:hud-wipe .45s ease-out backwards}
+
+/* animations switched off (button, or the device asks for reduced motion) */
+html[data-motion="off"] *,html[data-motion="off"] *::before,html[data-motion="off"] *::after{animation:none!important;transition:none!important}
+html[data-motion="off"] .hud-glow{display:none}
+}
+
+/* ---- print: the plain light page ---- */
+@media print{
+  html.hud:root{color-scheme:light;--paper:#fff;--raised:#fff;--ink:#132029;--ink-soft:#384956;--muted:#5B6B78;--line:#D2DBE2;--line-strong:#9AABB9;--grid:rgba(29,78,137,.075);
+    --accent:#1D4E89;--accent-soft:#E2EBF5;--amber:#8F5400;--amber-soft:#FBEFD9;--green:#1D6647;--green-soft:#E0F1E8;--red:#A12C2C;--red-soft:#F8E2E2;
+    --code-bg:#E8EEF3;--code-ink:#1A2A36;--code-c:#6A7B88}
+  .hud-bg,.hud-boot,.hud-rings-clip,.hud-holo,.hud-status,.hud-progress,.ln-flow{display:none!important}
+  html.hud *,html.hud *::before,html.hud *::after{animation:none!important;transition:none!important}
+}
+
+/* ================================================================
+   3D hologram effects. Only active when <html> has the class "hud3d".
+   ================================================================ */
+@media screen{
+html:not(.js) .hud-holo{display:none}
+
+/* ---- hologram stage: a globe floating over a tilted ring "emitter" ---- */
+.hud-holo{height:196px;margin-bottom:-14px;pointer-events:none;-webkit-user-select:none;user-select:none}
+.holo-stage{position:absolute;left:50%;bottom:0;width:300px;height:210px;margin-left:-150px;perspective:820px;perspective-origin:50% 10%}
+.holo-floor{position:absolute;left:0;bottom:-128px;width:300px;height:300px;transform:rotateX(76deg)}
+.hf{position:absolute;top:14.65%;left:14.65%;width:70.7%;height:70.7%;overflow:visible;fill:none;stroke:currentColor;color:var(--accent)}
+.hf3{filter:drop-shadow(0 0 6px rgba(70,212,255,.9))}
+.holo-core{position:absolute;left:50%;top:50%;width:130px;height:130px;margin:-65px 0 0 -65px;border-radius:50%;
+  background:radial-gradient(circle,rgba(190,242,255,.85),rgba(70,212,255,.3) 38%,rgba(70,212,255,0) 70%)}
+.holo-cone{position:absolute;left:50%;bottom:20px;width:216px;height:150px;margin-left:-108px;opacity:.85;
+  background:linear-gradient(0deg,rgba(70,212,255,.26),rgba(70,212,255,.05) 60%,rgba(70,212,255,0) 92%);
+  -webkit-clip-path:polygon(34% 100%,66% 100%,100% 0,0 0);clip-path:polygon(34% 100%,66% 100%,100% 0,0 0)}
+.holo-atmo{position:absolute;left:50%;top:6px;width:168px;height:168px;margin-left:-84px;border-radius:50%;
+  background:radial-gradient(circle at 50% 50%,rgba(70,212,255,.09),rgba(70,212,255,.03) 62%,rgba(70,212,255,0) 71%);
+  box-shadow:0 0 34px rgba(70,212,255,.26),inset 0 0 26px rgba(70,212,255,.2)}
+.holo-globe{position:absolute;left:50%;top:-10px;width:200px;height:200px;margin-left:-100px;pointer-events:auto;cursor:grab;touch-action:pan-y}
+.holo-globe:active{cursor:grabbing}
+.holo-pin{position:absolute;left:0;top:0;width:0;height:0;pointer-events:none;opacity:0;transition:opacity .3s}
+.holo-pin.on{opacity:1}
+.holo-pin i{position:absolute;left:0;top:0;width:30px;height:1px;background:var(--amber);transform-origin:0 50%;transform:rotate(-40deg)}
+.holo-pin span{position:absolute;left:22px;top:-33px;padding:3px 6px;border:1px solid rgba(255,177,74,.65);background:rgba(20,12,2,.78);
+  font:500 9.5px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--amber);white-space:nowrap}
+.holo-pin.left i{transform:rotate(-140deg)}
+.holo-pin.left span{left:auto;right:22px}
+.holo-tag{position:absolute;top:6px;font:500 9.5px/1.6 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:rgba(70,212,255,.62)}
+.holo-tag b{display:block;font-size:12.5px;letter-spacing:.08em;color:var(--hi);font-weight:500;font-variant-numeric:tabular-nums}
+.holo-tl{left:0}
+.holo-tr{right:0;text-align:right}
+@media not all and (max-width:900px){
+  /* desktop: the hologram stands on top of the contact block, and the name block centres beside the two */
+  html.hud3d .hero{grid-template-rows:auto auto;row-gap:0}
+  html.hud3d .hero>div:not(.hud-holo){grid-column:1;grid-row:1 / span 2;align-self:center}
+  html.hud3d .hero>div.hud-holo{grid-column:2;grid-row:1}
+  html.hud3d .hero>dl.titleblock{grid-column:2;grid-row:2}
+}
+@media (max-width:1079px){.holo-pin{display:none}}
+@media (max-width:900px){
+  /* phones and small tablets: only the globe, in the top right corner of the hero beside the name, so it takes no space.
+     --gs is the size of the globe's square (the globe is 84% of it), --gc how far its centre sits from the right edge.
+     The sizes below keep it clear of the intro paragraph at every width; on phones it hangs off the right edge. */
+  html.hud3d .hero>div.hud-holo{position:absolute;z-index:0;top:-40px;right:calc(var(--bleed)*-1);width:340px;max-width:100vw;height:340px;margin:0;overflow:hidden;opacity:.9;
+    --gs:clamp(190px,calc(100vw - 630px),250px);--gc:calc(var(--gs)*.42 + 20px)}
+  .holo-stage{left:auto;right:calc(var(--gc) - var(--gs)/2);top:calc(52px - var(--gs)*.08);bottom:auto;width:var(--gs);height:var(--gs);margin:0;perspective:none}
+  .holo-floor,.holo-cone,.holo-tag{display:none}
+  .holo-atmo{left:8%;top:8%;width:84%;height:84%;margin:0;box-shadow:0 0 22px rgba(70,212,255,.2),inset 0 0 22px rgba(70,212,255,.18)}
+  .holo-globe{left:0;top:0;margin:0;width:100%;height:100%;pointer-events:none}
+}
+@media (max-width:760px){
+  html.hud3d .hero>div.hud-holo{--gs:160px;--gc:clamp(30px,calc(100vw - 505px),87px)}
+}
+@media (max-width:560px){
+  /* where the end of a text line runs under the globe, the globe fades out towards it */
+  .holo-stage{-webkit-mask-image:radial-gradient(circle at 62% 36%,#000 30%,rgba(0,0,0,.15) 72%);mask-image:radial-gradient(circle at 62% 36%,#000 30%,rgba(0,0,0,.15) 72%)}
+}
+@media (max-width:480px){
+  html.hud3d .hero>div.hud-holo{--gs:180px;--gc:30px}
+}
+
+/* ---- intro: the loading rings become a 3D gyroscope ---- */
+html.hud3d .hb-rings{perspective:640px}
+html.hud3d .hb-r1{animation:hud-gyro-a 6s linear infinite}
+html.hud3d .hb-r2{animation:hud-gyro-y 2.8s linear infinite}
+html.hud3d .hb-r3{animation:hud-gyro-x 4.2s linear infinite}
+
+/* ---- 3D keyframes ---- */
+@keyframes hud-gyro-y{from{transform:rotateZ(24deg) rotateY(0deg)}to{transform:rotateZ(24deg) rotateY(360deg)}}
+@keyframes hud-gyro-x{from{transform:rotateZ(-32deg) rotateX(0deg)}to{transform:rotateZ(-32deg) rotateX(360deg)}}
+@keyframes hud-gyro-a{from{transform:rotateX(64deg) rotateZ(0deg)}to{transform:rotateX(64deg) rotateZ(360deg)}}
+@keyframes hud-up3d{from{opacity:0;transform:perspective(900px) translate3d(0,26px,-70px) rotateX(-16deg)}}
+@keyframes hud-board3d{from{opacity:0;transform:perspective(1100px) translate3d(0,34px,-100px) rotateX(-26deg)}}
+@keyframes hud-node3d{from{opacity:0;transform:perspective(520px) translate3d(-12px,0,-160px) rotateY(38deg)}60%{box-shadow:0 0 22px rgba(70,212,255,.55)}}
+@keyframes hud-flip3d{from{opacity:0;transform:perspective(520px) rotateX(-84deg)}}
+@keyframes hud-fact3d{from{opacity:0;transform:perspective(700px) translate3d(0,18px,-130px) rotateX(26deg)}}
+@keyframes hud-zoom3d{from{transform:perspective(800px) translate3d(0,0,-220px) rotateX(18deg)}}
+@keyframes hud-holo-in{from{opacity:0;transform:translate3d(0,26px,0) scale(.72)}}
+@keyframes hud-cone{0%,100%{opacity:.85}46%{opacity:.6}50%{opacity:.95}54%{opacity:.66}}
+
+/* ---- 3D motion: only while animations are on ---- */
+html.hud3d[data-motion="on"] .hf1{animation:hud-spin 80s linear infinite}
+html.hud3d[data-motion="on"] .hf2{animation:hud-spin-r 30s linear infinite}
+html.hud3d[data-motion="on"] .hf3{animation:hud-spin 11s linear infinite}
+html.hud3d[data-motion="on"] .hf4{animation:hud-spin-r 46s linear infinite}
+html.hud3d[data-motion="on"] .holo-cone{animation:hud-cone 3.4s linear infinite}
+html.hud3d[data-motion="on"] .hero:not(.onscreen) .hf,html.hud3d[data-motion="on"] .hero:not(.onscreen) .holo-cone{animation-play-state:paused!important}
+html.hud3d.ready[data-motion="on"] .holo-stage{animation:hud-holo-in 1.3s .15s cubic-bezier(.16,.8,.2,1) backwards}
+html.hud3d.ready[data-motion="on"] .hero h1{animation:hud-flicker .75s .08s linear backwards,hud-zoom3d .9s .08s cubic-bezier(.2,.7,.2,1) backwards;transform-origin:0 60%}
+html.hud3d.ready[data-motion="on"] .hero .intro{animation-name:hud-up3d;transform-origin:50% 0}
+html.hud3d.ready[data-motion="on"] .fact{animation-name:hud-fact3d;transform-origin:50% 100%}
+html.hud3d[data-motion="on"] .titleblock{transition:transform .25s ease-out}
+html.hud3d[data-motion="on"] .rv.in:not(.sheet){animation-name:hud-up3d;transform-origin:50% 0}
+html.hud3d[data-motion="on"] .board.rv.in{animation-name:hud-board3d;animation-duration:.85s}
+html.hud3d[data-motion="on"] .sec-head.rv.in h2,html.hud3d[data-motion="on"] .group-h.rv.in h3{animation:hud-flip3d .7s cubic-bezier(.2,.7,.2,1) backwards;transform-origin:50% 100%}
+html.hud3d[data-motion="on"] .board.rv.in .node,html.hud3d[data-motion="on"] .board.rv.in .phase{animation-name:hud-node3d}
+html.hud3d[data-motion="on"] .sheet.built .board.in .node{animation-name:hud-node3d,hud-signal}
+}
+@media print{html.hud3d .hero .titleblock{transform:none!important}}
+
+/* ================================================================
+   More 3D (11 Oct 2026). Only active when <html> has the class "x3d".
+   ================================================================ */
+@media screen{
+/* ---- the grid sits on an inner layer so it can drift slowly as the page scrolls ---- */
+html.x3d .hud-grid{background-image:none}
+.hud-grid i{position:absolute;left:0;right:0;top:-44px;bottom:-44px;
+  background-image:linear-gradient(rgba(70,212,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(70,212,255,.06) 1px,transparent 1px);
+  background-size:44px 44px}
+
+/* ---- the name: stacked layers give the letters solid depth; --ex/--ey turn the depth with the name ---- */
+html.x3d .hero h1{--ex:.42;--ey:.9;
+  text-shadow:
+    calc(var(--ex)*.011em) calc(var(--ey)*.011em) 0 #BDEFFF,
+    calc(var(--ex)*.022em) calc(var(--ey)*.022em) 0 #86DAF5,
+    calc(var(--ex)*.033em) calc(var(--ey)*.033em) 0 #56BEE2,
+    calc(var(--ex)*.044em) calc(var(--ey)*.044em) 0 #3599C0,
+    calc(var(--ex)*.055em) calc(var(--ey)*.055em) 0 #23759A,
+    calc(var(--ex)*.066em) calc(var(--ey)*.066em) 0 #185673,
+    calc(var(--ex)*.077em) calc(var(--ey)*.077em) 0 #103D53,
+    calc(var(--ex)*.088em) calc(var(--ey)*.088em) 0 #0B2B3C,
+    calc(var(--ex)*.12em) calc(var(--ey)*.15em) .14em rgba(0,0,0,.7),
+    0 0 34px var(--glow);
+  width:-webkit-fit-content;width:-moz-fit-content;width:fit-content;max-width:100%;
+  transform:perspective(1100px) rotateX(var(--nrx,0deg)) rotateY(var(--nry,0deg));transform-origin:50% 60%}
+html.x3d[data-motion="on"] .hero h1{transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+html.x3d.ready[data-motion="on"] .hero h1{transform-origin:50% 60%}
+
+/* ---- design cards: tilt towards the mouse with a light sheen, and curve gently while scrolling ---- */
+html.x3d[data-motion="on"] .sheet,html.x3d[data-motion="on"] section.contact{
+  transition:transform .5s cubic-bezier(.2,.7,.2,1),border-color .3s,box-shadow .3s}
+html.x3d[data-motion="on"] .sheet.tilting{transition:transform .14s linear,border-color .3s,box-shadow .3s}
+.tilt-sheen{position:absolute;top:0;right:0;bottom:0;left:0;z-index:1;overflow:hidden;pointer-events:none}
+.tilt-sheen b{position:absolute;left:0;top:0;width:620px;height:620px;margin:-310px 0 0 -310px;border-radius:50%;opacity:0;
+  background:radial-gradient(circle,rgba(160,236,255,.16),rgba(70,212,255,.06) 34%,rgba(70,212,255,0) 64%);transition:opacity .45s}
+.sheet.sheen-on .tilt-sheen b{opacity:1}
+html[data-motion="off"] .tilt-sheen{display:none}
+/* the light is added inside a card that may already be revealed; keep the reveal fade off it so it shows at once */
+html.x3d .tilt-sheen{animation:none!important}
+
+/* ---- the shield and padlock beside the Security designs heading ---- */
+/* It stands in front of the eyebrow and heading. Its size steps down with the screen width so the heading never
+   wraps onto another line and the heading block keeps exactly the height it had without the shield. The negative
+   top margin lets it reach up into empty space instead of stretching the eyebrow and heading rows apart.
+   The heading itself is kept on one line, because its decoding effect briefly shows wider random letters. */
+html.x3d.js #security .sec-head>div:first-child{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:16px;align-items:end}
+html.x3d.js #security .sec-head h2{white-space:nowrap}
+.sec-shield{grid-row:1 / span 2;align-self:end;position:relative;width:100px;height:100px;margin:-14px 0 -2px -12px}
+.sec-shield canvas{display:block;width:100%;height:100%}
+html:not(.js) .sec-shield{display:none}
+@media (max-width:1139px){
+  html.x3d.js #security .sec-head>div:first-child{column-gap:14px}
+  .sec-shield{width:84px;height:84px;margin:-8px 0 -2px -10px}
+}
+@media (max-width:899px){
+  html.x3d.js #security .sec-head>div:first-child{column-gap:12px}
+  .sec-shield{width:72px;height:72px;margin:-4px 0 -2px -8px}
+}
+/* phones: the shield floats in the space above the top right of the heading, so the text keeps its full width.
+   It sits between the facts row above and the first line of the eyebrow below, with room for the heading's
+   scroll drift. grid-row:auto makes "top" count from the top of the heading block (its divider line). */
+@media (max-width:600px){
+  html.x3d.js #security .sec-head>div:first-child{display:block}
+  html.x3d.js #security .sec-head h2{white-space:normal}
+  .sec-shield{grid-row:auto;position:absolute;right:-6px;top:-39px;width:56px;height:56px;margin:0}
+}
+}
+@media print{
+  html.x3d .sheet,html.x3d section.contact,html.x3d .sec-head,html.x3d .group-h,html.x3d .hero>div,html.x3d .hero h1{transform:none!important;translate:none!important;scale:none!important}
+  .sec-shield,.tilt-sheen{display:none!important}
+}
+</style>
 </head>
 <body>
+<div class="hud-bg" aria-hidden="true"><div class="hud-grid"><i></i></div><div class="hud-beam"></div><div class="hud-glow" id="hud-glow"></div><i class="hud-corner tl"></i><i class="hud-corner tr"></i><i class="hud-corner bl"></i><i class="hud-corner br"></i><div class="hud-side">Archi Rose Mani · Portfolio</div><div class="hud-rail" id="hud-rail"><i></i><b id="hud-pct">0%</b></div></div>
+<div class="hud-progress" id="hud-progress" aria-hidden="true"></div>
+<div class="hud-boot" id="hud-boot">
+  <div class="hb-core" aria-hidden="true">
+    <div class="hb-rings"><svg class="hb-r hb-r1" viewBox="0 0 200 200" focusable="false"><circle cx="100" cy="100" r="96" stroke-width="1" opacity="0.4"/><circle cx="100" cy="100" r="90" stroke-width="6" stroke-dasharray="0.79 8.64" opacity="0.6"/></svg><svg class="hb-r hb-r2" viewBox="0 0 200 200" focusable="false"><circle cx="100" cy="100" r="72" stroke-width="5" stroke-dasharray="87.96 62.83 37.70 113.10 75.40 75.40" opacity="0.95" stroke-linecap="round"/></svg><svg class="hb-r hb-r3" viewBox="0 0 200 200" focusable="false"><circle cx="100" cy="100" r="60" stroke-width="1.5" stroke-dasharray="1.05 3.14" opacity="0.6"/></svg><svg class="hb-r hb-r4" viewBox="0 0 200 200" focusable="false"><circle cx="100" cy="100" r="84" stroke-width="3" opacity=".18"/><circle id="hb-arc" cx="100" cy="100" r="84" stroke-width="3" stroke-linecap="round" stroke-dasharray="527.79" stroke-dashoffset="527.79" data-c="527.79" transform="rotate(-90 100 100)"/></svg><div class="hb-pct"><b id="hb-pct">0</b><span>%</span></div></div>
+    <p class="hb-title">Archi Rose Mani</p>
+    <p class="hb-sub">Portfolio console</p>
+    <pre class="hb-log" id="hb-log"></pre>
+  </div>
+  <button type="button" class="hb-skip" id="hb-skip">Skip intro</button>
+</div>
 
 <div class="wrap">
   <div class="topbar">
@@ -318,6 +852,7 @@ table.matrix td{font-size:12.5px}
     <nav aria-label="Sections">
       <a href="#security">Security designs</a><a href="#designs">Automation</a><a href="#labs">Labs</a><a href="#experience">Experience</a><a href="#contact">Contact</a>
     </nav>
+    <div class="hud-status"><button type="button" class="hud-toggle" id="hud-motion" aria-pressed="true" title="Turn the animations on or off" hidden>Animations on</button></div>
   </div>
 
   <header class="hero">
@@ -325,8 +860,9 @@ table.matrix td{font-size:12.5px}
       <p class="eyebrow">Dunfermline, Fife · UK</p>
       <h1>Archi Rose Mani</h1>
       <p class="role">Security operations analyst · SOC and service desk automation</p>
-      <p class="intro">My background is security operations and IT support: a year as a Tier-1 analyst in a 24/7 Microsoft SOC and over a year on a first-line service desk. This page shows my security designs (architecture, attack-and-defence flows, threat models and incident response runbooks) and the automations I've built in my home lab or designed next. Any automated step that changes an account or deletes mail waits for a person to approve it.</p>
+      <p class="intro">My background is security operations and IT support: a year as a Tier-1 analyst in a 24/7 Microsoft SOC and over a year on a first-line service desk. This page shows my security designs (architecture, attack-and-defence flows, threat models and incident response runbooks) and the automations I've built in my home lab, plus the ones I've designed to build next. Any automated step that changes an account or deletes mail waits for a person to approve it.</p>
     </div>
+    <div class="hud-holo" id="hud-holo" aria-hidden="true"><div class="holo-stage"><div class="holo-floor"><svg class="hf hf1" viewBox="88 88 424 424" focusable="false"><circle cx="300" cy="300" r="292" stroke-width="1.5" opacity="0.4"/><circle cx="300" cy="300" r="282" stroke-width="10" stroke-dasharray="2.21 22.39" opacity="0.6"/><circle cx="300" cy="300" r="277" stroke-width="20" stroke-dasharray="2.90 142.14" opacity="0.85"/></svg><svg class="hf hf2" viewBox="88 88 424 424" focusable="false"><circle cx="300" cy="300" r="236" stroke-width="16" stroke-dasharray="238.90 32.95 82.38 32.95 453.09 49.43 140.05 41.19 288.33 123.57" opacity="0.24"/><circle cx="300" cy="300" r="212" stroke-width="1.5" stroke-dasharray="4.44 10.36" opacity="0.6"/></svg><svg class="hf hf3" viewBox="88 88 424 424" focusable="false"><circle cx="300" cy="300" r="176" stroke-width="5" stroke-dasharray="196.59 172.02 79.87 288.75 153.59 215.02" opacity="0.95" stroke-linecap="round"/></svg><svg class="hf hf4" viewBox="88 88 424 424" focusable="false"><circle cx="300" cy="300" r="118" stroke-width="1.5" opacity="0.45"/><circle cx="300" cy="300" r="96" stroke-width="3" stroke-dasharray="1.51 8.55" opacity="0.6"/></svg><div class="holo-core"></div></div><div class="holo-cone"></div><div class="holo-atmo"></div><canvas class="holo-globe" id="holo-globe" width="16" height="16"></canvas><div class="holo-pin" id="holo-pin"><i></i><span>Dunfermline</span></div></div><div class="holo-tag holo-tl"><span>Globe</span><b>Drag to spin</b></div><div class="holo-tag holo-tr"><span>UK time</span><b id="hud-clock">--:--</b></div></div>
     <dl class="titleblock" aria-label="Contact details">
       <dt>Email</dt><dd><span class="copyrow"><span id="email-hero">archicybersoc@gmail.com</span><button type="button" class="btn" data-copy="archicybersoc@gmail.com" data-target="email-hero">Copy</button></span></dd>
       <dt>LinkedIn</dt><dd><a href="https://www.linkedin.com/in/archirosemani" target="_blank" rel="noopener">linkedin.com/in/archirosemani</a></dd>
@@ -346,7 +882,7 @@ table.matrix td{font-size:12.5px}
 
   <section id="security" aria-labelledby="security-h">
     <div class="sec-head">
-      <div><p class="eyebrow">11 designs · architecture · attack and defence · threat models · runbooks</p><h2 id="security-h">Security designs</h2></div>
+      <div><div class="sec-shield" aria-hidden="true"><canvas id="sec-shield" width="16" height="16"></canvas></div><p class="eyebrow">11 designs · architecture · attack and defence · threat models · runbooks</p><h2 id="security-h">Security designs</h2></div>
       <p>Reference designs of the kind a SOC or security team works from: how the pieces fit together, how an attack runs and where it gets stopped, what could go wrong in a system, and what to do when it does. They link to the detections and playbooks in the automation designs below.</p>
     </div>
     <nav class="subnav" aria-label="Security design types"><a href="#architecture">Architecture <span>4</span></a><a href="#attack-defence">Attack and defence <span>2</span></a><a href="#threat-models">Threat models <span>2</span></a><a href="#runbooks">Incident response runbooks <span>3</span></a></nav>
@@ -908,13 +1444,14 @@ Get-MgUser -All -Property DisplayName, UserPrincipalName, AccountEnabled, Assign
     </div>
   </section>
 
-  <footer class="foot"><span>Archi Rose Mani</span><span>Updated September 2026</span></footer>
+  <footer class="foot"><span>Archi Rose Mani</span><span>Updated October 2026</span></footer>
 </div>
 
 <script>
 (function(){
   var state={lane:"all",status:"all"};
-  var sheets=[].slice.call(document.querySelectorAll(".sheet"));
+  // only the automation designs are filtered and counted (the security designs above use the same card class)
+  var sheets=[].slice.call(document.querySelectorAll("#designs .sheet"));
   var countEl=document.getElementById("design-count");
   function apply(){
     var shown=0;
@@ -951,6 +1488,738 @@ Get-MgUser -All -Property DisplayName, UserPrincipalName, AccountEnabled, Assign
     });
   });
   apply();
+})();
+</script>
+<script>
+(function(){
+"use strict";
+var d=document,W=window,root=d.documentElement;
+if(!root.classList||!root.classList.contains("hud"))return;
+function $(s,c){return (c||d).querySelector(s)}
+function $$(s,c){return Array.prototype.slice.call((c||d).querySelectorAll(s))}
+function motion(){return root.getAttribute("data-motion")==="on"}
+var raf=W.requestAnimationFrame?function(f){return W.requestAnimationFrame(f)}:function(f){return setTimeout(function(){f(Date.now())},16)};
+function clock(){return (W.performance&&W.performance.now)?W.performance.now():Date.now()}
+var GLYPHS="ABCDEFGHJKLMNPRSTUVWXYZ0123456789#/<>=+";
+
+function giveUp(){
+  /* if anything in this script fails, show the plain page with no animation */
+  root.setAttribute("data-motion","off");root.classList.remove("booting");root.classList.add("ready");
+  var b=d.getElementById("hud-boot");if(b&&b.parentNode)b.parentNode.removeChild(b);
+  $$(".rv").forEach(function(el){el.classList.add("in")});
+  $$("[data-hud-t]").forEach(function(el){el.textContent=el.getAttribute("data-hud-t");el.removeAttribute("aria-label")});
+}
+
+try{
+
+/* ---- text effects. Each one always ends on the exact original text ---- */
+function original(el){if(!el.hasAttribute("data-hud-t"))el.setAttribute("data-hud-t",el.textContent);return el.getAttribute("data-hud-t")}
+var printing=false;
+function run(el,dur,render){
+  var txt=original(el);if(!txt||!motion()||printing)return false;
+  var id=(el._hud||0)+1,t0=0,last=-1e9;el._hud=id;el.setAttribute("aria-label",txt);el.textContent=render(txt,0);
+  function end(){el.textContent=txt;el.removeAttribute("aria-label");el.classList.remove("hud-caret");el.style.minHeight=""}
+  function step(t){
+    if(el._hud!==id)return;
+    if(!t0)t0=t;
+    var p=Math.min(1,(t-t0)/dur);
+    if(p>=1||!motion()||printing){end();return}
+    if(t-last>38){last=t;el.textContent=render(txt,p)}
+    raf(step);
+  }
+  raf(step);return true;
+}
+/* printing or saving as PDF: any text effect that is part-way through jumps straight to its real text */
+function settle(on){
+  printing=on;if(!on)return;
+  $$("[data-hud-t]").forEach(function(el){
+    if(!el.hasAttribute("aria-label"))return;
+    el._hud=(el._hud||0)+1;el.textContent=el.getAttribute("data-hud-t");el.removeAttribute("aria-label");el.classList.remove("hud-caret");el.style.minHeight="";
+  });
+}
+W.addEventListener("beforeprint",function(){settle(true)});
+W.addEventListener("afterprint",function(){settle(false)});
+try{var mqp=W.matchMedia("print"),onp=function(e){settle(!!e.matches)};if(mqp.addEventListener)mqp.addEventListener("change",onp);else if(mqp.addListener)mqp.addListener(onp)}catch(e){}
+function decode(el,dur){
+  run(el,dur,function(txt,p){
+    var n=Math.floor(p*txt.length),out=txt.slice(0,n),i,c;
+    for(i=n;i<txt.length;i++){c=txt.charAt(i);out+=(c===" "?" ":GLYPHS.charAt(Math.floor(Math.random()*GLYPHS.length)))}
+    return out;
+  });
+}
+function typeIn(el,dur){
+  if(!motion()||!original(el))return;
+  el.style.minHeight=el.offsetHeight+"px";el.classList.add("hud-caret");
+  if(!run(el,dur,function(txt,p){return txt.slice(0,Math.max(1,Math.floor(p*txt.length)))})){el.classList.remove("hud-caret");el.style.minHeight=""}
+}
+function countUp(el,dur){
+  var txt=original(el),parts=txt.split(/(\d[\d,]*)/),max=0,i;
+  for(i=1;i<parts.length;i+=2){max=Math.max(max,parseInt(parts[i].replace(/,/g,""),10)||0)}
+  if(max<10){decode(el,dur*0.6);return}
+  run(el,dur,function(t,p){
+    var e=1-Math.pow(1-p,3);
+    return parts.map(function(s,k){
+      if(k%2===0)return s;
+      var v=String(Math.round((parseInt(s.replace(/,/g,""),10)||0)*e));
+      return s.indexOf(",")>-1?v.replace(/\B(?=(\d{3})+(?!\d))/g,","):v;
+    }).join("");
+  });
+}
+
+/* ---- UK time readout ---- */
+var clockEl=$("#hud-clock"),fmt=null;
+try{fmt=new Intl.DateTimeFormat("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false,timeZone:"Europe/London"})}catch(e){}
+function tick(){if(!clockEl||!fmt||d.hidden)return;var s=fmt.format(new Date());clockEl.textContent=motion()?s:s.slice(0,5)}
+if(clockEl&&fmt){tick();setInterval(tick,1000)}else if(clockEl&&clockEl.parentNode){clockEl.parentNode.style.display="none"}
+
+/* ---- animations on/off switch ---- */
+var btn=$("#hud-motion");
+function paintBtn(){if(!btn)return;var on=motion();btn.setAttribute("aria-pressed",on?"true":"false");btn.textContent=on?"Animations on":"Animations off"}
+if(btn){
+  btn.hidden=false;paintBtn();
+  btn.addEventListener("click",function(){
+    var on=!motion();root.setAttribute("data-motion",on?"on":"off");
+    try{W.localStorage.setItem("hud-motion",on?"on":"off")}catch(e){}
+    paintBtn();tick();
+  });
+}
+
+/* ---- diagrams: line lengths for the draw-in, plus a moving "data" overlay on every arrow ---- */
+$$("svg.dg").forEach(function(svg){
+  var vb=(svg.getAttribute("viewBox")||"0 0 1000 400").split(/[\s,]+/),vw=parseFloat(vb[2])||1000;
+  $$("rect,text",svg).forEach(function(n){
+    var x=parseFloat(n.getAttribute("x"))||0;
+    if(n.tagName.toLowerCase()==="rect")x+=(parseFloat(n.getAttribute("width"))||0)/2;
+    n.style.setProperty("--x",(x/vw).toFixed(3));
+  });
+  $$("line.ln",svg).forEach(function(ln){
+    var x1=+ln.getAttribute("x1"),y1=+ln.getAttribute("y1"),x2=+ln.getAttribute("x2"),y2=+ln.getAttribute("y2");
+    var len=Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
+    ln.style.setProperty("--len",len.toFixed(1));
+    ln.style.setProperty("--x",(Math.min(x1,x2)/vw).toFixed(3));
+    if(ln.hasAttribute("marker-end")){
+      var f=ln.cloneNode(false);
+      f.removeAttribute("marker-end");f.removeAttribute("style");f.setAttribute("class","ln-flow");f.setAttribute("aria-hidden","true");
+      ln.parentNode.insertBefore(f,ln.nextSibling);
+    }
+  });
+});
+$$(".flow,.rb").forEach(function(g){$$(".node,.phase",g).forEach(function(n,i){n.style.setProperty("--i",i)})});
+
+/* ---- reveal on scroll ---- */
+var targets=$$(".sec-head,.subnav,.group-h,.controls,.sheet,.sheet>.board,.sheet>.detail,.sheet>.kd,.sheet .crow,.lab,.xrow,.edu>div,section.contact,footer.foot");
+function onShow(el){
+  el.classList.add("in");
+  if(!motion()||!el.classList.contains("rv"))return;
+  var h=null;
+  if(el.classList.contains("sec-head")||el.classList.contains("contact"))h=$("h2",el);
+  else if(el.classList.contains("group-h"))h=$("h3",el);
+  if(h)decode(h,700);
+}
+var vh=W.innerHeight||800;
+if("IntersectionObserver" in W){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){io.unobserve(e.target);onShow(e.target)}})},{rootMargin:"100000px 0px -7% 0px",threshold:0.01});
+  targets.forEach(function(el){
+    var r=el.getBoundingClientRect();
+    if(motion()&&r.top>vh*0.93&&(r.width||r.height)){el.classList.add("rv");io.observe(el)}else{el.classList.add("in")}
+  });
+  var live=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add("onscreen");else e.target.classList.remove("onscreen")})},{rootMargin:"120px 0px 120px 0px"});
+  $$(".hero,.sheet").forEach(function(el){live.observe(el)});
+}else{
+  targets.forEach(function(el){el.classList.add("in")});
+  $$(".hero,.sheet").forEach(function(el){el.classList.add("onscreen")});
+}
+
+/* ---- scroll progress, side rail and the nav highlight ---- */
+var bar=$("#hud-progress"),rail=$("#hud-rail"),pct=$("#hud-pct"),secs=$$("#security,#designs,#labs,#experience,#contact"),links={},cur=null,busy=false;
+$$(".topbar nav a").forEach(function(a){var h=a.getAttribute("href")||"";if(h.charAt(0)==="#")links[h.slice(1)]=a});
+function mark(id){
+  if(id===cur)return;cur=id;
+  for(var k in links){if(k===id)links[k].setAttribute("aria-current","true");else links[k].removeAttribute("aria-current")}
+}
+function onScroll(){
+  if(busy)return;busy=true;
+  raf(function(){
+    busy=false;vh=W.innerHeight||vh;
+    var max=root.scrollHeight-vh,y=W.pageYOffset||root.scrollTop||0,p=max>0?Math.min(1,Math.max(0,y/max)):0,id="",i;
+    if(bar)bar.style.transform="scaleX("+p.toFixed(4)+")";
+    if(rail)rail.style.setProperty("--p",p.toFixed(4));
+    if(pct)pct.textContent=Math.round(p*100)+"%";
+    for(i=0;i<secs.length;i++){if(secs[i].getBoundingClientRect().top<=vh*0.34)id=secs[i].id}
+    if(p>0.985&&secs.length)id=secs[secs.length-1].id;
+    mark(id);
+  });
+}
+var topbar=$(".topbar");
+function measure(){if(topbar)root.style.setProperty("--tb-h",topbar.offsetHeight+"px")}
+W.addEventListener("scroll",onScroll,{passive:true});
+W.addEventListener("resize",function(){measure();onScroll()});
+measure();onScroll();
+
+/* ---- pointer glow and a little parallax on the rings (mouse only) ---- */
+var glow=$("#hud-glow"),rings=$("#hud-rings"),mx=0,my=0,pend=false;
+if(W.matchMedia&&W.matchMedia("(hover:hover) and (pointer:fine)").matches){
+  W.addEventListener("pointermove",function(e){
+    mx=e.clientX;my=e.clientY;if(pend)return;pend=true;
+    raf(function(){
+      pend=false;if(!motion())return;
+      if(glow){glow.style.opacity="1";glow.style.transform="translate3d("+mx+"px,"+my+"px,0)"}
+      if(rings){rings.style.setProperty("--px",(-(mx/W.innerWidth-.5)*16).toFixed(1)+"px");rings.style.setProperty("--py",(-(my/vh-.5)*12).toFixed(1)+"px")}
+    });
+  },{passive:true});
+}
+
+/* ---- start: optional intro, then the hero sequence ---- */
+function hero(){
+  if(!motion())return;
+  var h1=$(".hero h1"),role=$(".hero .role");
+  if(h1)setTimeout(function(){decode(h1,950)},100);
+  if(role)setTimeout(function(){typeIn(role,950)},520);
+  $$(".fact b").forEach(function(b,i){setTimeout(function(){countUp(b,1300)},1150+i*110)});
+}
+function ready(){root.classList.remove("booting");root.classList.add("ready");hero()}
+function boot(){
+  var el=d.getElementById("hud-boot");
+  if(!el||!root.classList.contains("booting")){if(el&&el.parentNode)el.parentNode.removeChild(el);ready();return}
+  el.classList.add("on");
+  try{W.sessionStorage.setItem("hud-boot","1")}catch(e){}
+  var log=$("#hb-log"),num=$("#hb-pct"),arc=$("#hb-arc"),C=arc?parseFloat(arc.getAttribute("data-c")):0,done=false,timers=[],t0=clock(),D=1750;
+  function row(k,v){v=String(v);var n=Math.max(3,30-k.length-v.length),dots=new Array(n+1).join(".");return "> "+k+" "+dots+" "+v}
+  var lines=[row("profile","loaded"),row("security designs",$$("#security .sheet").length),row("automation designs",$$("#designs .sheet").length),row("home labs",$$("#labs .lab").length),row("status","ready")];
+  lines.forEach(function(s,i){timers.push(setTimeout(function(){if(log&&!done)log.textContent+=(i?"\n":"")+s},150+i*300))});
+  function finish(){
+    if(done)return;done=true;timers.forEach(function(t){clearTimeout(t)});
+    d.removeEventListener("keydown",onKey);el.classList.add("out");ready();
+    setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el)},600);
+  }
+  function onKey(e){var k=e.key||"";if(k==="Escape"||k==="Enter"||k===" "||k==="Spacebar"){e.preventDefault();finish()}}
+  (function step(){
+    if(done)return;
+    var p=Math.min(1,(clock()-t0)/D);
+    if(num)num.textContent=Math.round(p*100);
+    if(arc)arc.setAttribute("stroke-dashoffset",(C*(1-p)).toFixed(2));
+    if(p<1)raf(step);else timers.push(setTimeout(finish,260));
+  })();
+  el.addEventListener("click",finish);d.addEventListener("keydown",onKey);
+  el.addEventListener("wheel",function(e){e.preventDefault()},{passive:false});
+  el.addEventListener("touchmove",function(e){e.preventDefault()},{passive:false});
+  var skip=$("#hb-skip");if(skip){try{skip.focus({preventScroll:true})}catch(e){}}
+  setTimeout(finish,6000);
+}
+boot();
+
+}catch(err){giveUp();if(W.console&&console.error)console.error("HUD layer stopped:",err)}
+})();
+
+(function(){
+"use strict";
+var d=document,W=window,root=d.documentElement;
+if(!root.classList||!root.classList.contains("hud3d"))return;
+function motion(){return root.getAttribute("data-motion")==="on"}
+function isReady(){return root.classList.contains("ready")}
+var raf=W.requestAnimationFrame?function(f){return W.requestAnimationFrame(f)}:function(f){return setTimeout(function(){f(Date.now())},16)};
+function now(){return (W.performance&&W.performance.now)?W.performance.now():Date.now()}
+var fine=!!(W.matchMedia&&W.matchMedia("(hover:hover) and (pointer:fine)").matches);
+var aim=null,tb=d.querySelector(".hero .titleblock");
+
+try{
+
+/* ---------- the hologram globe: land dots on a sphere, drawn on a canvas ---------- */
+var cv=d.getElementById("holo-globe"),holo=d.getElementById("hud-holo"),pin=d.getElementById("holo-pin");
+var ctx=(cv&&cv.getContext)?cv.getContext("2d"):null;
+if(ctx&&holo&&W.atob&&W.Float32Array){(function(){
+  var RAD=Math.PI/180,NEQ=144,ROWS=72,STEP=180/ROWS,bin=W.atob("AAAAADwgAFxAABL4AMACY8AHAADM8AD/wP5kcDj/////m4Bz///x//WYg/////H/8IQB3///+wI/4wAAX///8ACB/zwAAX///+EAAP/vAAp/////EAAD//4ABf////+AAAB//1AAP/////8AAAA//+AAD/3f///QAAAD//wAADXHf///kAAAAf/8AAB4vu///+AAAAAP/+AAQcA/n//+RAAAAAf/8AAADgb////kgAAAAB//AAAA+AP////GAAAAAAf/AAAA/7n////4AAAAAAB+EAAAD//vv///4AAAAAAB+CAAAD//94///8AAAAAAAFwEAAAP//7+H//6AAAAAAAA4iAAAH//+/h+fgAAAAAAAAHIEAAA///z4Dw9AAAAAAAAAHgBAAB///3gHB8EAAAAAAAAAcAAAA///9ABgPBAAAAAAAAABFAAAP///2AMAYIAAAAAAAAAG/AAAf///wAgBAQAAAAAAAAAD/AAA+///AAgIAAAAAAAAAAAH/wAAAf/+AAAYYAAAAAAAAAAP/wAAAP/8AAAI6AAAAAAAAAAP/0AAAP/4AAAc6MAAAAAAAAAP//gAAP/wAAAEKDwAAAAAAAAf//wAAP/gAAAAADwAAAAAAAAf//AAAf/AAAAA0GgAAAAAAAB//4AAB/4AAAAAAAAAAAAAAAP/+AAAf/AAAAADkAAAAAAAAB//AAAP/MAAAAH2AAAAAAAAB/+AAAf8YAAAA/4AAAAAAAAH/wAAD/GAAAA//ggAAAAAAD/gAAB/iAAAA//gAAAAAAAH+AAAD8AAAAH/+AAAAAAAB/gAAA+AAAAD//AAAAAAAD+AAAB4AAAAP/4AAAAAAA9AAAA4AAAAOHwAAAAAAB8AAAAAAAAAAcAAAAAAB8AAAAAAAAAAACAAAAAMAAAAAAAAAAQCAAAAAYAAAAAAAAAABAAAAAYAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAgAAQEIAAAIAA9/8AACAf//+Amg///wf4///D8f/+fv/5////w"),tmp=[],i,j,k=0,latd,lat,cl,sl,n,lon;
+  for(i=0;i<ROWS;i++){
+    latd=90-STEP/2-STEP*i;n=Math.max(1,Math.round(NEQ*Math.cos(latd*Math.PI/180)));lat=latd*RAD;cl=Math.cos(lat);sl=Math.sin(lat);
+    for(j=0;j<n;j++,k++){
+      if(bin.charCodeAt(k>>3)&(128>>(k&7))){lon=(-180+(j+0.5)*360/n)*RAD;tmp.push(cl*Math.sin(lon),sl,cl*Math.cos(lon))}
+    }
+  }
+  var P=new Float32Array(tmp),N=P.length/3,SX=new Float32Array(N),SY=new Float32Array(N),SZ=new Float32Array(N);
+  /* graticule: 6 great circles through the poles and 5 parallels */
+  var G=[],SEG=60,a,u,m,c,s;
+  for(a=0;a<180;a+=30){m=new Float32Array((SEG+1)*3);for(i=0;i<=SEG;i++){u=i/SEG*2*Math.PI;m[i*3]=Math.cos(u)*Math.sin(a*RAD);m[i*3+1]=Math.sin(u);m[i*3+2]=Math.cos(u)*Math.cos(a*RAD)}G.push(m)}
+  for(a=-60;a<=60;a+=30){m=new Float32Array((SEG+1)*3);c=Math.cos(a*RAD);s=Math.sin(a*RAD);for(i=0;i<=SEG;i++){u=i/SEG*2*Math.PI;m[i*3]=c*Math.sin(u);m[i*3+1]=s;m[i*3+2]=c*Math.cos(u)}G.push(m)}
+  /* the marker: Dunfermline, Fife (the town the page already names) */
+  var PLAT=56.07*RAD,PLON=-3.45*RAD,mx3=Math.cos(PLAT)*Math.sin(PLON),my3=Math.sin(PLAT),mz3=Math.cos(PLAT)*Math.cos(PLON);
+  var lon0=PLON+0.5,pitch=0.44,w=0,SPIN=2*Math.PI/58,drag=false,pid=-1,lx=0,ly=0,lt=0,size=0,dpr=1,R=0,C=0,U=1,offL=0,offT=0,compact=false,label=true;
+  var running=false,seen=true,tPrev=0,born=0,hasBorn=false,aimX=0,aimY=0,curX=0,curY=0,pinOn=false,pinLeft=false;
+  var cyw=1,syw=0,cp=1,sp=0,edge=-2;
+
+  function fit(){
+    /* layout size, not the on-screen box: the stage is scaled down while it fades in */
+    var sz=Math.round(Math.min(cv.offsetWidth,cv.offsetHeight));
+    if(!sz)return false;
+    dpr=Math.min(2,W.devicePixelRatio||1);
+    if(sz!==size||cv.width!==Math.round(sz*dpr)){size=sz;cv.width=cv.height=Math.round(sz*dpr)}
+    R=size*0.42;C=size/2;U=R/60;offL=cv.offsetLeft;offT=cv.offsetTop;
+    compact=!!(W.matchMedia&&W.matchMedia("(max-width:900px)").matches);
+    label=!(W.matchMedia&&W.matchMedia("(max-width:1079px)").matches);
+    return true;
+  }
+  function dots(lo,hi,sz,style){
+    var i,z,h=sz/2;ctx.fillStyle=style;ctx.beginPath();
+    for(i=0;i<N;i++){z=SZ[i];if(z>=lo&&z<hi&&P[i*3+1]>=edge)ctx.rect(SX[i]-h,SY[i]-h,sz,sz)}
+    ctx.fill();
+  }
+  function lines(front,style){
+    var g,i,q,x,y,z,x1,z1,sx,sy,sz,px=0,py=0,pz=0;
+    ctx.strokeStyle=style;ctx.lineWidth=0.7*U;ctx.beginPath();
+    for(g=0;g<G.length;g++){q=G[g];
+      for(i=0;i<=SEG;i++){x=q[i*3];y=q[i*3+1];z=q[i*3+2];x1=x*cyw-z*syw;z1=x*syw+z*cyw;sx=C+R*x1;sy=C-R*(y*cp-z1*sp);sz=y*sp+z1*cp;
+        if(i>0&&((sz+pz>=0)===front)&&y>=edge){ctx.moveTo(px,py);ctx.lineTo(sx,sy)}
+        px=sx;py=sy;pz=sz}
+    }
+    ctx.stroke();
+  }
+  function orbit(ro,inc,ph,front,style){
+    var i,uu,ox,oz,x,y,x1,z1,z2,sx,sy,px=0,py=0,pz=0,ci=Math.cos(inc),si=Math.sin(inc),cph=Math.cos(ph),sph=Math.sin(ph),S=72;
+    ctx.strokeStyle=style;ctx.lineWidth=U;ctx.beginPath();
+    for(i=0;i<=S;i++){uu=i/S*2*Math.PI;ox=ro*Math.cos(uu);oz=ro*Math.sin(uu);x=ox*ci;y=ox*si;x1=x*cph-oz*sph;z1=x*sph+oz*cph;z2=y*sp+z1*cp;sx=C+R*x1;sy=C-R*(y*cp-z1*sp);
+      if(i>0&&((z2+pz>=0)===front)){ctx.moveTo(px,py);ctx.lineTo(sx,sy)}
+      px=sx;py=sy;pz=z2}
+    ctx.stroke();
+  }
+  function setPin(on,left){
+    if(!pin)return;
+    if(on!==pinOn){pinOn=on;if(on)pin.classList.add("on");else pin.classList.remove("on")}
+    if(left!==pinLeft){pinLeft=left;if(left)pin.classList.add("left");else pin.classList.remove("left")}
+  }
+  function draw(t){
+    if(!size&&!fit())return;
+    var live=motion(),yaw=lon0-curX*0.45,pt=pitch+curY*0.28,i,x,y,z,x1,z1,grow,scan,ph,xm,zm,ym,zz,px,py,su,ox,oz,sx1,sz1,sy2,sz2;
+    cyw=Math.cos(yaw);syw=Math.sin(yaw);cp=Math.cos(pt);sp=Math.sin(pt);
+    /* when it first appears the globe "prints" from the north pole down */
+    grow=hasBorn?Math.min(1,(t-born)/1600):1;edge=1-2.02*grow;
+    scan=grow<1?edge+0.03:1-2*((t/5200)%1);
+    ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,size,size);
+    for(i=0;i<N;i++){x=P[i*3];y=P[i*3+1];z=P[i*3+2];x1=x*cyw-z*syw;z1=x*syw+z*cyw;SX[i]=C+R*x1;SY[i]=C-R*(y*cp-z1*sp);SZ[i]=y*sp+z1*cp}
+    /* far side first, then the near side on top, so the globe reads as see-through */
+    lines(false,"rgba(70,212,255,.07)");
+    dots(-2,0,U,"rgba(70,212,255,.2)");
+    orbit(1.17,0.5,t*0.00011,false,"rgba(70,212,255,.16)");
+    orbit(1.09,-0.95,-t*0.00007,false,"rgba(70,212,255,.1)");
+    ctx.strokeStyle="rgba(70,212,255,.5)";ctx.lineWidth=U;ctx.beginPath();ctx.arc(C,C,R,0,2*Math.PI);ctx.stroke();
+    lines(true,"rgba(70,212,255,.2)");
+    dots(0,0.35,1.2*U,"rgba(70,212,255,.5)");
+    dots(0.35,0.7,1.5*U,"rgba(110,224,255,.82)");
+    dots(0.7,2,1.8*U,"rgba(170,238,255,1)");
+    /* scan band (only while animations are on: a frozen white stripe would look like a fault) */
+    if(live){ctx.fillStyle="#FFFFFF";ctx.beginPath();
+      for(i=0;i<N;i++){y=P[i*3+1];if(SZ[i]>0&&y>=edge&&Math.abs(y-scan)<0.05)ctx.rect(SX[i]-U,SY[i]-U,2*U,2*U)}
+      ctx.fill()}
+    orbit(1.17,0.5,t*0.00011,true,"rgba(70,212,255,.55)");
+    orbit(1.09,-0.95,-t*0.00007,true,"rgba(70,212,255,.32)");
+    /* a satellite on the first orbit */
+    su=t*0.0008;ph=t*0.00011;ox=1.17*Math.cos(su);oz=1.17*Math.sin(su);x=ox*Math.cos(0.5);y=ox*Math.sin(0.5);
+    sx1=x*Math.cos(ph)-oz*Math.sin(ph);sz1=x*Math.sin(ph)+oz*Math.cos(ph);sy2=y*cp-sz1*sp;sz2=y*sp+sz1*cp;
+    ctx.fillStyle=sz2>=0?"#EAFBFF":"rgba(70,212,255,.45)";ctx.beginPath();ctx.arc(C+R*sx1,C-R*sy2,(sz2>=0?2.3:1.5)*U,0,2*Math.PI);ctx.fill();
+    /* the marker and its label */
+    xm=mx3*cyw-mz3*syw;zm=mx3*syw+mz3*cyw;ym=my3*cp-zm*sp;zz=my3*sp+zm*cp;
+    if(zz>0&&my3>=edge){
+      px=C+R*xm;py=C-R*ym;ph=live?(t/1700)%1:0.42;
+      ctx.strokeStyle="rgba(255,177,74,"+(1-ph).toFixed(3)+")";ctx.lineWidth=1.3*U;ctx.beginPath();ctx.arc(px,py,(2.5+ph*11)*U,0,2*Math.PI);ctx.stroke();
+      ctx.fillStyle="#FFB14A";ctx.beginPath();ctx.arc(px,py,2.5*U,0,2*Math.PI);ctx.fill();
+      if(pin&&label)pin.style.transform="translate3d("+(offL+px).toFixed(1)+"px,"+(offT+py).toFixed(1)+"px,0)";
+    }
+    setPin(zz>0.15&&my3>=edge&&label,xm>0.2);
+  }
+  function want(){return motion()&&seen&&!d.hidden&&isReady()}
+  /* one clean still picture whenever the loop stops. With animations off the globe is always shown complete. */
+  function still(){tPrev=0;if(!motion()){hasBorn=true;born=-1e9}if(fit())draw(now())}
+  function frame(t){
+    running=false;
+    /* a slow spin only needs about 30 pictures a second, which halves the work for phones and laptops on battery.
+       Full speed while it is being dragged, is still coasting after a flick, or is leaning towards the mouse. */
+    var dt,quick=drag||Math.abs(w+SPIN)>0.3||Math.abs(aimX-curX)+Math.abs(aimY-curY)>0.02;
+    if(quick||!tPrev||t-tPrev>=31){
+      dt=tPrev?Math.min(0.08,(t-tPrev)/1000):0;tPrev=t;
+      if(!hasBorn){hasBorn=true;born=t}
+      if(!drag){w+=(-SPIN-w)*Math.min(1,dt*2.4);lon0+=w*dt}
+      curX+=(aimX-curX)*Math.min(1,dt*6);curY+=(aimY-curY)*Math.min(1,dt*6);
+      draw(t);
+    }
+    if(want()||drag){running=true;raf(frame)}else still();
+  }
+  function kick(){
+    if(running)return;
+    if(want()||drag){running=true;raf(frame)}
+    else if(isReady()||!motion())still();
+  }
+  aim=function(x,y){aimX=x;aimY=y;if(want())kick()};
+
+  /* drag to spin (mouse, or a sideways swipe on a touch screen) */
+  cv.addEventListener("pointerdown",function(e){
+    if(compact||(e.pointerType==="mouse"&&e.button!==0))return;
+    /* one pointer at a time: the newest one takes over, so a second finger cannot make it jump */
+    drag=true;pid=e.pointerId;lx=e.clientX;ly=e.clientY;lt=now();w=0;
+    try{cv.setPointerCapture(e.pointerId)}catch(err){}
+    kick();
+  });
+  cv.addEventListener("pointermove",function(e){
+    if(!drag||!R||e.pointerId!==pid)return;
+    if(e.pointerType==="mouse"&&e.buttons===0){endDrag();return}
+    var dx=e.clientX-lx,dy=e.clientY-ly,tn=now(),dtm=Math.max(8,tn-lt)/1000;lx=e.clientX;ly=e.clientY;lt=tn;
+    lon0-=dx/R;pitch=Math.max(-0.35,Math.min(1.15,pitch+dy/R*0.8));
+    /* remember how fast it was being turned, so a flick keeps it spinning for a moment */
+    w=Math.max(-5,Math.min(5,w*0.5-(dx/R)/dtm*0.5));
+  });
+  function endDrag(e){
+    if(!drag||(e&&e.pointerId!==undefined&&e.pointerId!==pid))return;
+    drag=false;if(now()-lt>90||!motion())w=0;
+    kick();
+  }
+  cv.addEventListener("pointerup",endDrag);cv.addEventListener("pointercancel",endDrag);cv.addEventListener("lostpointercapture",endDrag);
+  W.addEventListener("blur",function(){endDrag()});
+
+  if("IntersectionObserver" in W){new IntersectionObserver(function(es){seen=es[es.length-1].isIntersecting;kick()},{rootMargin:"60px 0px 60px 0px"}).observe(holo)}
+  if("MutationObserver" in W){new MutationObserver(function(){if(!motion()&&tb)tb.style.transform="";kick()}).observe(root,{attributes:true,attributeFilter:["data-motion","class"]})}
+  d.addEventListener("visibilitychange",function(){kick()});
+  W.addEventListener("resize",function(){size=0;kick()});
+  kick();
+})()}
+
+/* ---------- the contact panel turns to face the mouse, and the globe leans with it ---------- */
+var pend=false,mx=0,my=0,inside=false;
+function face(){
+  pend=false;
+  if(!inside||!motion()||!isReady()){if(tb)tb.style.transform="";return}
+  var vw=W.innerWidth||1,vh=W.innerHeight||1,op,pr,bl,bt,bw,bh,nx,ny,k;
+  if(aim)aim((mx/vw-0.5)*2,(my/vh-0.5)*2);
+  if(!tb)return;
+  /* the panel's flat box (from layout, so the tilt itself does not move it) */
+  op=tb.offsetParent;if(!op){tb.style.transform="";return}
+  pr=op.getBoundingClientRect();bw=tb.offsetWidth;bh=tb.offsetHeight;bl=pr.left+op.clientLeft+tb.offsetLeft;bt=pr.top+op.clientTop+tb.offsetTop;
+  /* flat again when the pointer is on the panel, so its text is sharp to read and click */
+  if(bt+bh<0||bt>vh||(mx>=bl&&mx<=bl+bw&&my>=bt&&my<=bt+bh)){tb.style.transform="";return}
+  nx=Math.max(-1,Math.min(1,(mx-(bl+bw/2))/(vw*0.5)));
+  ny=Math.max(-1,Math.min(1,(my-(bt+bh/2))/(vh*0.5)));
+  k=Math.min(1,440/Math.max(1,bw));
+  tb.style.transform="perspective(900px) rotateX("+(-ny*6*k).toFixed(2)+"deg) rotateY("+(nx*8*k).toFixed(2)+"deg)";
+}
+if(fine){
+  W.addEventListener("pointermove",function(e){mx=e.clientX;my=e.clientY;inside=true;if(!pend){pend=true;raf(face)}},{passive:true});
+  root.addEventListener("pointerleave",function(){inside=false;if(tb)tb.style.transform="";if(aim)aim(0,0)});
+}
+
+}catch(err){if(W.console&&console.error)console.error("3D layer stopped:",err)}
+})();
+
+(function(){
+"use strict";
+var d=document,W=window,root=d.documentElement;
+if(!root.classList||!root.classList.contains("x3d"))return;
+function motion(){return root.getAttribute("data-motion")==="on"}
+function isReady(){return root.classList.contains("ready")}
+var raf=W.requestAnimationFrame?function(f){return W.requestAnimationFrame(f)}:function(f){return setTimeout(function(){f(Date.now())},16)};
+function now(){return (W.performance&&W.performance.now)?W.performance.now():Date.now()}
+function mq(q){return !!(W.matchMedia&&W.matchMedia(q).matches)}
+function $$(s){return Array.prototype.slice.call(d.querySelectorAll(s))}
+function clamp(v,a,b){return v<a?a:(v>b?b:v)}
+/* where an element sits in the page before any transform (so tilting or moving it never feeds back) */
+function docTop(el){var t=0;while(el){t+=el.offsetTop||0;el=el.offsetParent}return t}
+function docLeft(el){var t=0;while(el){t+=el.offsetLeft||0;el=el.offsetParent}return t}
+function scrollY(){return W.pageYOffset||root.scrollTop||0}
+var fine=mq("(hover:hover) and (pointer:fine)");
+
+try{
+
+/* ---------- 1 and 2: depth on scroll, and cards that tilt towards the mouse ---------- */
+var grid=d.querySelector(".hud-grid i"),holo=d.getElementById("hud-holo"),hero=d.querySelector(".hero"),
+    nameBox=d.querySelector(".hero>div:not(.hud-holo)");
+var items=[];
+function item(el,panel,depth){var it={el:el,panel:panel,depth:depth,top:0,left:0,h:0,w:0,on:false,s:"",o:""};el._x3d=it;items.push(it)}
+$$(".sheet,section.contact").forEach(function(el){item(el,true,0)});
+$$(".sec-head").forEach(function(el){item(el,false,10)});
+$$(".group-h").forEach(function(el){item(el,false,7)});
+var h1=d.querySelector(".hero h1"),nm={top:0,left:0,w:0,h:0};
+var tilt={el:null,x:0,y:0,timer:0},vh=W.innerHeight||800,maxY=0,compact=mq("(max-width:900px)"),queued=false,active=false,heroOn=false,heroH=600;
+
+/* positions are read here only (on load, resize, and when the page changes size), never while animating,
+   so the browser is not made to work out the layout again on every frame or mouse move */
+function measure(){
+  vh=W.innerHeight||vh;compact=mq("(max-width:900px)");heroH=(hero&&hero.offsetHeight)||600;
+  for(var i=0,it;i<items.length;i++){it=items[i];it.top=docTop(it.el);it.left=docLeft(it.el);it.h=it.el.offsetHeight;it.w=it.el.offsetWidth}
+  if(h1){nm.top=docTop(h1);nm.left=docLeft(h1);nm.w=h1.offsetWidth;nm.h=h1.offsetHeight}
+  maxY=Math.max(0,(root.scrollHeight||0)-vh);
+}
+function reset(it){it.el.style.transform="";it.el.style.translate="";it.el.style.transformOrigin="";it.on=false;it.s="";it.o=""}
+function clearAll(){
+  for(var i=0;i<items.length;i++)if(items[i].on)reset(items[i]);
+  if(grid)grid.style.transform="";
+  if(holo){holo.style.translate="";holo.style.scale=""}
+  if(nameBox)nameBox.style.translate="";
+  heroOn=false;
+  if(tilt.el)untilt();
+}
+function paint(){
+  queued=false;
+  if(!motion()||!isReady()){if(active){active=false;clearAll()}return}
+  active=true;
+  var y=scrollY(),A=compact?2.4:3.2,zone=Math.min(vh*0.3,320),atEnd=y>=maxY-2,atTop=y<=0,i,it,p,q,qb,qt,rx,ry,s,str,o,vt,vb,tl;
+  if(grid)grid.style.transform="translate3d(0,"+(-((y*0.12)%44)).toFixed(2)+"px,0)";
+  if(hero){
+    var hh=heroH;
+    if(y<hh+300){
+      /* the hologram sinks behind the contact block on wide screens; on phones it lifts away above the name */
+      var k=Math.min(1,y/Math.max(320,hh));
+      if(holo){holo.style.translate="0 "+(compact?-y*0.22:y*0.3).toFixed(1)+"px";holo.style.scale=(1-k*0.12).toFixed(4)}
+      if(nameBox)nameBox.style.translate="0 "+Math.round(-y*0.1)+"px";
+      heroOn=true;
+    }else if(heroOn){
+      heroOn=false;
+    }
+  }
+  for(i=0;i<items.length;i++){
+    it=items[i];
+    if(!it.h||it.top+it.h<y-200||it.top>y+vh+200){if(it.on)reset(it);continue}
+    /* -1 when the element is leaving at the top, 0 in the middle of the screen, 1 when it is arriving at the bottom */
+    p=clamp(((it.top+it.h/2)-(y+vh/2))/((vh+it.h)/2),-1,1);
+    if(it.panel){
+      /* a card leans back while its top edge is in the lowest 30% of the screen (coming in) and leans forward while
+         its bottom edge is in the highest 30% (going out). Anywhere else, and whenever it fills the screen, it is
+         completely flat, so the text you are reading is sharp. At the very top or bottom of the page nothing more
+         can come in or go out, so cards there settle flat too. */
+      qb=atEnd?0:clamp((it.top-(y+vh-zone))/zone,0,1);
+      qt=atTop?0:clamp(((y+zone)-(it.top+it.h))/zone,0,1);
+      q=qt>qb?qt:qb;q=q*q*(3-2*q);
+      tl=tilt.el===it.el&&(tilt.x||tilt.y);
+      if(!q&&!tl){str=""}
+      else{
+        rx=(qt>qb?q:-q)*A;ry=0;s=1-q*0.03;
+        if(tl){rx+=tilt.x;ry=tilt.y}
+        /* turn about the middle of the part of the card that is on screen, so a tall card stays flat where you read it */
+        vt=Math.max(it.top,y);vb=Math.min(it.top+it.h,y+vh);
+        o="50% "+(vb>vt?((vt+vb)/2-it.top):it.h/2).toFixed(0)+"px";
+        if(o!==it.o){it.el.style.transformOrigin=o;it.o=o}
+        str="perspective(1600px) rotateX("+rx.toFixed(2)+"deg) rotateY("+ry.toFixed(2)+"deg) scale("+s.toFixed(4)+")";
+      }
+      if(str!==it.s){it.el.style.transform=str;it.s=str}
+    }else{
+      /* headings travel a little further than the page, so they read as nearer (whole pixels, so the text stays sharp) */
+      str="0 "+Math.round(p*it.depth)+"px";
+      if(str!==it.s){it.el.style.translate=str;it.s=str}
+    }
+    it.on=true;
+  }
+}
+function queue(){if(!queued){queued=true;raf(paint)}}
+
+/* the mouse: the card under it turns towards it, and goes flat again over code, tables, links and buttons,
+   after a pause, or when you scroll */
+var mx=0,my=0,over=null,flatHere=false,mpend=false;
+function sheenOf(el){
+  if(!el._sheen){var s=d.createElement("i");s.className="tilt-sheen";s.setAttribute("aria-hidden","true");s.appendChild(d.createElement("b"));el.appendChild(s);el._sheen=s}
+  return el._sheen;
+}
+function untilt(){
+  var el=tilt.el;if(!el)return;
+  clearTimeout(tilt.timer);tilt.el=null;tilt.x=tilt.y=0;
+  el.classList.remove("tilting");el.classList.remove("sheen-on");
+  queue();
+}
+function settle(){if(tilt.el){tilt.x=tilt.y=0;tilt.el.classList.remove("tilting");tilt.el.classList.remove("sheen-on");queue()}}
+function onMove(){
+  mpend=false;
+  if(!motion()||!isReady()){if(tilt.el)untilt();return}
+  var card=over;
+  if(card!==tilt.el){if(tilt.el)untilt();if(card){tilt.el=card}}
+  if(!card)return;
+  var it=card._x3d;if(!it)return;
+  var top=it.top-scrollY(),left=it.left-(W.pageXOffset||0),w=it.w||1,h=it.h||1;
+  var vt=Math.max(top,0),vb=Math.min(top+h,vh),cy=(vt+vb)/2,half=Math.max(40,(vb-vt)/2);
+  var nx=clamp((mx-(left+w/2))/(w/2),-1,1),ny=clamp((my-cy)/half,-1,1),k=clamp(760/w,0.55,1);
+  if(flatHere){tilt.x=0;tilt.y=0;card.classList.remove("sheen-on")}
+  else{tilt.x=-ny*4*k;tilt.y=nx*6*k;card.classList.add("sheen-on")}
+  card.classList.add("tilting");
+  var b=sheenOf(card).firstChild;b.style.transform="translate3d("+(mx-left).toFixed(0)+"px,"+(my-top).toFixed(0)+"px,0)";
+  clearTimeout(tilt.timer);tilt.timer=setTimeout(settle,1300);
+  queue();
+}
+
+/* ---------- 3: the name turns a little towards the mouse, and its depth turns with it ---------- */
+var inside=false,npend=false,nmx=0,nmy=0,nRx=0,nRy=0,nMoved=false;
+function nameRest(){
+  if(!h1||!nMoved)return;
+  nMoved=false;nRx=nRy=0;
+  h1.style.setProperty("--nrx","0deg");h1.style.setProperty("--nry","0deg");
+  h1.style.removeProperty("--ex");h1.style.removeProperty("--ey");
+}
+function nameFace(){
+  npend=false;
+  if(!h1)return;
+  if(!inside||!motion()||!isReady()){nameRest();return}
+  var top=nm.top-scrollY(),left=nm.left-(W.pageXOffset||0),vw=W.innerWidth||1;
+  if(top+nm.h<0||top>vh){nameRest();return}
+  var nx=clamp((nmx-(left+nm.w/2))/(vw*0.5),-1,1),ny=clamp((nmy-(top+nm.h/2))/(vh*0.6),-1,1);
+  /* steps of 0.05 degrees: small mouse movements that would not show do not repaint the name */
+  var ry=Math.round(nx*200)/20,rx=Math.round(-ny*100)/20,R=Math.PI/180;
+  if(nMoved&&ry===nRy&&rx===nRx)return;
+  nMoved=true;nRy=ry;nRx=rx;
+  h1.style.setProperty("--nry",ry.toFixed(2)+"deg");h1.style.setProperty("--nrx",rx.toFixed(2)+"deg");
+  h1.style.setProperty("--ex",(0.42-2.6*Math.sin(ry*R)).toFixed(3));h1.style.setProperty("--ey",(0.9+2.6*Math.sin(rx*R)).toFixed(3));
+}
+
+if(fine){
+  W.addEventListener("pointermove",function(e){
+    /* mouse only: a finger or pen on a touch laptop scrolls the page and should not tilt anything */
+    if(e.pointerType&&e.pointerType!=="mouse")return;
+    mx=nmx=e.clientX;my=nmy=e.clientY;inside=true;
+    var t=e.target&&e.target.closest?e.target:null;
+    over=t?t.closest(".sheet"):null;
+    /* flat over code, tables, links and buttons, and while a button is held down (selecting text), so they are easy to use */
+    flatHere=!!(e.buttons||(t&&t.closest("pre,code,.codewrap,.tablewrap,table,summary,a,input,textarea,select,button,label")));
+    if(!mpend){mpend=true;raf(onMove)}
+    if(!npend){npend=true;raf(nameFace)}
+  },{passive:true});
+  root.addEventListener("pointerleave",function(){inside=false;over=null;if(tilt.el)untilt();nameRest()});
+  W.addEventListener("blur",function(){inside=false;if(tilt.el)untilt();nameRest()});
+}
+W.addEventListener("scroll",function(){if(tilt.el)settle();queue()},{passive:true});
+W.addEventListener("resize",function(){measure();queue()});
+if("ResizeObserver" in W){var wrap=d.querySelector(".wrap");if(wrap)new ResizeObserver(function(){measure();queue()}).observe(wrap)}
+else{
+  /* older browsers: measure again after code is opened or closed, or a filter button is pressed */
+  d.addEventListener("toggle",function(){measure();queue()},true);
+  d.addEventListener("click",function(){raf(function(){measure();queue()})},true);
+}
+if("MutationObserver" in W){new MutationObserver(function(){if(!motion()){clearAll();nameRest()}queue()}).observe(root,{attributes:true,attributeFilter:["data-motion","class"]})}
+measure();queue();
+
+/* ---------- 4: the shield and padlock, a wireframe drawn on a canvas ---------- */
+var cv=d.getElementById("sec-shield"),ctx=(cv&&cv.getContext)?cv.getContext("2d"):null,head=cv?cv.closest(".sec-head"):null;
+if(ctx){(function(){
+  /* outline of the shield (y up, height 2): a peak at the top, straight sides, a curve down to the point */
+  function cub(p0,p1,p2,p3,t){var u=1-t;return [u*u*u*p0[0]+3*u*u*t*p1[0]+3*u*t*t*p2[0]+t*t*t*p3[0],u*u*u*p0[1]+3*u*u*t*p1[1]+3*u*t*t*p2[1]+t*t*t*p3[1]]}
+  var right=[],i,t;
+  for(i=0;i<=6;i++){t=i/6;right.push([0.82*t,1-0.36*t])}
+  for(i=1;i<=5;i++){t=i/5;right.push([0.82,0.64-0.64*t])}
+  for(i=1;i<=14;i++){right.push(cub([0.82,0],[0.82,-0.505],[0.47,-0.885],[0,-1],i/14))}
+  var ring=right.slice(0);
+  for(i=right.length-2;i>=1;i--)ring.push([-right[i][0],right[i][1]]);
+  var ZF=0.11,ZI=0.125;
+  function poly(pts,z,sc,dy){return pts.map(function(q){return [q[0]*sc,(q[1]-dy)*sc+dy,z]})}
+  var front=poly(ring,ZF,1,0),back=poly(ring,-ZF,1,0),inner=poly(ring,ZI,0.8,0.05);
+  /* the padlock sits just in front of the shield */
+  function rect(z){return [[-0.3,-0.06,z],[0.3,-0.06,z],[0.3,-0.52,z],[-0.3,-0.52,z],[-0.3,-0.06,z]]}
+  var lockF=rect(0.36),lockB=rect(0.2);
+  function arc(r,z){var a=[],k;for(k=0;k<=16;k++){var u=Math.PI*k/16;a.push([r*Math.cos(u),-0.06+r*Math.sin(u)*1.15,z])}return a}
+  var shOut=arc(0.21,0.28),shIn=arc(0.13,0.28);
+  var scan=[[0,0,ZF+0.004],[0,0,ZF+0.004]];
+  var key=[];for(i=0;i<=16;i++){t=i/16*2*Math.PI;key.push([0.055*Math.cos(t),-0.25+0.055*Math.sin(t),0.365])}
+  var slot=[[0,-0.3,0.365],[0,-0.42,0.365]];
+  /* half-width of the shield at height y, for the scan line */
+  function halfW(y){for(var j=1;j<right.length;j++){var a=right[j-1],b=right[j];if(y<=a[1]&&y>=b[1]){var f=(a[1]-b[1])?(a[1]-y)/(a[1]-b[1]):0;return a[0]+(b[0]-a[0])*f}}return 0}
+
+  /* the projector rings under the shield */
+  var ring2=[],ring3=[];
+  for(i=0;i<36;i++){t=i/36*2*Math.PI;ring2.push([0.76*Math.cos(t),-1.12,0.76*Math.sin(t)]);ring3.push([0.5*Math.cos(t),-1.12,0.5*Math.sin(t)])}
+  var size=0,dpr=1,S=0,C=0,yaw=-0.55,spin=0.42,pitch=0.16,hover=false,turning=false,seen=false,running=false,tPrev=0,due=0,flash=0;
+  var cyw=1,syw=0,cp=1,sp=0,bob=0;
+  /* scale and centre: worked out so the whole drawing, ring included, stays inside the canvas at every angle,
+     about 5% in from each edge */
+  function fit(){
+    var sz=Math.round(Math.min(cv.offsetWidth,cv.offsetHeight));if(!sz)return false;
+    dpr=Math.min(2,W.devicePixelRatio||1);
+    if(sz!==size||cv.width!==Math.round(sz*dpr)){size=sz;cv.width=cv.height=Math.round(sz*dpr)}
+    S=size*0.345;C=size/2;return true;
+  }
+  /* the projected point goes into a small typed array (no new objects every frame, so no garbage to collect) */
+  var Q=W.Float64Array?new Float64Array(3):[0,0,0];
+  function proj(q){
+    var x=q[0],y=q[1]+bob,z=q[2],x1=x*cyw+z*syw,z1=-x*syw+z*cyw,y2=y*cp-z1*sp,z2=y*sp+z1*cp,f=3.4/(3.4-z2);
+    Q[0]=C+x1*f*S;Q[1]=C-0.21*S-y2*f*S;Q[2]=z2;
+  }
+  /* draws the near (front=true) or far (front=false) segments of a line; a run of segments is one moveTo and then lineTos */
+  function path(pts,closed,front,style,lw){
+    var j,ax,ay,az,bx,by,bz,n=pts.length,run=false;
+    ctx.strokeStyle=style;ctx.lineWidth=lw;ctx.beginPath();
+    proj(pts[0]);ax=Q[0];ay=Q[1];az=Q[2];
+    for(j=1;j<=n;j++){
+      if(j===n){if(!closed)break;proj(pts[0])}else proj(pts[j]);
+      bx=Q[0];by=Q[1];bz=Q[2];
+      if((az+bz>=0)===front){if(!run){ctx.moveTo(ax,ay);run=true}ctx.lineTo(bx,by)}else run=false;
+      ax=bx;ay=by;az=bz;
+    }
+    ctx.stroke();
+  }
+  function edges(a,b,step,want,style){
+    var j,ax,ay,az;ctx.strokeStyle=style;ctx.lineWidth=0.8;ctx.beginPath();
+    for(j=0;j<a.length;j+=step){proj(a[j]);ax=Q[0];ay=Q[1];az=Q[2];proj(b[j]);if((az+Q[2]>=0)===want){ctx.moveTo(ax,ay);ctx.lineTo(Q[0],Q[1])}}
+    ctx.stroke();
+  }
+  function draw(t){
+    if(!size&&!fit())return;
+    var live=motion();
+    cyw=Math.cos(yaw);syw=Math.sin(yaw);cp=Math.cos(pitch);sp=Math.sin(pitch);bob=live?0.035*Math.sin(t*0.0013):0;
+    ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,size,size);
+    ctx.lineCap="round";ctx.lineJoin="round";
+    /* the projector rings underneath */
+    var u=Math.max(0.8,size/100);
+    path(ring2,true,false,"rgba(70,212,255,.18)",u);path(ring3,true,false,"rgba(70,212,255,.12)",u);
+    path(ring2,true,true,"rgba(70,212,255,.5)",1.1*u);path(ring3,true,true,"rgba(70,212,255,.28)",u);
+    /* far side first, near side on top */
+    path(back,true,false,"rgba(70,212,255,.2)",u);path(front,true,false,"rgba(70,212,255,.2)",u);
+    edges(front,back,3,false,"rgba(70,212,255,.14)");
+    path(lockB,true,false,"rgba(255,177,74,.25)",u);path(lockF,true,false,"rgba(255,177,74,.3)",u);
+    path(back,true,true,"rgba(70,212,255,.35)",u);
+    edges(front,back,3,true,"rgba(70,212,255,.3)");
+    path(inner,true,true,"rgba(70,212,255,.5)",u);path(inner,true,false,"rgba(70,212,255,.16)",u);
+    path(front,true,true,"rgba(70,212,255,.28)",4.2*u);
+    path(front,true,true,"rgba(170,238,255,.98)",1.5*u);
+    /* the padlock */
+    path(shOut,false,true,"rgba(255,177,74,.95)",1.4*u);path(shIn,false,true,"rgba(255,177,74,.7)",1.1*u);
+    path(shOut,false,false,"rgba(255,177,74,.3)",u);path(shIn,false,false,"rgba(255,177,74,.22)",u);
+    edges(lockF,lockB,1,true,"rgba(255,177,74,.55)");edges(lockF,lockB,1,false,"rgba(255,177,74,.2)");
+    path(lockB,true,true,"rgba(255,177,74,.45)",u);
+    path(lockF,true,true,"rgba(255,177,74,.28)",4*u);
+    path(lockF,true,true,"rgba(255,206,140,.98)",1.5*u);
+    path(key,true,true,"rgba(255,244,225,.95)",1.2*u);path(slot,false,true,"rgba(255,244,225,.95)",1.6*u);
+    /* a scan line sweeps down the shield; brighter for a moment after the mouse arrives */
+    if(live){
+      var sy=0.98-((t/3200)%1)*1.96,hw=halfW(sy);
+      if(hw>0.02){scan[0][0]=-hw*0.98;scan[1][0]=hw*0.98;scan[0][1]=scan[1][1]=sy;
+        ctx.save();ctx.globalAlpha=0.55+0.45*flash;path(scan,false,true,"rgba(220,248,255,.9)",(1.2+1.4*flash)*u);ctx.restore()}
+    }
+  }
+  function want(){return motion()&&seen&&!d.hidden&&isReady()}
+  /* about 30 pictures a second whatever the screen's refresh rate (a new one is due every 33 ms);
+     every frame only while it swings round to face the mouse */
+  function frame(t){
+    running=false;
+    var quick=turning||Math.abs(spin)>0.5;
+    if(quick||!tPrev||t>=due-6){
+      var dt=tPrev?Math.min(0.08,(t-tPrev)/1000):0;tPrev=t;
+      due=(due&&t-due<50)?due+33.3:t+33.3;
+      if(hover){
+        /* turn to face the front, then hold */
+        var target=Math.round(yaw/(2*Math.PI))*2*Math.PI;yaw+=(target-yaw)*Math.min(1,dt*4);spin=0;
+        turning=Math.abs(target-yaw)>0.01;
+      }else{spin+=(0.42-spin)*Math.min(1,dt*1.5);yaw+=spin*dt;turning=false}
+      flash=Math.max(0,flash-dt*1.4);
+      pitch=0.16+0.04*Math.sin(t*0.0009);
+      draw(t);
+    }
+    if(want()){running=true;raf(frame)}else{still()}
+  }
+  function still(){tPrev=0;due=0;if(!motion()){yaw=-0.55;pitch=0.16}if(fit())draw(now())}
+  function kick(){
+    if(running)return;
+    if(want()){running=true;raf(frame)}else if(isReady()||!motion())still();
+  }
+  if("IntersectionObserver" in W){new IntersectionObserver(function(es){seen=es[es.length-1].isIntersecting;kick()},{rootMargin:"0px"}).observe(cv)}
+  else{seen=true}
+  if("MutationObserver" in W){new MutationObserver(function(){kick()}).observe(root,{attributes:true,attributeFilter:["data-motion","class"]})}
+  d.addEventListener("visibilitychange",kick);
+  W.addEventListener("resize",function(){size=0;kick()});
+  if(fine&&head){
+    head.addEventListener("pointerenter",function(e){if(!motion()||(e.pointerType&&e.pointerType!=="mouse"))return;hover=true;turning=true;flash=1;kick()});
+    head.addEventListener("pointerleave",function(){hover=false;turning=false;kick()});
+  }
+  kick();
+})()}
+
+}catch(err){if(W.console&&console.error)console.error("3D extras stopped:",err)}
 })();
 </script>
 </body>
