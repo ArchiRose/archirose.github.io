@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="hud hud3d x3d">
+<html lang="en" class="hud hud3d x3d cine">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -309,7 +309,7 @@ table.matrix td{font-size:12.5px}
   .crow{grid-template-columns:26px minmax(0,1fr);grid-template-areas:"n tac" ". atk" ". prev" ". det";gap:8px 12px}
 }
 </style>
-<meta name="theme-color" content="#03080E">
+<meta name="theme-color" content="#040C0D">
 <script>
 (function(){var h=document.documentElement,m=null,seen=null;
 try{m=window.localStorage.getItem("hud-motion")}catch(e){}
@@ -334,38 +334,38 @@ html.hud section.contact{padding-top:0}
 /* everything visual in the HUD layer is screen-only, so a printed copy is the plain light page */
 @media screen{
 html.hud:root{color-scheme:dark;
-  --paper:#03080E;--raised:#081522;--ink:#E4F4FC;--ink-soft:#B5CDDB;--muted:#7C99AD;
-  --line:#11314A;--line-strong:#2A6585;--grid:rgba(70,212,255,.07);
-  --accent:#46D4FF;--accent-soft:rgba(70,212,255,.10);
+  --paper:#040C0D;--raised:#0A1617;--ink:#F3EEE6;--ink-soft:#CDC6BC;--muted:#93A7A3;
+  --line:#12302F;--line-strong:#2C6966;--grid:rgba(52,201,208,.07);
+  --accent:#34C9D0;--accent-soft:rgba(52,201,208,.10);
   --amber:#FFB14A;--amber-soft:rgba(255,177,74,.11);--green:#3FE0A0;--green-soft:rgba(63,224,160,.10);
   --red:#FF7676;--red-soft:rgba(255,118,118,.11);
-  --code-bg:#02070C;--code-ink:#CFE8F6;--code-c:#7C99AD;
-  --hi:#F2FBFF;--edge:rgba(70,212,255,.26);--edge-hi:rgba(70,212,255,.52);
-  --panel:rgba(8,21,34,.86);--panel-2:rgba(5,14,24,.86);--glow:rgba(70,212,255,.45);
+  --code-bg:#030909;--code-ink:#D9EEEA;--code-c:#93A7A3;
+  --hi:#FFF6EA;--edge:rgba(52,201,208,.26);--edge-hi:rgba(52,201,208,.52);
+  --panel:rgba(9,22,23,.86);--panel-2:rgba(6,14,15,.86);--glow:rgba(52,201,208,.45);
   --bleed:clamp(20px,calc((100vw - 1140px)/2),140px)}
-html.hud{scrollbar-color:#17475F #03080E}
+html.hud{scrollbar-color:#1A4F4D #040C0D}
 html.hud[data-motion="on"]{scroll-behavior:smooth}
-html.hud body{background:#03080E}
-html.hud ::selection{background:rgba(70,212,255,.3);color:#fff}
+html.hud body{background:#040C0D}
+html.hud ::selection{background:rgba(52,201,208,.3);color:#fff}
 html.hud .wrap{position:relative;z-index:1}
 html.hud a{transition:color .2s,text-shadow .2s}
 html.hud a:hover{text-shadow:0 0 12px var(--glow)}
 
 /* ---- fixed background: grid, glows, scan beam, frame ---- */
 .hud-bg{position:fixed;top:0;right:0;bottom:0;left:0;z-index:0;pointer-events:none;overflow:hidden;color:var(--accent);
-  background:radial-gradient(900px 520px at 80% -6%,rgba(70,212,255,.14),transparent 62%),
-    radial-gradient(760px 620px at -8% 30%,rgba(40,110,255,.09),transparent 60%),
-    radial-gradient(900px 700px at 108% 100%,rgba(70,212,255,.06),transparent 60%),#03080E}
+  background:radial-gradient(900px 520px at 80% -6%,rgba(52,201,208,.14),transparent 62%),
+    radial-gradient(760px 620px at -8% 30%,rgba(255,122,48,.09),transparent 60%),
+    radial-gradient(900px 700px at 108% 100%,rgba(52,201,208,.06),transparent 60%),#040C0D}
 .hud-grid{position:absolute;top:0;right:0;bottom:0;left:0;
-  background-image:linear-gradient(rgba(70,212,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(70,212,255,.06) 1px,transparent 1px);
+  background-image:linear-gradient(rgba(52,201,208,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(52,201,208,.06) 1px,transparent 1px);
   background-size:44px 44px;
   -webkit-mask-image:radial-gradient(ellipse 90% 80% at 50% 30%,#000 15%,transparent 80%);
   mask-image:radial-gradient(ellipse 90% 80% at 50% 30%,#000 15%,transparent 80%)}
 .hud-beam{position:absolute;left:0;right:0;top:-190px;height:180px;opacity:0;
-  background:linear-gradient(180deg,transparent,rgba(70,212,255,.035) 60%,rgba(70,212,255,.11) 98%,transparent)}
+  background:linear-gradient(180deg,transparent,rgba(52,201,208,.035) 60%,rgba(52,201,208,.11) 98%,transparent)}
 .hud-glow{position:absolute;left:-300px;top:-300px;width:600px;height:600px;border-radius:50%;opacity:0;transition:opacity .8s;
-  background:radial-gradient(circle,rgba(70,212,255,.09),transparent 60%)}
-.hud-corner{position:absolute;width:18px;height:18px;border:1.5px solid rgba(70,212,255,.55)}
+  background:radial-gradient(circle,rgba(52,201,208,.09),transparent 60%)}
+.hud-corner{position:absolute;width:18px;height:18px;border:1.5px solid rgba(52,201,208,.55)}
 .hud-corner.tl{left:8px;top:8px;border-right:0;border-bottom:0}
 .hud-corner.tr{right:8px;top:8px;border-left:0;border-bottom:0}
 .hud-corner.bl{left:8px;bottom:8px;border-right:0;border-top:0}
@@ -373,24 +373,24 @@ html.hud a:hover{text-shadow:0 0 12px var(--glow)}
 .hud-side,.hud-rail,.hud-readout{display:none}
 @media (min-width:1320px){
   .hud-side{display:block;position:absolute;left:26px;top:50%;writing-mode:vertical-rl;transform:translateY(-50%) rotate(180deg);
-    font:500 10px/1 var(--f-mono);letter-spacing:.42em;text-transform:uppercase;color:rgba(70,212,255,.5);white-space:nowrap}
+    font:500 10px/1 var(--f-mono);letter-spacing:.42em;text-transform:uppercase;color:rgba(52,201,208,.5);white-space:nowrap}
   .hud-rail{display:block;position:absolute;right:30px;top:20vh;height:52vh;width:10px;
-    background:repeating-linear-gradient(180deg,rgba(70,212,255,.55) 0 1px,transparent 1px 12px)}
+    background:repeating-linear-gradient(180deg,rgba(52,201,208,.55) 0 1px,transparent 1px 12px)}
   .hud-rail i{position:absolute;left:-8px;right:-4px;top:calc(var(--p,0)*100%);height:2px;margin-top:-1px;background:var(--accent);box-shadow:0 0 10px var(--accent)}
   .hud-rail b{position:absolute;right:22px;top:calc(var(--p,0)*100%);transform:translateY(-50%);
     font:500 10px/1 var(--f-mono);letter-spacing:.1em;color:var(--accent);white-space:nowrap}
   .hud-readout{display:block;position:absolute;right:26px;bottom:34px;text-align:right;
-    font:500 9.5px/1.6 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:rgba(70,212,255,.62)}
+    font:500 9.5px/1.6 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:rgba(52,201,208,.62)}
   .hud-readout b{display:block;font-size:13px;letter-spacing:.08em;color:var(--hi);font-weight:500;font-variant-numeric:tabular-nums}
 }
 .hud-progress{position:fixed;left:0;right:0;top:0;height:2px;z-index:70;pointer-events:none;
-  transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,rgba(70,212,255,.25),var(--accent));box-shadow:0 0 12px rgba(70,212,255,.8)}
+  transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,rgba(52,201,208,.25),var(--accent));box-shadow:0 0 12px rgba(52,201,208,.8)}
 
 /* ---- top bar ---- */
 html.hud .topbar{position:relative;border-bottom:0;align-items:center;gap:10px 20px}
 html.hud .topbar nav{gap:4px 15px}
 html.hud .topbar::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
-  background:linear-gradient(90deg,transparent,rgba(70,212,255,.32) 14%,rgba(70,212,255,.32) 86%,transparent)}
+  background:linear-gradient(90deg,transparent,rgba(52,201,208,.32) 14%,rgba(52,201,208,.32) 86%,transparent)}
 html.hud .topbar .eyebrow{color:var(--ink-soft)}
 html.hud .topbar nav a{position:relative;padding:3px 0;text-transform:uppercase;font-size:12px;letter-spacing:.09em;color:var(--ink-soft)}
 html.hud .topbar nav a::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:1px;background:var(--accent);box-shadow:0 0 8px var(--accent);
@@ -399,16 +399,16 @@ html.hud .topbar nav a:hover,html.hud .topbar nav a[aria-current]{color:var(--ac
 html.hud .topbar nav a:hover::after,html.hud .topbar nav a[aria-current]::after{transform:scaleX(1)}
 @media (min-width:900px){
   html.hud .topbar{position:sticky;top:0;z-index:60;margin:-28px calc(var(--bleed)*-1) 0;padding:13px var(--bleed) 12px;
-    background:linear-gradient(90deg,rgba(3,8,14,0),rgba(3,8,14,.95) min(var(--bleed),70px),rgba(3,8,14,.95) calc(100% - min(var(--bleed),70px)),rgba(3,8,14,0))}
+    background:linear-gradient(90deg,rgba(4,12,13,0),rgba(4,12,13,.95) min(var(--bleed),70px),rgba(4,12,13,.95) calc(100% - min(var(--bleed),70px)),rgba(4,12,13,0))}
   html.hud section[id],html.hud .group[id],html.hud article[id]{scroll-margin-top:calc(var(--tb-h,56px) + 16px)}
 }
 .hud-status{display:flex;align-items:center;gap:12px}
 .hud-toggle{position:relative;font:500 11px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);
-  background:rgba(70,212,255,.06);border:1px solid rgba(70,212,255,.45);border-radius:2px;padding:8px 10px 8px 25px;cursor:pointer}
+  background:rgba(52,201,208,.06);border:1px solid rgba(52,201,208,.45);border-radius:2px;padding:8px 10px 8px 25px;cursor:pointer}
 .hud-toggle::before{content:"";position:absolute;left:9px;top:50%;width:7px;height:7px;margin-top:-4px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
-.hud-toggle[aria-pressed="false"]{color:var(--ink-soft);border-color:rgba(124,153,173,.6)}
-.hud-toggle[aria-pressed="false"]::before{background:#5A7183;box-shadow:none}
-.hud-toggle:hover{background:rgba(70,212,255,.14)}
+.hud-toggle[aria-pressed="false"]{color:var(--ink-soft);border-color:rgba(147,167,163,.6)}
+.hud-toggle[aria-pressed="false"]::before{background:#5C7472;box-shadow:none}
+.hud-toggle:hover{background:rgba(52,201,208,.14)}
 
 /* ---- hero ---- */
 html.hud .hero{position:relative}
@@ -416,8 +416,8 @@ html.hud .hero>div:not(.hud-rings-clip),html.hud .hero>dl{position:relative;z-in
 html.hud .hero .eyebrow{color:var(--accent)}
 html.hud .hero .eyebrow::before{content:"";display:inline-block;width:7px;height:7px;margin-right:10px;border-radius:50%;vertical-align:1px;
   background:var(--accent);box-shadow:0 0 10px var(--accent)}
-html.hud .hero h1{color:var(--hi);text-shadow:0 0 30px var(--glow),0 0 2px rgba(70,212,255,.5)}
-html.hud .hero .role{text-shadow:0 0 14px rgba(70,212,255,.4)}
+html.hud .hero h1{color:var(--hi);text-shadow:0 0 30px var(--glow),0 0 2px rgba(52,201,208,.5)}
+html.hud .hero .role{text-shadow:0 0 14px rgba(52,201,208,.4)}
 .hud-caret::after{content:"";display:inline-block;width:.5em;height:.95em;margin-left:4px;vertical-align:-.1em;background:var(--accent);box-shadow:0 0 10px var(--accent)}
 .hud-rings-clip{position:absolute;top:-76px;bottom:-64px;left:calc(var(--bleed)*-1);right:calc(var(--bleed)*-1);overflow:hidden;pointer-events:none;z-index:0;
   -webkit-mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent);
@@ -425,9 +425,9 @@ html.hud .hero .role{text-shadow:0 0 14px rgba(70,212,255,.4)}
 .hud-rings{position:absolute;width:540px;height:540px;top:50%;margin-top:-270px;right:calc(var(--bleed) - 52px);opacity:.62}
 .hud-par{position:absolute;top:0;right:0;bottom:0;left:0;transform:translate3d(var(--px,0px),var(--py,0px),0);transition:transform .5s ease-out}
 .hr{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;overflow:visible;fill:none;stroke:currentColor;color:var(--accent)}
-.hr3{filter:drop-shadow(0 0 5px rgba(70,212,255,.9))}
+.hr3{filter:drop-shadow(0 0 5px rgba(52,201,208,.9))}
 .hr-sweep{position:absolute;top:6%;right:6%;bottom:6%;left:6%;border-radius:50%;display:none;
-  background:conic-gradient(from 0deg,rgba(70,212,255,.22),rgba(70,212,255,0) 15%,rgba(70,212,255,0) 100%)}
+  background:conic-gradient(from 0deg,rgba(52,201,208,.22),rgba(52,201,208,0) 15%,rgba(52,201,208,0) 100%)}
 @media (max-width:900px){
   html.hud .hero{grid-template-columns:1fr;gap:22px}
   /* phones and small tablets: the rings swing in from the right edge; the centre marks stay off screen so nothing sits on the text */
@@ -440,10 +440,10 @@ html.hud .hero .role{text-shadow:0 0 14px rgba(70,212,255,.4)}
   .hud-corner.tl,.hud-corner.tr{top:5px}
   .hud-corner.bl,.hud-corner.br{bottom:5px}
 }
-html.hud .titleblock{position:relative;overflow:hidden;border:1px solid var(--edge-hi);background:rgba(5,15,25,.84);
-  box-shadow:0 24px 70px -28px #000,inset 0 0 44px rgba(70,212,255,.06)}
-html.hud .titleblock dt,html.hud .titleblock dd{border-bottom-color:rgba(70,212,255,.16)}
-html.hud .titleblock dt{border-right-color:rgba(70,212,255,.16);color:var(--accent)}
+html.hud .titleblock{position:relative;overflow:hidden;border:1px solid var(--edge-hi);background:rgba(6,15,16,.84);
+  box-shadow:0 24px 70px -28px #000,inset 0 0 44px rgba(52,201,208,.06)}
+html.hud .titleblock dt,html.hud .titleblock dd{border-bottom-color:rgba(52,201,208,.16)}
+html.hud .titleblock dt{border-right-color:rgba(52,201,208,.16);color:var(--accent)}
 html.hud .titleblock>:nth-child(n+3){--i:1}
 html.hud .titleblock>:nth-child(n+5){--i:2}
 html.hud .titleblock>:nth-child(n+7){--i:3}
@@ -461,92 +461,92 @@ html.hud .sheet::before,html.hud .titleblock::before,html.hud .contact::before,h
 html.hud .sheet:hover::before,html.hud .contact:hover::before{--hud-s:30px}
 
 /* ---- facts ---- */
-html.hud .facts{border-block:1px solid var(--edge-hi);background:linear-gradient(90deg,rgba(70,212,255,.06),transparent 65%)}
-html.hud .fact{border-left-color:rgba(70,212,255,.18)}
+html.hud .facts{border-block:1px solid var(--edge-hi);background:linear-gradient(90deg,rgba(52,201,208,.06),transparent 65%)}
+html.hud .fact{border-left-color:rgba(52,201,208,.18)}
 html.hud .fact::before{content:"";display:block;width:26px;height:2px;margin-bottom:10px;background:var(--accent);box-shadow:0 0 8px var(--accent)}
 html.hud .fact b{color:var(--hi);text-shadow:0 0 18px var(--glow)}
 html.hud .fact:nth-child(2){--i:1}
 html.hud .fact:nth-child(3){--i:2}
 html.hud .fact:nth-child(4){--i:3}
-@media (max-width:760px){html.hud .fact:nth-child(n+3){border-top-color:rgba(70,212,255,.18)}}
+@media (max-width:760px){html.hud .fact:nth-child(n+3){border-top-color:rgba(52,201,208,.18)}}
 
 /* ---- section heads ---- */
 html.hud .sec-head{position:relative;padding-top:20px}
-html.hud .sec-head::before{content:"";position:absolute;left:0;top:0;width:100%;height:1px;background:linear-gradient(90deg,var(--accent),rgba(70,212,255,.16) 32%,transparent 85%)}
+html.hud .sec-head::before{content:"";position:absolute;left:0;top:0;width:100%;height:1px;background:linear-gradient(90deg,var(--accent),rgba(52,201,208,.16) 32%,transparent 85%)}
 html.hud .sec-head::after{content:"";position:absolute;left:0;top:-2px;width:64px;height:5px;background:var(--accent);box-shadow:0 0 12px var(--accent);
   -webkit-clip-path:polygon(0 0,100% 0,calc(100% - 5px) 100%,0 100%);clip-path:polygon(0 0,100% 0,calc(100% - 5px) 100%,0 100%)}
 html.hud .sec-head .eyebrow{color:var(--accent)}
-html.hud .sec-head h2,html.hud .contact h2{color:var(--hi);text-shadow:0 0 24px rgba(70,212,255,.4)}
-html.hud .group-h{border-bottom-color:rgba(70,212,255,.22)}
-html.hud .group-h h3{color:var(--hi);text-shadow:0 0 18px rgba(70,212,255,.35)}
-html.hud .subnav a{background:rgba(8,21,34,.8);border-color:rgba(70,212,255,.38);border-radius:2px;transition:border-color .2s,box-shadow .2s,color .2s}
-html.hud .subnav a:hover{box-shadow:0 0 14px rgba(70,212,255,.28)}
+html.hud .sec-head h2,html.hud .contact h2{color:var(--hi);text-shadow:0 0 24px rgba(52,201,208,.4)}
+html.hud .group-h{border-bottom-color:rgba(52,201,208,.22)}
+html.hud .group-h h3{color:var(--hi);text-shadow:0 0 18px rgba(52,201,208,.35)}
+html.hud .subnav a{background:rgba(9,22,23,.8);border-color:rgba(52,201,208,.38);border-radius:2px;transition:border-color .2s,box-shadow .2s,color .2s}
+html.hud .subnav a:hover{box-shadow:0 0 14px rgba(52,201,208,.28)}
 html.hud .subnav a span{color:var(--accent)}
 
 /* ---- filters and legend ---- */
-html.hud .controls{position:relative;border-color:rgba(70,212,255,.22);background:rgba(8,21,34,.72)}
-html.hud .chip{border-color:rgba(70,212,255,.42);border-radius:2px;font-family:var(--f-mono);font-size:12px;letter-spacing:.03em;transition:border-color .2s,box-shadow .2s,color .2s,background .2s}
-html.hud .chip:hover{border-color:var(--accent);color:var(--accent);box-shadow:0 0 12px rgba(70,212,255,.25)}
-html.hud .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#03121C;box-shadow:0 0 16px var(--glow)}
-html.hud .btn{border-color:rgba(70,212,255,.5);color:var(--accent);transition:background .2s,box-shadow .2s}
-html.hud .btn:hover{background:rgba(70,212,255,.12);box-shadow:0 0 12px rgba(70,212,255,.28)}
-html.hud .swatch:not(.gate){border-color:rgba(70,212,255,.62)}
+html.hud .controls{position:relative;border-color:rgba(52,201,208,.22);background:rgba(9,22,23,.72)}
+html.hud .chip{border-color:rgba(52,201,208,.42);border-radius:2px;font-family:var(--f-mono);font-size:12px;letter-spacing:.03em;transition:border-color .2s,box-shadow .2s,color .2s,background .2s}
+html.hud .chip:hover{border-color:var(--accent);color:var(--accent);box-shadow:0 0 12px rgba(52,201,208,.25)}
+html.hud .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#031615;box-shadow:0 0 16px var(--glow)}
+html.hud .btn{border-color:rgba(52,201,208,.5);color:var(--accent);transition:background .2s,box-shadow .2s}
+html.hud .btn:hover{background:rgba(52,201,208,.12);box-shadow:0 0 12px rgba(52,201,208,.28)}
+html.hud .swatch:not(.gate){border-color:rgba(52,201,208,.62)}
 html.hud .swatch.dash{border-color:rgba(181,205,219,.55)}
 
 /* ---- design sheets ---- */
 html.hud .sheet{position:relative;border:1px solid var(--edge);background:linear-gradient(180deg,var(--panel),var(--panel-2));
-  box-shadow:0 26px 70px -36px #000,inset 0 1px 0 rgba(70,212,255,.07);transition:border-color .3s,box-shadow .3s}
-html.hud .sheet:hover{border-color:var(--edge-hi);box-shadow:0 26px 70px -36px #000,0 0 36px -10px rgba(70,212,255,.38),inset 0 1px 0 rgba(70,212,255,.07)}
-html.hud .tb{border-bottom-color:rgba(70,212,255,.2);background:linear-gradient(90deg,rgba(70,212,255,.09),transparent 58%)}
-html.hud .tb-id{border-right-color:rgba(70,212,255,.2)}
-html.hud .tb-id .mono{text-shadow:0 0 12px rgba(70,212,255,.6)}
-html.hud .tb-status{border-left-color:rgba(70,212,255,.2)}
+  box-shadow:0 26px 70px -36px #000,inset 0 1px 0 rgba(52,201,208,.07);transition:border-color .3s,box-shadow .3s}
+html.hud .sheet:hover{border-color:var(--edge-hi);box-shadow:0 26px 70px -36px #000,0 0 36px -10px rgba(52,201,208,.38),inset 0 1px 0 rgba(52,201,208,.07)}
+html.hud .tb{border-bottom-color:rgba(52,201,208,.2);background:linear-gradient(90deg,rgba(52,201,208,.09),transparent 58%)}
+html.hud .tb-id{border-right-color:rgba(52,201,208,.2)}
+html.hud .tb-id .mono{text-shadow:0 0 12px rgba(52,201,208,.6)}
+html.hud .tb-status{border-left-color:rgba(52,201,208,.2)}
 html.hud .tb-title{color:var(--hi)}
-@media (max-width:760px){html.hud .tb-status{border-top-color:rgba(70,212,255,.2)}}
+@media (max-width:760px){html.hud .tb-status{border-top-color:rgba(52,201,208,.2)}}
 html.hud .stamp.built{box-shadow:0 0 14px rgba(63,224,160,.25),inset 0 0 12px rgba(63,224,160,.12)}
 html.hud .stamp.ref{color:var(--ink-soft);border-color:rgba(181,205,219,.55)}
-html.hud .tag{border-color:rgba(70,212,255,.36)}
-html.hud .board{background-color:rgba(2,7,12,.72);border-color:rgba(70,212,255,.16)}
-html.hud .node{background:rgba(9,26,41,.96);border-color:rgba(70,212,255,.62)}
-html.hud .blueprint .node{background:rgba(8,20,32,.9);border-color:rgba(181,205,219,.5)}
+html.hud .tag{border-color:rgba(52,201,208,.36)}
+html.hud .board{background-color:rgba(3,9,9,.72);border-color:rgba(52,201,208,.16)}
+html.hud .node{background:rgba(10,27,28,.96);border-color:rgba(52,201,208,.62)}
+html.hud .blueprint .node{background:rgba(9,21,22,.9);border-color:rgba(181,205,219,.5)}
 html.hud .node.k-gate{background:rgba(46,30,10,.92);border-color:var(--amber)}
 html.hud .node:not(:last-child)::after{color:var(--accent)}
 html.hud .blueprint .node:not(:last-child)::after{color:var(--muted)}
-html.hud .detail h4,html.hud .kd h4{color:rgba(70,212,255,.85)}
-html.hud details.code{border-top-color:rgba(70,212,255,.18)}
-html.hud .codewrap{border-color:rgba(70,212,255,.2);box-shadow:inset 0 0 30px rgba(70,212,255,.04)}
+html.hud .detail h4,html.hud .kd h4{color:rgba(52,201,208,.85)}
+html.hud details.code{border-top-color:rgba(52,201,208,.18)}
+html.hud .codewrap{border-color:rgba(52,201,208,.2);box-shadow:inset 0 0 30px rgba(52,201,208,.04)}
 html.hud .dg .bx{stroke:rgba(181,205,219,.75)}
 html.hud .dg .bx.hl{stroke:var(--accent);stroke-width:2.4}
 html.hud .dg .bx.good{stroke:var(--green)}
 html.hud .dg .bx.warn{stroke:var(--amber)}
 html.hud .dg .bx.bad{stroke:var(--red)}
-.ln-flow{fill:none;stroke:#8FE6FF;stroke-width:2.2;stroke-linecap:round;stroke-dasharray:5 15;opacity:0;pointer-events:none}
-html.hud .tablewrap{background:rgba(5,14,24,.8);border-color:rgba(70,212,255,.18)}
-html.hud table.t th{background:rgba(70,212,255,.07);color:rgba(70,212,255,.85);border-bottom-color:rgba(70,212,255,.22)}
-html.hud table.t td{border-bottom-color:rgba(70,212,255,.1)}
-html.hud table.t tbody tr:hover td{background:rgba(70,212,255,.05)}
-html.hud .crow{border-top-color:rgba(70,212,255,.14)}
+.ln-flow{fill:none;stroke:#8FEBE6;stroke-width:2.2;stroke-linecap:round;stroke-dasharray:5 15;opacity:0;pointer-events:none}
+html.hud .tablewrap{background:rgba(6,14,15,.8);border-color:rgba(52,201,208,.18)}
+html.hud table.t th{background:rgba(52,201,208,.07);color:rgba(52,201,208,.85);border-bottom-color:rgba(52,201,208,.22)}
+html.hud table.t td{border-bottom-color:rgba(52,201,208,.1)}
+html.hud table.t tbody tr:hover td{background:rgba(52,201,208,.05)}
+html.hud .crow{border-top-color:rgba(52,201,208,.14)}
 html.hud .cn{text-shadow:0 0 14px rgba(255,118,118,.45)}
-html.hud .phase{background:rgba(9,26,41,.96);border-color:rgba(70,212,255,.42)}
+html.hud .phase{background:rgba(10,27,28,.96);border-color:rgba(52,201,208,.42)}
 html.hud .phase h5{color:var(--hi)}
 html.hud .pn{color:var(--accent)}
-html.hud .phase .role{border-color:rgba(70,212,255,.45);color:var(--accent)}
+html.hud .phase .role{border-color:rgba(52,201,208,.45);color:var(--accent)}
 
 /* ---- labs, experience, contact ---- */
 html.hud .labs,html.hud .xp{border-top:1px solid var(--edge-hi)}
-html.hud .lab,html.hud .xrow{border-bottom-color:rgba(70,212,255,.14)}
-html.hud .lab:not(:nth-child(3n+1)),html.hud .lab:nth-child(2n){border-left-color:rgba(70,212,255,.14)}
+html.hud .lab,html.hud .xrow{border-bottom-color:rgba(52,201,208,.14)}
+html.hud .lab:not(:nth-child(3n+1)),html.hud .lab:nth-child(2n){border-left-color:rgba(52,201,208,.14)}
 html.hud .lab h3,html.hud .xrow h3{color:var(--hi)}
-html.hud .edu ul{border-top-color:rgba(70,212,255,.22)}
-html.hud .edu li{border-bottom-color:rgba(70,212,255,.14)}
+html.hud .edu ul{border-top-color:rgba(52,201,208,.22)}
+html.hud .edu li{border-bottom-color:rgba(52,201,208,.14)}
 html.hud .edu h3{color:var(--accent)}
-html.hud .contact{position:relative;border:1px solid var(--edge-hi);background:linear-gradient(180deg,var(--panel),var(--panel-2));box-shadow:0 26px 70px -36px #000,inset 0 0 50px rgba(70,212,255,.05)}
-html.hud .contact>div+div{border-color:rgba(70,212,255,.18)}
+html.hud .contact{position:relative;border:1px solid var(--edge-hi);background:linear-gradient(180deg,var(--panel),var(--panel-2));box-shadow:0 26px 70px -36px #000,inset 0 0 50px rgba(52,201,208,.05)}
+html.hud .contact>div+div{border-color:rgba(52,201,208,.18)}
 html.hud .contact dt{color:var(--accent)}
 
 /* ---- start-up intro ---- */
 .hud-boot{display:none;position:fixed;top:0;right:0;bottom:0;left:0;z-index:1000;flex-direction:column;align-items:center;justify-content:center;
-  background:radial-gradient(circle at 50% 40%,#08192A,#02060B 72%);color:var(--accent);overscroll-behavior:contain;touch-action:none;cursor:pointer}
+  background:radial-gradient(circle at 50% 40%,#0A1A1A,#020606 72%);color:var(--accent);overscroll-behavior:contain;touch-action:none;cursor:pointer}
 html.booting .hud-boot,.hud-boot.on{display:flex}
 html.booting .hud-boot{animation:hud-bootsafe .01s linear 8s forwards}
 .hud-boot.out{opacity:0;transition:opacity .5s ease;pointer-events:none}
@@ -555,17 +555,17 @@ html.booting .hud-boot{animation:hud-bootsafe .01s linear 8s forwards}
 .hud-boot.out .hb-rings{transform:scale(2.2);opacity:0}
 .hb-r{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;overflow:visible;fill:none;stroke:currentColor}
 .hb-r1{animation:hud-spin 7s linear infinite}
-.hb-r2{animation:hud-spin-r 2.4s linear infinite;filter:drop-shadow(0 0 5px rgba(70,212,255,.9))}
+.hb-r2{animation:hud-spin-r 2.4s linear infinite;filter:drop-shadow(0 0 5px rgba(52,201,208,.9))}
 .hb-r3{animation:hud-spin 10s linear infinite}
-.hb-pct{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;align-items:center;justify-content:center;gap:2px;color:var(--hi);text-shadow:0 0 22px rgba(70,212,255,.7)}
+.hb-pct{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;align-items:center;justify-content:center;gap:2px;color:var(--hi);text-shadow:0 0 22px rgba(52,201,208,.7)}
 .hb-pct b{font:700 46px/1 var(--f-display);font-variant-numeric:tabular-nums}
 .hb-pct span{font:500 12px/1 var(--f-mono);align-self:flex-end;margin-bottom:76px;color:var(--accent)}
 .hb-title{margin:0;font:700 26px/1 var(--f-display);letter-spacing:.2em;text-transform:uppercase;color:var(--hi);text-shadow:0 0 22px var(--glow)}
 .hb-sub{margin:4px 0 14px;font:500 11px/1 var(--f-mono);letter-spacing:.32em;text-transform:uppercase;color:var(--accent)}
 .hb-log{margin:0;width:268px;max-width:88vw;min-height:9.6em;font:400 12px/1.6 var(--f-mono);color:var(--ink-soft);white-space:pre;overflow:hidden}
 .hb-skip{position:absolute;right:20px;bottom:20px;font:500 12px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);
-  background:rgba(70,212,255,.08);border:1px solid rgba(70,212,255,.5);border-radius:2px;padding:14px 16px;cursor:pointer}
-.hb-skip:hover{background:rgba(70,212,255,.18)}
+  background:rgba(52,201,208,.08);border:1px solid rgba(52,201,208,.5);border-radius:2px;padding:14px 16px;cursor:pointer}
+.hb-skip:hover{background:rgba(52,201,208,.18)}
 
 /* ---- keyframes ---- */
 @keyframes hud-spin{to{transform:rotate(360deg)}}
@@ -581,8 +581,8 @@ html.booting .hud-boot{animation:hud-bootsafe .01s linear 8s forwards}
 @keyframes hud-rings-in{from{opacity:0;transform:scale(.55) rotate(-50deg)}}
 @keyframes hud-sweep{0%{transform:translate3d(0,-90px,0)}45%,100%{transform:translate3d(0,360px,0)}}
 @keyframes hud-scan{0%{transform:translate3d(0,0,0);opacity:0}12%{opacity:1}100%{transform:translate3d(0,280px,0);opacity:0}}
-@keyframes hud-node{from{opacity:0;transform:translate3d(-10px,0,0) scale(.96)}60%{box-shadow:0 0 22px rgba(70,212,255,.55)}}
-@keyframes hud-signal{0%,13%,100%{box-shadow:0 0 0 rgba(70,212,255,0);border-color:rgba(70,212,255,.62)}5%{box-shadow:0 0 22px rgba(70,212,255,.6),inset 0 0 18px rgba(70,212,255,.16);border-color:#A6ECFF}}
+@keyframes hud-node{from{opacity:0;transform:translate3d(-10px,0,0) scale(.96)}60%{box-shadow:0 0 22px rgba(52,201,208,.55)}}
+@keyframes hud-signal{0%,13%,100%{box-shadow:0 0 0 rgba(52,201,208,0);border-color:rgba(52,201,208,.62)}5%{box-shadow:0 0 22px rgba(52,201,208,.6),inset 0 0 18px rgba(52,201,208,.16);border-color:#A8EEEA}}
 @keyframes hud-arrow{0%,13%,100%{color:var(--accent);text-shadow:none}5%{color:#fff;text-shadow:0 0 10px var(--accent)}}
 @keyframes hud-draw{from{stroke-dashoffset:var(--len);opacity:0}25%{opacity:1}to{stroke-dashoffset:0;opacity:1}}
 @keyframes hud-flow{to{stroke-dashoffset:-20}}
@@ -604,7 +604,7 @@ html[data-motion="on"] .hr5{animation:hud-spin 75s linear infinite}
 html[data-motion="on"] .hr-sweep{display:block;animation:hud-spin 7s linear infinite}
 html[data-motion="on"] .hero:not(.onscreen) .hr,html[data-motion="on"] .hero:not(.onscreen) .hr-sweep,html[data-motion="on"] .hero:not(.onscreen) .titleblock::after{animation-play-state:paused!important}
 html[data-motion="on"] .titleblock::after{content:"";position:absolute;left:0;right:0;top:0;height:70px;pointer-events:none;
-  background:linear-gradient(180deg,transparent,rgba(70,212,255,.09));border-bottom:1px solid rgba(70,212,255,.32);
+  background:linear-gradient(180deg,transparent,rgba(52,201,208,.09));border-bottom:1px solid rgba(52,201,208,.32);
   transform:translate3d(0,-90px,0);animation:hud-sweep 7s 2.6s ease-in-out infinite}
 
 html.ready[data-motion="on"] .topbar{animation:hud-in .7s ease backwards}
@@ -628,7 +628,7 @@ html[data-motion="on"] .sheet.rv.in{animation:none}
 html[data-motion="on"] .sheet.rv.in>*:not(.rv){animation:hud-in .6s .12s ease backwards}
 html[data-motion="on"] .sheet.rv.in>.tb{animation:hud-left .55s cubic-bezier(.2,.7,.2,1) backwards}
 html[data-motion="on"] .sheet.rv.in::after{content:"";position:absolute;left:0;right:0;top:0;height:2px;z-index:3;pointer-events:none;
-  background:linear-gradient(90deg,transparent,var(--accent) 30%,#fff 50%,var(--accent) 70%,transparent);box-shadow:0 0 16px 2px rgba(70,212,255,.7);
+  background:linear-gradient(90deg,transparent,var(--accent) 30%,#fff 50%,var(--accent) 70%,transparent);box-shadow:0 0 16px 2px rgba(52,201,208,.7);
   animation:hud-scan 1.15s .1s ease-out both}
 html[data-motion="on"] .board.rv.in .node,html[data-motion="on"] .board.rv.in .phase{animation:hud-node .5s cubic-bezier(.2,.7,.2,1) backwards;animation-delay:calc(.15s + var(--i,0)*90ms)}
 html[data-motion="on"] .sheet.built .board.in .node{--loop:calc(var(--n,5)*.55s + 2.6s);
@@ -669,15 +669,15 @@ html:not(.js) .hud-holo{display:none}
 .holo-stage{position:absolute;left:50%;bottom:0;width:300px;height:210px;margin-left:-150px;perspective:820px;perspective-origin:50% 10%}
 .holo-floor{position:absolute;left:0;bottom:-128px;width:300px;height:300px;transform:rotateX(76deg)}
 .hf{position:absolute;top:14.65%;left:14.65%;width:70.7%;height:70.7%;overflow:visible;fill:none;stroke:currentColor;color:var(--accent)}
-.hf3{filter:drop-shadow(0 0 6px rgba(70,212,255,.9))}
+.hf3{filter:drop-shadow(0 0 6px rgba(52,201,208,.9))}
 .holo-core{position:absolute;left:50%;top:50%;width:130px;height:130px;margin:-65px 0 0 -65px;border-radius:50%;
-  background:radial-gradient(circle,rgba(190,242,255,.85),rgba(70,212,255,.3) 38%,rgba(70,212,255,0) 70%)}
+  background:radial-gradient(circle,rgba(255,206,160,.85),rgba(52,201,208,.3) 38%,rgba(52,201,208,0) 70%)}
 .holo-cone{position:absolute;left:50%;bottom:20px;width:216px;height:150px;margin-left:-108px;opacity:.85;
-  background:linear-gradient(0deg,rgba(70,212,255,.26),rgba(70,212,255,.05) 60%,rgba(70,212,255,0) 92%);
+  background:linear-gradient(0deg,rgba(52,201,208,.26),rgba(52,201,208,.05) 60%,rgba(52,201,208,0) 92%);
   -webkit-clip-path:polygon(34% 100%,66% 100%,100% 0,0 0);clip-path:polygon(34% 100%,66% 100%,100% 0,0 0)}
 .holo-atmo{position:absolute;left:50%;top:6px;width:168px;height:168px;margin-left:-84px;border-radius:50%;
-  background:radial-gradient(circle at 50% 50%,rgba(70,212,255,.09),rgba(70,212,255,.03) 62%,rgba(70,212,255,0) 71%);
-  box-shadow:0 0 34px rgba(70,212,255,.26),inset 0 0 26px rgba(70,212,255,.2)}
+  background:radial-gradient(circle at 50% 50%,rgba(52,201,208,.09),rgba(52,201,208,.03) 62%,rgba(52,201,208,0) 71%);
+  box-shadow:0 0 34px rgba(52,201,208,.26),inset 0 0 26px rgba(52,201,208,.2)}
 .holo-globe{position:absolute;left:50%;top:-10px;width:200px;height:200px;margin-left:-100px;pointer-events:auto;cursor:grab;touch-action:pan-y}
 .holo-globe:active{cursor:grabbing}
 .holo-pin{position:absolute;left:0;top:0;width:0;height:0;pointer-events:none;opacity:0;transition:opacity .3s}
@@ -687,7 +687,7 @@ html:not(.js) .hud-holo{display:none}
   font:500 9.5px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--amber);white-space:nowrap}
 .holo-pin.left i{transform:rotate(-140deg)}
 .holo-pin.left span{left:auto;right:22px}
-.holo-tag{position:absolute;top:6px;font:500 9.5px/1.6 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:rgba(70,212,255,.62)}
+.holo-tag{position:absolute;top:6px;font:500 9.5px/1.6 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:rgba(52,201,208,.62)}
 .holo-tag b{display:block;font-size:12.5px;letter-spacing:.08em;color:var(--hi);font-weight:500;font-variant-numeric:tabular-nums}
 .holo-tl{left:0}
 .holo-tr{right:0;text-align:right}
@@ -707,7 +707,7 @@ html:not(.js) .hud-holo{display:none}
     --gs:clamp(190px,calc(100vw - 630px),250px);--gc:calc(var(--gs)*.42 + 20px)}
   .holo-stage{left:auto;right:calc(var(--gc) - var(--gs)/2);top:calc(52px - var(--gs)*.08);bottom:auto;width:var(--gs);height:var(--gs);margin:0;perspective:none}
   .holo-floor,.holo-cone,.holo-tag{display:none}
-  .holo-atmo{left:8%;top:8%;width:84%;height:84%;margin:0;box-shadow:0 0 22px rgba(70,212,255,.2),inset 0 0 22px rgba(70,212,255,.18)}
+  .holo-atmo{left:8%;top:8%;width:84%;height:84%;margin:0;box-shadow:0 0 22px rgba(52,201,208,.2),inset 0 0 22px rgba(52,201,208,.18)}
   .holo-globe{left:0;top:0;margin:0;width:100%;height:100%;pointer-events:none}
 }
 @media (max-width:760px){
@@ -733,7 +733,7 @@ html.hud3d .hb-r3{animation:hud-gyro-x 4.2s linear infinite}
 @keyframes hud-gyro-a{from{transform:rotateX(64deg) rotateZ(0deg)}to{transform:rotateX(64deg) rotateZ(360deg)}}
 @keyframes hud-up3d{from{opacity:0;transform:perspective(900px) translate3d(0,26px,-70px) rotateX(-16deg)}}
 @keyframes hud-board3d{from{opacity:0;transform:perspective(1100px) translate3d(0,34px,-100px) rotateX(-26deg)}}
-@keyframes hud-node3d{from{opacity:0;transform:perspective(520px) translate3d(-12px,0,-160px) rotateY(38deg)}60%{box-shadow:0 0 22px rgba(70,212,255,.55)}}
+@keyframes hud-node3d{from{opacity:0;transform:perspective(520px) translate3d(-12px,0,-160px) rotateY(38deg)}60%{box-shadow:0 0 22px rgba(52,201,208,.55)}}
 @keyframes hud-flip3d{from{opacity:0;transform:perspective(520px) rotateX(-84deg)}}
 @keyframes hud-fact3d{from{opacity:0;transform:perspective(700px) translate3d(0,18px,-130px) rotateX(26deg)}}
 @keyframes hud-zoom3d{from{transform:perspective(800px) translate3d(0,0,-220px) rotateX(18deg)}}
@@ -767,7 +767,7 @@ html.hud3d[data-motion="on"] .sheet.built .board.in .node{animation-name:hud-nod
 /* ---- the grid sits on an inner layer so it can drift slowly as the page scrolls ---- */
 html.x3d .hud-grid{background-image:none}
 .hud-grid i{position:absolute;left:0;right:0;top:-44px;bottom:-44px;
-  background-image:linear-gradient(rgba(70,212,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(70,212,255,.06) 1px,transparent 1px);
+  background-image:linear-gradient(rgba(52,201,208,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(52,201,208,.06) 1px,transparent 1px);
   background-size:44px 44px}
 
 /* ---- the name: stacked layers give the letters solid depth; --ex/--ey turn the depth with the name ---- */
@@ -794,7 +794,7 @@ html.x3d[data-motion="on"] .sheet,html.x3d[data-motion="on"] section.contact{
 html.x3d[data-motion="on"] .sheet.tilting{transition:transform .14s linear,border-color .3s,box-shadow .3s}
 .tilt-sheen{position:absolute;top:0;right:0;bottom:0;left:0;z-index:1;overflow:hidden;pointer-events:none}
 .tilt-sheen b{position:absolute;left:0;top:0;width:620px;height:620px;margin:-310px 0 0 -310px;border-radius:50%;opacity:0;
-  background:radial-gradient(circle,rgba(160,236,255,.16),rgba(70,212,255,.06) 34%,rgba(70,212,255,0) 64%);transition:opacity .45s}
+  background:radial-gradient(circle,rgba(255,206,160,.16),rgba(52,201,208,.06) 34%,rgba(52,201,208,0) 64%);transition:opacity .45s}
 .sheet.sheen-on .tilt-sheen b{opacity:1}
 html[data-motion="off"] .tilt-sheen{display:none}
 /* the light is added inside a card that may already be revealed; keep the reveal fade off it so it shows at once */
@@ -831,20 +831,195 @@ html:not(.js) .sec-shield{display:none}
   html.x3d .sheet,html.x3d section.contact,html.x3d .sec-head,html.x3d .group-h,html.x3d .hero>div,html.x3d .hero h1{transform:none!important;translate:none!important;scale:none!important}
   .sec-shield,.tilt-sheen{display:none!important}
 }
+
+/* ================================================================
+   Cinematic layer (19 Oct 2026). Only active when <html> has the class "cine".
+   ================================================================ */
+@media screen{
+/* ---- warm highlights on top of the teal grade ---- */
+html.hud.cine:root{--glow:rgba(255,136,58,.42);--warm:#FFA45C;--warm-hi:#FFD2A3}
+html.cine .hero .eyebrow{color:var(--warm)}
+html.cine .hero .eyebrow::before{background:var(--warm);box-shadow:0 0 10px var(--warm)}
+html.cine .hero .role{color:#FFB27A;text-shadow:0 0 16px rgba(255,140,60,.45)}
+html.cine .sec-head .eyebrow{color:#FFAE70}
+html.cine .sec-head h2,html.cine .contact h2{color:#FFF2E2;text-shadow:0 0 26px rgba(255,138,58,.45)}
+html.cine .group-h h3{color:#FFF2E2;text-shadow:0 0 18px rgba(255,138,58,.35)}
+html.cine .sec-head::before{background:linear-gradient(90deg,var(--warm),rgba(52,201,208,.22) 34%,transparent 85%)}
+html.cine .sec-head::after{background:var(--warm);box-shadow:0 0 14px rgba(255,140,60,.8)}
+html.cine .fact::before{background:var(--warm);box-shadow:0 0 8px var(--warm)}
+html.cine .topbar nav a:hover,html.cine .topbar nav a[aria-current]{color:var(--warm-hi);text-shadow:0 0 12px rgba(255,140,60,.45)}
+html.cine .topbar nav a::after{background:var(--warm);box-shadow:0 0 8px var(--warm)}
+html.cine .hud-progress{background:linear-gradient(90deg,rgba(255,164,92,.25),var(--warm));box-shadow:0 0 12px rgba(255,140,60,.8)}
+html.cine .hud-rail i{background:var(--warm);box-shadow:0 0 10px var(--warm)}
+html.cine .hud-rail b{color:var(--warm-hi)}
+/* the honesty labels keep their exact colours: green solid for "Built in my lab", blue dashed for "Blueprint" */
+html.cine .stamp.built{color:#3FE0A0;border-color:#3FE0A0;border-style:solid;background:rgba(63,224,160,.10);box-shadow:0 0 14px rgba(63,224,160,.25),inset 0 0 12px rgba(63,224,160,.12)}
+html.cine .stamp.blueprint{color:#46D4FF;border-color:#46D4FF;border-style:dashed;background:rgba(70,212,255,.10)}
+
+/* ---- the name, lit like a movie poster: warm metal edges instead of blue ---- */
+html.x3d.cine .hero h1{color:#FFF3E4;
+  text-shadow:
+    calc(var(--ex)*.011em) calc(var(--ey)*.011em) 0 #FFDDB8,
+    calc(var(--ex)*.022em) calc(var(--ey)*.022em) 0 #FFC48C,
+    calc(var(--ex)*.033em) calc(var(--ey)*.033em) 0 #F4A766,
+    calc(var(--ex)*.044em) calc(var(--ey)*.044em) 0 #DE8848,
+    calc(var(--ex)*.055em) calc(var(--ey)*.055em) 0 #BC6A33,
+    calc(var(--ex)*.066em) calc(var(--ey)*.066em) 0 #8F4F27,
+    calc(var(--ex)*.077em) calc(var(--ey)*.077em) 0 #5F361D,
+    calc(var(--ex)*.088em) calc(var(--ey)*.088em) 0 #2F1D12,
+    calc(var(--ex)*.12em) calc(var(--ey)*.15em) .14em rgba(0,0,0,.75),
+    0 0 46px rgba(255,130,50,.42),
+    0 0 120px rgba(255,110,40,.16)}
+
+/* ---- film grain over everything, and darker screen edges ---- */
+.cine-grain{position:fixed;top:-10%;left:-10%;width:120%;height:120%;z-index:900;pointer-events:none;opacity:.09;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='discrete' tableValues='0 1'/%3E%3CfeFuncG type='discrete' tableValues='0 1'/%3E%3CfeFuncB type='discrete' tableValues='0 1'/%3E%3CfeFuncA type='table' tableValues='1 0 1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");background-size:220px 220px}
+html[data-motion="on"] .cine-grain{animation:cine-grain .9s steps(1) infinite}
+/* a browser that cannot keep up (the script checks once, see "calm") keeps the grain still */
+html.cine-calm .cine-grain{animation:none!important}
+@keyframes cine-grain{0%{transform:translate3d(0,0,0)}11%{transform:translate3d(-4%,3%,0)}22%{transform:translate3d(3%,-5%,0)}33%{transform:translate3d(-7%,-2%,0)}
+  44%{transform:translate3d(5%,6%,0)}55%{transform:translate3d(-2%,7%,0)}66%{transform:translate3d(7%,-1%,0)}77%{transform:translate3d(-6%,-6%,0)}88%{transform:translate3d(2%,4%,0)}}
+/* the darker edges are part of the background, behind the text, so no words are ever darkened */
+.cine-vig-bg{position:absolute;top:0;right:0;bottom:0;left:0;
+  background:radial-gradient(ellipse 88% 80% at 50% 40%,rgba(0,0,0,0) 38%,rgba(0,0,0,.5) 78%,rgba(0,0,0,.82) 100%)}
+
+/* ---- a glint of light sweeps across each section heading while it is on screen, leaving a short light trail ---- */
+/* The script adds the class "cine-glint" to a heading every 9 seconds while it is on screen (every 12 for the name)
+   and takes it off when the glint is over. No blend modes here: a blended light inside a moving heading shows as a
+   pale box, so the glint is a soft round light that fades to nothing at its edges. Both parts are drawn inside the
+   heading's own box, so they can never make the page scroll sideways. */
+html.cine .sec-head h2,html.cine section.contact h2{position:relative;width:-webkit-fit-content;width:-moz-fit-content;width:fit-content;max-width:100%}
+html.cine .hero h1{position:relative}
+html.cine .sec-head h2::before,html.cine section.contact h2::before{content:"";position:absolute;left:0;width:1.6em;top:.55em;height:1.4em;margin-top:-.7em;
+  pointer-events:none;opacity:0;
+  background:radial-gradient(closest-side,rgba(255,252,246,.95),rgba(255,214,168,.5) 18%,rgba(255,160,80,.14) 52%,rgba(255,150,70,0))}
+html.cine .sec-head h2::after,html.cine section.contact h2::after{content:"";position:absolute;left:.8em;right:.8em;top:.55em;height:2px;margin-top:-1px;
+  pointer-events:none;opacity:0;transform:scaleX(0);transform-origin:0 50%;
+  background:linear-gradient(90deg,rgba(255,170,90,0),rgba(255,170,90,.45) 50%,rgba(255,196,140,.9) 92%,#FFF6EA);
+  box-shadow:0 0 22px 4px rgba(255,140,50,.26)}
+html.cine[data-motion="on"] .sec-head.cine-glint h2::before,html.cine[data-motion="on"] section.contact.cine-glint h2::before{animation:cine-glint 1.71s cubic-bezier(.45,0,.25,1) both}
+html.cine[data-motion="on"] .sec-head.cine-glint h2::after,html.cine[data-motion="on"] section.contact.cine-glint h2::after{animation:cine-trail 1.71s cubic-bezier(.45,0,.25,1) both}
+/* the glint moves by "translate" only (the script sets --gx, the distance from the left end of the heading to the right
+   end), so the browser's compositor moves it without redrawing the heading */
+@keyframes cine-glint{0%{opacity:0;translate:0 0}7.9%{opacity:1}57.9%{opacity:1;translate:var(--gx,0px) 0}68.4%,100%{opacity:0;translate:var(--gx,0px) 0}}
+@keyframes cine-trail{0%{opacity:0;transform:scaleX(0)}7.9%{opacity:1}57.9%{opacity:1;transform:scaleX(1)}100%{opacity:0;transform:scaleX(1)}}
+/* the name in the hero gets a wide anamorphic flare through its middle, like a film poster */
+html.cine .hero h1::after{content:"";position:absolute;left:-2%;right:-2%;top:56%;height:2px;margin-top:-1px;
+  pointer-events:none;opacity:0;transform:scaleX(.15);
+  background:linear-gradient(90deg,rgba(255,170,90,0),rgba(255,170,90,.8) 32%,#FFF4E6 50%,rgba(255,170,90,.8) 68%,rgba(255,170,90,0));
+  box-shadow:0 0 24px 5px rgba(255,140,50,.30)}
+html.cine.ready[data-motion="on"] .hero.cine-glint h1::after{animation:cine-streak 1.8s ease-in-out both}
+@keyframes cine-streak{0%{opacity:0;transform:scaleX(.15)}40%{opacity:1;transform:scaleX(1)}100%{opacity:0;transform:scaleX(1)}}
+
+/* ---- scenes: each section arrives like a new shot ---- */
+/* the heading starts large and out of focus, then pulls into focus; the caption and text follow;
+   the divider line wipes across; cards rise and settle into place. Phones use smaller amounts. Only the amounts
+   change with the screen width (never the animation names), so turning a phone or resizing the window does not
+   play the entrances again. */
+html.hud3d.cine{--shot-blur:14px;--shot-scale:1.14;--rise:64px;--rise-scale:.955}
+@media (max-width:600px){html.hud3d.cine{--shot-blur:10px;--shot-scale:1.06;--rise:40px;--rise-scale:.97}}
+html.hud3d.cine[data-motion="on"] .sec-head.rv.in,html.hud3d.cine[data-motion="on"] section.contact.rv.in{animation:cine-fade .5s ease backwards}
+html.hud3d.cine[data-motion="on"] .sec-head.rv.in h2,html.hud3d.cine[data-motion="on"] section.contact.rv.in h2,
+html.hud3d.cine[data-motion="on"] .group-h.rv.in h3{animation:cine-shot 1.2s .05s cubic-bezier(.16,.84,.22,1) backwards;transform-origin:0 60%}
+html.hud3d.cine[data-motion="on"] .sec-head.rv.in .eyebrow{animation:cine-caption .9s .2s cubic-bezier(.2,.7,.2,1) backwards}
+html.hud3d.cine[data-motion="on"] .sec-head.rv.in>p,html.hud3d.cine[data-motion="on"] .group-h.rv.in>p{animation:cine-fade 1s .45s ease backwards}
+html.hud3d.cine[data-motion="on"] .sec-head.rv.in::before{animation:cine-wipe 1.3s .1s cubic-bezier(.7,0,.2,1) backwards;transform-origin:0 50%}
+html.hud3d.cine[data-motion="on"] .sec-head.rv.in::after{animation:cine-bar .8s .15s cubic-bezier(.2,.7,.2,1) backwards}
+/* a card that a link points at (for example #soc-03) is left exactly in its place, so the browser lands right on it;
+   the script marks it "cine-still" so it stays put after the address changes */
+html.hud3d.cine[data-motion="on"] .sheet.rv:not(.in):not(:target):not(.cine-still){translate:0 var(--rise);scale:var(--rise-scale)}
+html.hud3d.cine[data-motion="on"] .sheet.rv.in:not(:target):not(.cine-still){animation:cine-settle 1.05s cubic-bezier(.16,.84,.22,1) backwards}
+@keyframes cine-fade{from{opacity:0}}
+@keyframes cine-shot{0%{opacity:0;filter:blur(var(--shot-blur));scale:var(--shot-scale)}40%{opacity:1}100%{opacity:1;filter:blur(0);scale:1}}
+@keyframes cine-caption{from{opacity:0;translate:-18px 0;filter:blur(4px)}}
+@keyframes cine-wipe{from{transform:scaleX(0)}}
+@keyframes cine-bar{from{opacity:0;translate:-24px 0}}
+@keyframes cine-settle{from{translate:0 var(--rise);scale:var(--rise-scale)}}
+
+/* ---- the hero, lit like a movie poster: beams of light and drifting dust behind the name and the globe ---- */
+/* The script draws the beams and the dust together on one canvas at half resolution: one light layer for the
+   browser instead of a stack of large moving ones. The light fades in at its top edge and out at its bottom edge,
+   so it never shows a hard edge. Without JavaScript only the warm glow shows.
+   The light reaches up behind the top bar. On wide screens the top bar already sits above it (it is sticky there);
+   on narrower screens it is lifted above it here, so the light is always behind the menu, never over it. */
+@media not all and (min-width:900px){html.cine .topbar{z-index:2}}
+html.cine .hero>.cine-light{position:absolute;z-index:0;top:-110px;bottom:-30px;left:calc(var(--bleed)*-1);right:calc(var(--bleed)*-1);
+  overflow:hidden;pointer-events:none}
+.cl-glow{position:absolute;left:-6%;top:12%;width:70%;height:86%;
+  background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(255,120,48,.17),rgba(255,120,48,.06) 45%,rgba(255,120,48,0) 72%)}
+.cl-dust{position:absolute;top:0;left:0;width:100%;height:100%}
+html:not(.js) .cl-dust{display:none}
+@media (max-width:760px){.cl-glow,.cl-dust{opacity:.85}}
+
+/* ---- the film opening: a short title sequence in widescreen bars ---- */
+.hud-boot.cine-boot{background:none;cursor:default}
+.cb-frame{position:absolute;top:0;right:0;bottom:0;left:0;overflow:hidden;background:#000;transition:background-color .45s ease}
+.cb-scene{position:absolute;top:0;right:0;bottom:0;left:0;transition:opacity .42s ease,transform .6s cubic-bezier(.3,0,.2,1)}
+.cb-haze{position:absolute;left:0;right:0;top:12.5vh;bottom:12.5vh;opacity:0;
+  background:radial-gradient(ellipse 60% 70% at 50% 52%,rgba(28,74,74,.55),rgba(6,16,17,.92) 62%,#020606 100%)}
+.cb-flare{position:absolute;left:0;right:0;top:50%;height:0}
+.cb-flare i{position:absolute;left:6%;right:6%;top:-1px;height:2px;opacity:0;transform:scaleX(0);
+  background:linear-gradient(90deg,rgba(255,164,92,0),rgba(255,164,92,.75) 30%,#FFF4E6 50%,rgba(255,164,92,.75) 70%,rgba(255,164,92,0));
+  box-shadow:0 0 34px 9px rgba(255,136,58,.32),0 0 90px 22px rgba(52,201,208,.10)}
+.cb-pre{position:absolute;left:0;right:0;top:50%;margin:-4.4em 0 0;text-align:center;opacity:0;
+  font:500 clamp(10px,1.1vw,13px)/1 var(--f-mono);letter-spacing:.42em;text-transform:uppercase;color:#FFB27A}
+.cb-title{position:absolute;left:0;right:0;top:50%;margin:-.5em 0 0;padding:0 16px;text-align:center;opacity:0;
+  font:700 clamp(30px,10vw,116px)/1 var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:#FFF3E4;
+  text-shadow:0 .03em 0 #F4A766,0 .06em 0 #BC6A33,0 .09em 0 #5F361D,0 0 50px rgba(255,130,50,.5)}
+.cb-title span{position:relative;display:inline-block}
+.cb-title span::before{content:"";position:absolute;left:0;right:0;top:.55em;height:1.3em;margin-top:-.65em;opacity:0;
+  background:radial-gradient(closest-side,rgba(255,252,246,.95),rgba(255,214,168,.5) 18%,rgba(255,160,80,.14) 52%,rgba(255,150,70,0)) no-repeat;
+  background-size:1.4em 100%;background-position:0 0}
+.cb-title span::after{content:"";position:absolute;left:.7em;right:.7em;top:.55em;height:2px;margin-top:-1px;opacity:0;transform:scaleX(0);transform-origin:0 50%;
+  background:linear-gradient(90deg,rgba(255,170,90,0),rgba(255,170,90,.45) 50%,rgba(255,196,140,.9) 92%,#FFF6EA);
+  box-shadow:0 0 26px 5px rgba(255,140,50,.3)}
+.cb-grain{position:absolute;top:-8%;left:-8%;width:116%;height:116%;pointer-events:none;opacity:.14;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='discrete' tableValues='0 1'/%3E%3CfeFuncG type='discrete' tableValues='0 1'/%3E%3CfeFuncB type='discrete' tableValues='0 1'/%3E%3CfeFuncA type='table' tableValues='1 0 1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px 200px}
+.cb-bar{position:absolute;left:0;right:0;height:12.5vh;background:#000;transition:transform .55s cubic-bezier(.7,0,.25,1)}
+.cb-top{top:0}
+.cb-bot{bottom:0}
+.cine-boot .hb-skip{z-index:2;bottom:max(14px,calc(6.25vh - 22px));color:#FFD2A3;background:rgba(255,164,92,.08);border-color:rgba(255,164,92,.5)}
+.cine-boot .hb-skip:hover{background:rgba(255,164,92,.18)}
+.hud-boot.cine-boot.on .cb-haze{animation:cb-haze 2.3s ease forwards}
+.hud-boot.cine-boot.on .cb-flare i{animation:cb-flare 2.3s cubic-bezier(.2,.7,.2,1) forwards}
+.hud-boot.cine-boot.on .cb-pre{animation:cb-pre 2.3s ease forwards}
+.hud-boot.cine-boot.on .cb-title{animation:cb-title 2.3s cubic-bezier(.16,.84,.22,1) forwards}
+.hud-boot.cine-boot.on .cb-title span::before{animation:cb-glint 2.3s linear forwards}
+.hud-boot.cine-boot.on .cb-title span::after{animation:cb-trail 2.3s linear forwards}
+.hud-boot.cine-boot.on .cb-grain{animation:cine-grain .8s steps(1) infinite}
+@keyframes cb-haze{0%{opacity:0}18%,100%{opacity:1}}
+@keyframes cb-flare{0%{opacity:0;transform:scaleX(0)}8%{opacity:1}34%{opacity:1;transform:scaleX(1)}56%,100%{opacity:0;transform:scaleX(1)}}
+@keyframes cb-pre{0%,10%{opacity:0;letter-spacing:.24em}22%{opacity:1}40%{opacity:1;letter-spacing:.42em}50%,100%{opacity:0;letter-spacing:.46em}}
+@keyframes cb-title{0%,36%{opacity:0;filter:blur(16px);transform:scale(1.16)}62%{opacity:1;filter:blur(0);transform:scale(1.02)}100%{opacity:1;filter:blur(0);transform:scale(1)}}
+@keyframes cb-glint{0%,64%{opacity:0;background-position:0 0}67%{opacity:1}88%{opacity:1;background-position:100% 0}93%,100%{opacity:0;background-position:100% 0}}
+@keyframes cb-trail{0%,64%{opacity:0;transform:scaleX(0)}67%{opacity:1}88%{opacity:1;transform:scaleX(1)}100%{opacity:0;transform:scaleX(1)}}
+/* the end: the bars open onto the page and the title pushes towards the camera as it fades */
+.hud-boot.cine-boot.out{opacity:1;transition:none}
+.hud-boot.cine-boot.out .cb-frame{background-color:rgba(0,0,0,0)}
+.hud-boot.cine-boot.out .cb-scene{opacity:0;transform:scale(1.06)}
+.hud-boot.cine-boot.out .cb-top{transform:translateY(-100%)}
+.hud-boot.cine-boot.out .cb-bot{transform:translateY(100%)}
+.hud-boot.cine-boot.out .hb-skip{opacity:0;transition:opacity .2s ease}
+/* the name then comes into focus as the page appears */
+html.hud3d.cine.ready[data-motion="on"] .hero h1{animation:cine-title 1.2s .05s cubic-bezier(.16,.84,.22,1) backwards;transform-origin:50% 60%}
+@keyframes cine-title{from{opacity:0;filter:blur(14px);scale:1.08}}
+}
+@media print{
+  .cine-grain,.cine-vig-bg,.cine-light{display:none!important}
+  html.cine .sheet{translate:none!important;scale:none!important}
+}
 </style>
 </head>
 <body>
-<div class="hud-bg" aria-hidden="true"><div class="hud-grid"><i></i></div><div class="hud-beam"></div><div class="hud-glow" id="hud-glow"></div><i class="hud-corner tl"></i><i class="hud-corner tr"></i><i class="hud-corner bl"></i><i class="hud-corner br"></i><div class="hud-side">Archi Rose Mani · Portfolio</div><div class="hud-rail" id="hud-rail"><i></i><b id="hud-pct">0%</b></div></div>
+<div class="hud-bg" aria-hidden="true"><div class="hud-grid"><i></i></div><div class="hud-beam"></div><div class="hud-glow" id="hud-glow"></div><i class="cine-vig-bg"></i><i class="hud-corner tl"></i><i class="hud-corner tr"></i><i class="hud-corner bl"></i><i class="hud-corner br"></i><div class="hud-side">Archi Rose Mani · Portfolio</div><div class="hud-rail" id="hud-rail"><i></i><b id="hud-pct">0%</b></div></div>
 <div class="hud-progress" id="hud-progress" aria-hidden="true"></div>
-<div class="hud-boot" id="hud-boot">
-  <div class="hb-core" aria-hidden="true">
-    <div class="hb-rings"><svg class="hb-r hb-r1" viewBox="0 0 200 200" focusable="false"><circle cx="100" cy="100" r="96" stroke-width="1" opacity="0.4"/><circle cx="100" cy="100" r="90" stroke-width="6" stroke-dasharray="0.79 8.64" opacity="0.6"/></svg><svg class="hb-r hb-r2" viewBox="0 0 200 200" focusable="false"><circle cx="100" cy="100" r="72" stroke-width="5" stroke-dasharray="87.96 62.83 37.70 113.10 75.40 75.40" opacity="0.95" stroke-linecap="round"/></svg><svg class="hb-r hb-r3" viewBox="0 0 200 200" focusable="false"><circle cx="100" cy="100" r="60" stroke-width="1.5" stroke-dasharray="1.05 3.14" opacity="0.6"/></svg><svg class="hb-r hb-r4" viewBox="0 0 200 200" focusable="false"><circle cx="100" cy="100" r="84" stroke-width="3" opacity=".18"/><circle id="hb-arc" cx="100" cy="100" r="84" stroke-width="3" stroke-linecap="round" stroke-dasharray="527.79" stroke-dashoffset="527.79" data-c="527.79" transform="rotate(-90 100 100)"/></svg><div class="hb-pct"><b id="hb-pct">0</b><span>%</span></div></div>
-    <p class="hb-title">Archi Rose Mani</p>
-    <p class="hb-sub">Portfolio console</p>
-    <pre class="hb-log" id="hb-log"></pre>
+<div class="hud-boot cine-boot" id="hud-boot" data-dur="2300">
+  <div class="cb-frame" aria-hidden="true">
+    <div class="cb-scene"><div class="cb-haze"></div><div class="cb-flare"><i></i></div><p class="cb-pre">Security operations portfolio</p><p class="cb-title"><span>Archi Rose Mani</span></p><div class="cb-grain"></div></div>
+    <div class="cb-bar cb-top"></div><div class="cb-bar cb-bot"></div>
   </div>
   <button type="button" class="hb-skip" id="hb-skip">Skip intro</button>
 </div>
+<div class="cine-grain" aria-hidden="true"></div>
 
 <div class="wrap">
   <div class="topbar">
@@ -856,6 +1031,7 @@ html:not(.js) .sec-shield{display:none}
   </div>
 
   <header class="hero">
+    <span class="cine-light" aria-hidden="true"><i class="cl-glow"></i><canvas class="cl-dust" id="cine-dust" width="16" height="16"></canvas></span>
     <div>
       <p class="eyebrow">Dunfermline, Fife · UK</p>
       <h1>Archi Rose Mani</h1>
@@ -1673,7 +1849,7 @@ if(W.matchMedia&&W.matchMedia("(hover:hover) and (pointer:fine)").matches){
 function hero(){
   if(!motion())return;
   var h1=$(".hero h1"),role=$(".hero .role");
-  if(h1)setTimeout(function(){decode(h1,950)},100);
+  if(h1&&!root.classList.contains("cine"))setTimeout(function(){decode(h1,950)},100);
   if(role)setTimeout(function(){typeIn(role,950)},520);
   $$(".fact b").forEach(function(b,i){setTimeout(function(){countUp(b,1300)},1150+i*110)});
 }
@@ -1683,7 +1859,7 @@ function boot(){
   if(!el||!root.classList.contains("booting")){if(el&&el.parentNode)el.parentNode.removeChild(el);ready();return}
   el.classList.add("on");
   try{W.sessionStorage.setItem("hud-boot","1")}catch(e){}
-  var log=$("#hb-log"),num=$("#hb-pct"),arc=$("#hb-arc"),C=arc?parseFloat(arc.getAttribute("data-c")):0,done=false,timers=[],t0=clock(),D=1750;
+  var log=$("#hb-log"),num=$("#hb-pct"),arc=$("#hb-arc"),C=arc?parseFloat(arc.getAttribute("data-c")):0,done=false,timers=[],t0=clock(),D=+(el.getAttribute("data-dur"))||1750;
   function row(k,v){v=String(v);var n=Math.max(3,30-k.length-v.length),dots=new Array(n+1).join(".");return "> "+k+" "+dots+" "+v}
   var lines=[row("profile","loaded"),row("security designs",$$("#security .sheet").length),row("automation designs",$$("#designs .sheet").length),row("home labs",$$("#labs .lab").length),row("status","ready")];
   lines.forEach(function(s,i){timers.push(setTimeout(function(){if(log&&!done)log.textContent+=(i?"\n":"")+s},150+i*300))});
@@ -1795,25 +1971,25 @@ if(ctx&&holo&&W.atob&&W.Float32Array){(function(){
     ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,size,size);
     for(i=0;i<N;i++){x=P[i*3];y=P[i*3+1];z=P[i*3+2];x1=x*cyw-z*syw;z1=x*syw+z*cyw;SX[i]=C+R*x1;SY[i]=C-R*(y*cp-z1*sp);SZ[i]=y*sp+z1*cp}
     /* far side first, then the near side on top, so the globe reads as see-through */
-    lines(false,"rgba(70,212,255,.07)");
-    dots(-2,0,U,"rgba(70,212,255,.2)");
-    orbit(1.17,0.5,t*0.00011,false,"rgba(70,212,255,.16)");
-    orbit(1.09,-0.95,-t*0.00007,false,"rgba(70,212,255,.1)");
-    ctx.strokeStyle="rgba(70,212,255,.5)";ctx.lineWidth=U;ctx.beginPath();ctx.arc(C,C,R,0,2*Math.PI);ctx.stroke();
-    lines(true,"rgba(70,212,255,.2)");
-    dots(0,0.35,1.2*U,"rgba(70,212,255,.5)");
-    dots(0.35,0.7,1.5*U,"rgba(110,224,255,.82)");
-    dots(0.7,2,1.8*U,"rgba(170,238,255,1)");
+    lines(false,"rgba(52,201,208,.07)");
+    dots(-2,0,U,"rgba(52,201,208,.2)");
+    orbit(1.17,0.5,t*0.00011,false,"rgba(52,201,208,.16)");
+    orbit(1.09,-0.95,-t*0.00007,false,"rgba(52,201,208,.1)");
+    ctx.strokeStyle="rgba(52,201,208,.5)";ctx.lineWidth=U;ctx.beginPath();ctx.arc(C,C,R,0,2*Math.PI);ctx.stroke();
+    lines(true,"rgba(52,201,208,.2)");
+    dots(0,0.35,1.2*U,"rgba(52,201,208,.5)");
+    dots(0.35,0.7,1.5*U,"rgba(98,222,220,.82)");
+    dots(0.7,2,1.8*U,"rgba(172,240,236,1)");
     /* scan band (only while animations are on: a frozen white stripe would look like a fault) */
     if(live){ctx.fillStyle="#FFFFFF";ctx.beginPath();
       for(i=0;i<N;i++){y=P[i*3+1];if(SZ[i]>0&&y>=edge&&Math.abs(y-scan)<0.05)ctx.rect(SX[i]-U,SY[i]-U,2*U,2*U)}
       ctx.fill()}
-    orbit(1.17,0.5,t*0.00011,true,"rgba(70,212,255,.55)");
-    orbit(1.09,-0.95,-t*0.00007,true,"rgba(70,212,255,.32)");
+    orbit(1.17,0.5,t*0.00011,true,"rgba(52,201,208,.55)");
+    orbit(1.09,-0.95,-t*0.00007,true,"rgba(52,201,208,.32)");
     /* a satellite on the first orbit */
     su=t*0.0008;ph=t*0.00011;ox=1.17*Math.cos(su);oz=1.17*Math.sin(su);x=ox*Math.cos(0.5);y=ox*Math.sin(0.5);
     sx1=x*Math.cos(ph)-oz*Math.sin(ph);sz1=x*Math.sin(ph)+oz*Math.cos(ph);sy2=y*cp-sz1*sp;sz2=y*sp+sz1*cp;
-    ctx.fillStyle=sz2>=0?"#EAFBFF":"rgba(70,212,255,.45)";ctx.beginPath();ctx.arc(C+R*sx1,C-R*sy2,(sz2>=0?2.3:1.5)*U,0,2*Math.PI);ctx.fill();
+    ctx.fillStyle=sz2>=0?"#EAFFFB":"rgba(52,201,208,.45)";ctx.beginPath();ctx.arc(C+R*sx1,C-R*sy2,(sz2>=0?2.3:1.5)*U,0,2*Math.PI);ctx.fill();
     /* the marker and its label */
     xm=mx3*cyw-mz3*syw;zm=mx3*syw+mz3*cyw;ym=my3*cp-zm*sp;zz=my3*sp+zm*cp;
     if(zz>0&&my3>=edge){
@@ -2156,17 +2332,17 @@ if(ctx){(function(){
     ctx.lineCap="round";ctx.lineJoin="round";
     /* the projector rings underneath */
     var u=Math.max(0.8,size/100);
-    path(ring2,true,false,"rgba(70,212,255,.18)",u);path(ring3,true,false,"rgba(70,212,255,.12)",u);
-    path(ring2,true,true,"rgba(70,212,255,.5)",1.1*u);path(ring3,true,true,"rgba(70,212,255,.28)",u);
+    path(ring2,true,false,"rgba(52,201,208,.18)",u);path(ring3,true,false,"rgba(52,201,208,.12)",u);
+    path(ring2,true,true,"rgba(52,201,208,.5)",1.1*u);path(ring3,true,true,"rgba(52,201,208,.28)",u);
     /* far side first, near side on top */
-    path(back,true,false,"rgba(70,212,255,.2)",u);path(front,true,false,"rgba(70,212,255,.2)",u);
-    edges(front,back,3,false,"rgba(70,212,255,.14)");
+    path(back,true,false,"rgba(52,201,208,.2)",u);path(front,true,false,"rgba(52,201,208,.2)",u);
+    edges(front,back,3,false,"rgba(52,201,208,.14)");
     path(lockB,true,false,"rgba(255,177,74,.25)",u);path(lockF,true,false,"rgba(255,177,74,.3)",u);
-    path(back,true,true,"rgba(70,212,255,.35)",u);
-    edges(front,back,3,true,"rgba(70,212,255,.3)");
-    path(inner,true,true,"rgba(70,212,255,.5)",u);path(inner,true,false,"rgba(70,212,255,.16)",u);
-    path(front,true,true,"rgba(70,212,255,.28)",4.2*u);
-    path(front,true,true,"rgba(170,238,255,.98)",1.5*u);
+    path(back,true,true,"rgba(52,201,208,.35)",u);
+    edges(front,back,3,true,"rgba(52,201,208,.3)");
+    path(inner,true,true,"rgba(52,201,208,.5)",u);path(inner,true,false,"rgba(52,201,208,.16)",u);
+    path(front,true,true,"rgba(52,201,208,.28)",4.2*u);
+    path(front,true,true,"rgba(172,240,236,.98)",1.5*u);
     /* the padlock */
     path(shOut,false,true,"rgba(255,177,74,.95)",1.4*u);path(shIn,false,true,"rgba(255,177,74,.7)",1.1*u);
     path(shOut,false,false,"rgba(255,177,74,.3)",u);path(shIn,false,false,"rgba(255,177,74,.22)",u);
@@ -2179,7 +2355,7 @@ if(ctx){(function(){
     if(live){
       var sy=0.98-((t/3200)%1)*1.96,hw=halfW(sy);
       if(hw>0.02){scan[0][0]=-hw*0.98;scan[1][0]=hw*0.98;scan[0][1]=scan[1][1]=sy;
-        ctx.save();ctx.globalAlpha=0.55+0.45*flash;path(scan,false,true,"rgba(220,248,255,.9)",(1.2+1.4*flash)*u);ctx.restore()}
+        ctx.save();ctx.globalAlpha=0.55+0.45*flash;path(scan,false,true,"rgba(224,252,248,.9)",(1.2+1.4*flash)*u);ctx.restore()}
     }
   }
   function want(){return motion()&&seen&&!d.hidden&&isReady()}
@@ -2220,6 +2396,180 @@ if(ctx){(function(){
 })()}
 
 }catch(err){if(W.console&&console.error)console.error("3D extras stopped:",err)}
+})();
+
+(function(){
+"use strict";
+var d=document,W=window,root=d.documentElement;
+if(!root.classList||!root.classList.contains("cine"))return;
+function motion(){return root.getAttribute("data-motion")==="on"}
+function isReady(){return root.classList.contains("ready")}
+var raf=W.requestAnimationFrame?function(f){return W.requestAnimationFrame(f)}:function(f){return setTimeout(function(){f(Date.now())},16)};
+function now(){return (W.performance&&W.performance.now)?W.performance.now():Date.now()}
+try{
+
+/* ---------- a glint of light crosses each section heading every 9 seconds while it is on screen ----------
+   (the name in the hero gets its light streak every 12). Started from here rather than as an endless CSS
+   animation, so between glints the browser has nothing to do. The first one comes 1.3 seconds after a heading has
+   been shown (once it has pulled into focus and its letters have settled). The timer sleeps while animations are
+   off, the tab is hidden or no heading is on screen. */
+var blocks=Array.prototype.slice.call(d.querySelectorAll(".sec-head,section.contact,.hero")),live=[],ticking=false;
+function headOf(b){return b.querySelector(b.classList.contains("hero")?"h1":"h2")}
+function gap(b){return b.classList.contains("hero")?12000:9000}
+function lead(b){return b.classList.contains("hero")?1400:1300}
+/* the heading has not been shown yet / its letters are still settling (while the text effect runs, the heading
+   carries an aria-label with its real words next to data-hud-t, which keeps them for good) */
+function hidden(b){return b.classList.contains("rv")&&!b.classList.contains("in")}
+function settling(b){var e=headOf(b);return !!e&&e.hasAttribute("aria-label")&&e.hasAttribute("data-hud-t")}
+function glint(b){
+  /* how far the glint travels: from the left end of the heading to the right end, less its own width (1.6em) */
+  var e=headOf(b);if(e&&e.tagName==="H2"){var fs=parseFloat(W.getComputedStyle(e).fontSize)||0;e.style.setProperty("--gx",Math.max(0,Math.round(e.offsetWidth-1.6*fs))+"px")}
+  if(b.classList.contains("cine-glint")){b.classList.remove("cine-glint");void b.offsetWidth}b.classList.add("cine-glint")}
+function stopAll(){for(var k=0;k<blocks.length;k++)blocks[k].classList.remove("cine-glint")}
+blocks.forEach(function(b){b.addEventListener("animationend",function(e){if(e.animationName==="cine-trail"||e.animationName==="cine-streak")b.classList.remove("cine-glint")})});
+function tick(){
+  ticking=false;
+  if(!motion()||d.hidden||!live.length)return;
+  var t=now(),k,b;
+  for(k=0;k<live.length;k++){b=live[k];
+    if(!isReady()||hidden(b)){b._cineDue=Math.max(b._cineDue,t+lead(b));continue}
+    if(t>=b._cineDue&&!settling(b)){glint(b);b._cineDue=t+gap(b)}}
+  ticking=true;setTimeout(tick,300);
+}
+function wake(){if(!ticking){ticking=true;setTimeout(tick,300)}}
+if("IntersectionObserver" in W){
+  /* each heading itself is watched (not its whole block), so a glint never runs on a heading that is off screen */
+  var gio=new IntersectionObserver(function(es){var t=now();es.forEach(function(e){var b=e.target._cineBlock,k=live.indexOf(b);
+    if(e.isIntersecting){if(k<0){live.push(b);b._cineDue=t+lead(b)}}else{if(k>=0)live.splice(k,1);b.classList.remove("cine-glint")}});wake()},{rootMargin:"0px"});
+  blocks.forEach(function(b){var e=headOf(b);if(e){e._cineBlock=b;gio.observe(e)}});
+}
+if("MutationObserver" in W){new MutationObserver(function(){
+  if(!motion()){stopAll();return}
+  var t=now();for(var k=0;k<live.length;k++)live[k]._cineDue=t+lead(live[k]);wake();
+}).observe(root,{attributes:true,attributeFilter:["data-motion"]})}
+d.addEventListener("visibilitychange",wake);
+
+/* ---------- a card that a link points at stays exactly in its place (see the CSS), also after the address changes ---------- */
+function pin(){try{var id=decodeURIComponent((location.hash||"").slice(1)),e=id?d.getElementById(id):null;if(e&&e.classList.contains("sheet"))e.classList.add("cine-still")}catch(err){}}
+pin();W.addEventListener("hashchange",pin);
+
+/* ---------- calm: if this browser cannot keep up (for example a remote desktop with no graphics card), the grain
+   and the dust hold still. Checked once: 45 frames, starting 2 seconds after the page is ready. Very slow frames
+   (a middle frame time over 55 ms, below about 18 a second) switch the calm look on for the rest of the visit ---------- */
+(function(){
+  var gaps=[],last=0,settle=true;
+  function later(ms){last=0;setTimeout(function(){raf(f)},ms)}
+  function f(t){
+    if(!motion()||d.hidden||!isReady()){gaps=[];settle=true;later(1000);return}
+    if(settle){settle=false;later(2000);return}
+    if(last)gaps.push(t-last);
+    last=t;
+    if(gaps.length<45){raf(f);return}
+    gaps.sort(function(a,b){return a-b});
+    if(gaps[22]>55)root.classList.add("cine-calm");
+  }
+  later(500);
+})();
+function calm(){return root.classList.contains("cine-calm")}
+
+/* ---------- the light in the hero: beams and drifting dust, drawn together on one small canvas ---------- */
+var dc=d.getElementById("cine-dust"),box=dc?dc.parentNode:null,g=(dc&&dc.getContext)?dc.getContext("2d"):null;
+if(g&&box){(function(){
+  var BEAMS=[{"x": 0.2, "w": 0.3, "a": -24, "c": [255, 196, 140], "k": 1.0, "rgb": [255, 150, 72], "alpha": 0.3, "dur": 9}, {"x": 0.82, "w": 0.24, "a": 27, "c": [130, 232, 228], "k": 0.85, "rgb": [52, 201, 208], "alpha": 0.24, "dur": 11}, {"x": 0.4, "w": 0.1, "a": -13, "c": [255, 226, 190], "k": 0.8, "rgb": [255, 206, 150], "alpha": 0.2, "dur": 7}];
+  var S=0.5,Wd=0,Hd=0,parts=[],layers=[],cache=null,cx=null,cacheT=-1e9,seen=true,running=false,stillDone=false,tPrev=0,due=0,i;
+  for(i=0;i<BEAMS.length;i++){var b=BEAMS[i],r=b.a*Math.PI/180;b.dx=-Math.sin(r);b.dy=Math.cos(r)}
+  function rnd(a,b){return a+Math.random()*(b-a)}
+  /* the light fades in over the top 120px of its box and out over the bottom 28%, so it never shows a hard edge */
+  function edge(y){return Math.max(0,Math.min(1,y/120,(Hd-y)/(Hd*0.28)))}
+  function seed(){
+    parts=[];var n=Math.round(Math.max(40,Math.min(110,Wd*Hd/9000))),k;
+    for(k=0;k<n;k++)parts.push({x:rnd(0,Wd),y:rnd(0,Hd),r:rnd(.5,1.7),vx:rnd(-3,7),vy:rnd(-11,-3),ph:rnd(0,6.28),tw:rnd(.6,1.6),bk:0});
+    /* a few big soft specks, out of focus, like dust close to the lens */
+    for(k=0;k<8;k++)parts.push({x:rnd(0,Wd),y:rnd(0,Hd),r:rnd(4,10),vx:rnd(-2,4),vy:rnd(-6,-2),ph:rnd(0,6.28),tw:rnd(.3,.8),bk:1});
+  }
+  /* each beam is painted once into its own layer at the current size; every frame then only copies the layers */
+  function paintBeams(){
+    layers=[];var cw=dc.width,ch=dc.height,j,x,c,bw,bh,gr,m,e,col;
+    for(j=0;j<BEAMS.length;j++){var b=BEAMS[j];c=d.createElement("canvas");c.width=cw;c.height=ch;x=c.getContext("2d");if(!x){layers=[];return}
+      x.setTransform(S,0,0,S,0,0);x.translate(b.x*Wd,-0.12*Hd);x.rotate(b.a*Math.PI/180);
+      bw=b.w*Wd;bh=1.7*Hd;col=function(f){return "rgba("+b.rgb[0]+","+b.rgb[1]+","+b.rgb[2]+","+(b.alpha*f).toFixed(4)+")"};
+      /* soft across its width ... */
+      gr=x.createLinearGradient(-bw/2,0,bw/2,0);gr.addColorStop(0,col(0));gr.addColorStop(.28,col(.5));gr.addColorStop(.5,col(1));gr.addColorStop(.72,col(.5));gr.addColorStop(1,col(0));
+      x.fillStyle=gr;x.fillRect(-bw/2,0,bw,bh);
+      /* ... and fading along its length: full at the top, 60% by 45% of the way down, gone by 92% */
+      x.globalCompositeOperation="destination-in";m=x.createLinearGradient(0,0,0,bh);m.addColorStop(0,"#000");m.addColorStop(.45,"rgba(0,0,0,.6)");m.addColorStop(.92,"rgba(0,0,0,0)");m.addColorStop(1,"rgba(0,0,0,0)");
+      x.fillStyle=m;x.fillRect(-bw/2,0,bw,bh);
+      /* then the soft top and bottom edges of the whole light box */
+      x.setTransform(1,0,0,1,0,0);e=x.createLinearGradient(0,0,0,ch);e.addColorStop(0,"rgba(0,0,0,0)");e.addColorStop(Math.min(.5,120/Hd),"#000");e.addColorStop(.72,"#000");e.addColorStop(1,"rgba(0,0,0,0)");
+      x.fillStyle=e;x.fillRect(0,0,cw,ch);
+      layers.push(c)}
+  }
+  /* fit the canvas to its box. Only a real change of size does any work: the dust keeps its place (stretched to the
+     new size) and the beams are painted again for the new shape */
+  function fit(){
+    var w=box.offsetWidth,h=box.offsetHeight,k;if(!w||!h)return false;
+    if(w!==Wd||h!==Hd){
+      if(parts.length&&Wd&&Hd){for(k=0;k<parts.length;k++){parts[k].x*=w/Wd;parts[k].y*=h/Hd}}
+      Wd=w;Hd=h;dc.width=Math.max(1,Math.round(w*S));dc.height=Math.max(1,Math.round(h*S));if(!parts.length)seed();paintBeams();
+      cache=d.createElement("canvas");cache.width=dc.width;cache.height=dc.height;cx=cache.getContext("2d");cacheT=-1e9;stillDone=false}
+    return true;
+  }
+  /* how much beam light reaches a point, and its colour */
+  var LR=0,LG=0,LB=0;
+  function lit(x,y){
+    var sum=0,rr=0,gg=0,bb=0,j,b,vx,vy,t,perp,half,f;
+    for(j=0;j<BEAMS.length;j++){b=BEAMS[j];vx=x-b.x*Wd;vy=y+0.12*Hd;t=vx*b.dx+vy*b.dy;if(t<=0)continue;
+      perp=Math.abs(vx*b.dy-vy*b.dx);half=b.w*Wd/2;f=Math.exp(-Math.pow(perp/(half*0.6),2))*Math.max(0,1-t/(1.6*Hd))*b.k;
+      if(f>0.002){sum+=f;rr+=b.c[0]*f;gg+=b.c[1]*f;bb+=b.c[2]*f}}
+    if(sum>0){LR=rr/sum;LG=gg/sum;LB=bb/sum}else{LR=170;LG=196;LB=192}
+    return sum;
+  }
+  /* calm: one still picture (animations off, or nothing to animate): the beams at full strength, nothing drifts */
+  function draw(t,dt,calm){
+    if(!Wd&&!fit())return;
+    var k,p,l,a,rad,j,b;
+    /* each beam breathes slowly, between 78% and full strength. That change is so slow that the beams are mixed
+       together only four times a second; every frame then copies the mix in one go and adds the dust */
+    if(cx&&(calm||t-cacheT>250||t<cacheT)){cacheT=calm?-1e9:t;cx.setTransform(1,0,0,1,0,0);cx.globalAlpha=1;cx.clearRect(0,0,cache.width,cache.height);
+      for(j=0;j<layers.length;j++){b=BEAMS[j];cx.globalAlpha=calm?1:.78+.11*(1-Math.cos(t*0.001*6.2832/b.dur));cx.drawImage(layers[j],0,0)}}
+    g.setTransform(1,0,0,1,0,0);g.globalAlpha=1;
+    if(cx){g.globalCompositeOperation="copy";g.drawImage(cache,0,0);g.globalCompositeOperation="source-over"}else g.clearRect(0,0,dc.width,dc.height);
+    g.setTransform(S,0,0,S,0,0);
+    for(k=0;k<parts.length;k++){p=parts[k];
+      if(dt){p.x+=p.vx*dt;p.y+=p.vy*dt+Math.sin(t*0.0005+p.ph)*0.05;
+        if(p.y<-12){p.y=Hd+12;p.x=rnd(0,Wd)}if(p.x>Wd+12)p.x=-12;if(p.x<-12)p.x=Wd+12}
+      l=lit(p.x,p.y);
+      a=(p.bk?0.05:0.07)+(p.bk?0.16:0.85)*Math.min(1,l);
+      a*=(calm?0.86:0.72+0.28*Math.sin(t*0.001*p.tw+p.ph))*edge(p.y);
+      if(a<0.02)continue;
+      rad=Math.max(p.r,1.2);
+      g.fillStyle="rgba("+(LR|0)+","+(LG|0)+","+(LB|0)+","+a.toFixed(3)+")";
+      g.beginPath();g.arc(p.x,p.y,rad,0,6.2832);g.fill();
+    }
+  }
+  function want(){return motion()&&seen&&!d.hidden&&isReady()&&!calm()}
+  /* 15 pictures a second, whatever the refresh rate of the screen: the dust drifts less than a pixel between two
+     pictures, so it still looks smooth, and the browser redraws the hero a quarter as often as it could */
+  function frame(t){
+    running=false;
+    if(!tPrev||t>=due-6){
+      var dt=tPrev?Math.min(0.2,(t-tPrev)/1000):0;tPrev=t;due=(due&&t-due<100)?due+66.67:t+66.67;
+      draw(t,dt,false);stillDone=false;
+    }
+    if(want()){running=true;raf(frame)}else still();
+  }
+  /* one steady picture: drawn once, and again only if the size changes */
+  function still(){tPrev=0;due=0;if(!stillDone&&fit()){draw(now(),0,true);stillDone=true}}
+  function kick(){if(running)return;if(want()){running=true;raf(frame)}else if(isReady()||!motion())still()}
+  if("IntersectionObserver" in W){new IntersectionObserver(function(es){seen=es[es.length-1].isIntersecting;kick()},{rootMargin:"0px"}).observe(box)}
+  if("MutationObserver" in W){new MutationObserver(function(){kick()}).observe(root,{attributes:true,attributeFilter:["data-motion","class"]})}
+  d.addEventListener("visibilitychange",kick);
+  W.addEventListener("resize",function(){fit();kick()});
+  if("ResizeObserver" in W){new ResizeObserver(function(){fit();kick()}).observe(box)}
+  kick();
+})()}
+
+}catch(err){if(W.console&&console.error)console.error("Cinematic layer stopped:",err)}
 })();
 </script>
 </body>
